@@ -1,0 +1,2859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex, nofollow">
+<title>High-Value Care Case Simulator (5 Cases)</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f4f7f9; margin:0; padding:0 0 70px 0; color:#333; }
+  .container { max-width: 1100px; margin: 28px auto; background:#fff; padding: 28px; border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.10); }
+
+  h1,h2,h3 { color:#2e7d32; margin: 0 0 10px 0; }
+  p { line-height: 1.4; margin: 8px 0; }
+  ul { margin: 8px 0 8px 22px; }
+  .muted { color:#666; font-size: 0.95em; margin-bottom: 10px; }
+
+  .tabs { display:flex; gap:10px; margin: 10px 0 16px 0; flex-wrap:wrap; }
+  .tab { border:none; border-radius: 10px; padding: 10px 14px; cursor:pointer; background:#e8e8e8; color:#333; }
+  .tab.active { background:#2e7d32; color:#fff; }
+
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 820px){ .grid2{ grid-template-columns:1fr; } }
+
+  .summary { background:#eef6ff; padding:14px; border-radius:10px; margin-top:12px; }
+  .card { border:1px solid #e6e6e6; border-radius: 12px; padding: 14px; background:#fafafa; }
+  .small { font-size: 0.95em; }
+  .tiny { font-size: 0.85em; color:#666; margin-top: 10px; }
+
+  .hint { background:#fff7e6; border:1px solid #ffe0a3; padding:10px; border-radius:12px; margin: 10px 0; }
+
+  /* Big obvious search */
+  #search {
+    width:100%;
+    padding:16px 16px;
+    margin: 14px 0 10px 0;
+    border-radius: 12px;
+    border: 2px solid #2e7d32;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    outline:none;
+  }
+  #search:focus { box-shadow: 0 6px 18px rgba(46,125,50,0.18); }
+
+  .test-list { max-height: 320px; overflow-y:auto; border:1px solid #ccc; padding: 10px; border-radius:12px; background:#fff; }
+  label { display:block; margin: 6px 0; }
+
+  button.primary { margin-top: 14px; padding: 12px 18px; background:#2e7d32; color:#fff; border:none; border-radius:10px; cursor:pointer; }
+  button.primary:hover { background:#256428; }
+
+  .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; margin-left: 8px; }
+  .good { color: green; }
+  .warn { color: #c47a00; }
+  .bad { color: #b00020; }
+  .pill.good { background: rgba(0,128,0,0.10); color: green; }
+  .pill.warn { background: rgba(196,122,0,0.12); color: #8a5200; }
+  .pill.bad { background: rgba(176,0,32,0.10); color: #b00020; }
+
+  table { width:100%; border-collapse: collapse; margin-top: 10px; background:#fff; }
+  th,td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+  th { background:#f0f0f0; }
+  .hidden { display:none; }
+
+  .wells-box { margin-top: 12px; background:#f6fff6; border:1px solid #cfe8cf; padding: 12px; border-radius: 12px; }
+  .wells-box h4 { margin: 0 0 8px 0; color:#256428; }
+
+/* =========================
+   Launch polish (UI)
+   ========================= */
+:root{
+  --hvc-primary:#2e7d32;
+  --hvc-primary-dark:#256428;
+  --hvc-bg:#f4f7f9;
+  --hvc-text:#1f2937;
+  --hvc-muted:#5f6b7a;
+  --hvc-border: rgba(0,0,0,0.08);
+  --hvc-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+body{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% 0%, rgba(46,125,50,0.12), rgba(0,0,0,0) 60%),
+    linear-gradient(180deg, #f7fafc 0%, #eef3f7 100%);
+  color: var(--hvc-text);
+}
+
+.container{
+  border: 1px solid var(--hvc-border);
+  box-shadow: var(--hvc-shadow);
+}
+
+h1{
+  letter-spacing: -0.3px;
+}
+
+.muted{
+  color: var(--hvc-muted);
+}
+
+.tab{
+  transition: transform .05s ease, background .15s ease, box-shadow .15s ease;
+}
+.tab:hover{
+  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+  transform: translateY(-1px);
+}
+.tab:active{
+  transform: translateY(0px);
+}
+
+button.primary{
+  box-shadow: 0 10px 18px rgba(46,125,50,0.18);
+}
+button.primary:hover{
+  box-shadow: 0 12px 22px rgba(46,125,50,0.22);
+}
+
+.tab:focus-visible,
+button.primary:focus-visible,
+input:focus-visible{
+  outline: 3px solid rgba(46,125,50,0.25);
+  outline-offset: 2px;
+}
+
+/* Make long checkbox lists easier to scan */
+.test-list label{
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+.test-list label:hover{
+  background: rgba(46,125,50,0.06);
+}
+
+/* Subtle completion checkmarks on case tabs */
+.tabs .tab.completed{
+  position: relative;
+  padding-right: 32px;
+}
+.tabs .tab.completed::after{
+  content: "✓";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(46,125,50,0.14);
+  color: var(--hvc-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+.tabs .tab.active.completed::after{
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+}
+
+
+/* Card polish */
+.card{
+  background: #ffffff;
+  border: 1px solid var(--hvc-border);
+}
+.summary{
+  border: 1px solid rgba(0,0,0,0.06);
+  background: rgba(238,246,255,0.80);
+}
+.hint{
+  background: rgba(255,247,230,0.85);
+  border: 1px solid rgba(255,224,163,0.95);
+}
+table th{
+  background: rgba(0,0,0,0.04);
+}
+
+
+  .global-footer{position:fixed;left:0;right:0;bottom:0;padding:10px 14px;font-size:12px;color:#555;text-align:center;background:rgba(244,247,249,0.92);border-top:1px solid rgba(0,0,0,0.08);backdrop-filter: blur(4px);}
+</style>
+</head>
+
+
+<body>
+<div class="container" id="landing">
+  <h1>Medical High-Value Care Simulator</h1>
+  <div class="muted" style="margin-top:8px;">
+    This interactive module helps medical trainees practice <strong>high-value, context-dependent diagnostic decision-making</strong>.
+    You can freely search and order tests, then receive feedback on value and see costs after submission.
+  </div>
+
+  <div class="card" style="margin-top:16px; background:#ffffff;">
+    <h2 style="margin-top:0;">Before you start</h2>
+    <ul class="small">
+      <li><strong>No multiple-choice spoilers:</strong> you choose your own diagnostic pathway.</li>
+      <li><strong>Costs are hidden until you submit</strong> for each case.</li>
+      <li><strong>Costs shown in this module are derived from a publicly available price list from UCLA at the Ronald Reagan Medical Center, updated as of June 1, 2025.</strong></li>
+      <li><strong>High-value care is dynamic:</strong> what’s high value depends on the patient, timing, and pre-test probability.</li>
+      <li><strong>This information is for educational purposes only and should not be considered medical advice or be used in place of clinician judgement.</strong></li>
+    </ul>
+    <div class="muted" style="margin-top:10px; font-size:13px;">Module developed at the UCLA David Geffen School of Medicine by Dr. Ghadi Ghanem and Dr. Alexandra Glaeser.</div>
+  </div>
+
+  <div class="grid2" style="margin-top:14px;">
+  <div class="card" style="grid-column:1 / -1;">
+    <h3 style="margin-top:0;">Teaching Module</h3>
+    <p class="small muted" style="margin-top:6px;">
+      This is the default mode. Your selections and total cost per case are captured for review.
+    </p>
+    <button class="primary" id="startTeaching" type="button" style="width:100%; padding:16px 18px; font-size:18px; border-radius:12px;">
+      Start Module
+    </button>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+      <button class="tab" id="startFun" type="button">Just for fun mode</button>
+      <button class="tab" id="backForMore" type="button">Back for more practice</button>
+    </div>
+    <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+  <button class="tab" id="adminLoginBtn" type="button" style="padding:10px 14px; border-radius:12px;">Admin login</button>
+</div>
+  </div>
+</div>
+
+</div>
+
+
+<div class="container hidden" id="adminPanel">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+    <div>
+      <h1 style="margin:0;">Admin Dashboard</h1>
+      <div class="muted">View submitted case data collected from the module.</div>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="tab" id="adminRefreshBtn" type="button">Refresh</button>
+      <button class="tab" id="adminTestBtn" type="button">Test connection</button>
+      <button class="tab" id="adminOpenExportBtn" type="button">Open export</button>
+      <button class="tab" id="adminDownloadCsvBtn" type="button">Download CSV</button>
+      <button class="tab" id="adminBackBtn" type="button">Back</button>
+    </div>
+  </div>
+
+  <div class="hint small" style="margin-top:14px;">
+    If the table is empty, confirm your Google Apps Script endpoint is set in <code>ANALYTICS_ENDPOINT</code> and that your endpoint supports <code>?action=export</code>.
+  </div>
+
+  <div class="card" style="margin-top:12px;">
+    <h3 style="margin-top:0;">Submissions</h3>
+    <div class="small muted" id="adminStatus" style="margin-top:6px;"></div>
+    <div style="overflow:auto; margin-top:10px;">
+      <table id="adminTable">
+        <tr>
+          <th>receivedAt</th>
+          <th>source</th>
+          <th>eventId</th>
+          <th>type</th>
+          <th>moduleMode</th>
+          <th>sessionId</th>
+          <th>caseId</th>
+          <th>caseTitle</th>
+          <th>submittedAt</th>
+          <th>totalCost</th>
+          <th>costType</th>
+          <th>orders</th>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tiny" style="margin-top:10px;">
+    Note: This is a lightweight admin view. For true security, restrict access to the Apps Script endpoint and require authentication on the server side.
+  </div>
+</div>
+
+<div id="app" class="hidden">
+
+<div class="container">
+  <h1>Medical Case Simulator</h1>
+  <div class="muted">
+    Practice high-value care by selecting the <strong>initial diagnostic tests</strong> you would order at this stage of the encounter.
+    <strong>Costs are hidden until you submit.</strong>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" id="tab1" type="button">Case 1: Chest pain</button>
+    <button class="tab" id="tab2" type="button">Case 2: Fevers</button>
+    <button class="tab" id="tab3" type="button">Case 3: Fevers part 2</button>
+    <button class="tab" id="tab4" type="button">Case 4: Back pain</button>
+    <button class="tab" id="tab5" type="button">Case 5: Med reconciliation</button>
+  </div>
+
+  <h2 id="caseTitle"></h2>
+  <div id="caseContent"></div>
+
+  <!-- Case 5 uses its own embedded UI to preserve module integrity -->
+  <div id="case5MedRec" class="hidden" style="margin-top:12px;">
+    <iframe id="medRecFrame" title="Medication reconciliation case" style="width:100%; border:0; border-radius:12px; min-height:1200px; background:#f4f7f9;"></iframe>
+    <div class="tiny" id="case5Status" style="margin-top:10px;"></div>
+  </div>
+
+  <h3 id="dxHeader">Order Initial Diagnostic Tests</h3>
+  <div class="hint small" id="dxHint">
+    Tip: Search abbreviations like <strong>CXR</strong>, <strong>CTA</strong>, <strong>CTPA</strong>, <strong>UA</strong>, <strong>RPP</strong>, <strong>Echo</strong>.
+    Costs stay hidden until you submit.
+  </div>
+
+  <input type="text" id="search" placeholder="Search & add orders (e.g., CBC, CXR, CTA, COVID)…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="search" />
+
+  <form id="orderForm">
+    <div class="test-list" id="matchList"></div>
+
+    <div class="card" style="margin-top:12px; background:#ffffff;">
+      <h3 style="margin:0 0 8px 0; color:#2e7d32;">Selected orders</h3>
+      <div class="small muted" style="margin-top:0;">This updates as you check/uncheck items above.</div>
+      <div id="selectedOrdersBox" class="small" style="margin-top:10px;"></div>
+    </div>
+
+    
+    <button class="primary" type="submit">Submit Orders</button>
+  </form>
+
+  <div id="results" class="hidden">
+    <h2>Results</h2>
+    <p><strong>Final Diagnosis:</strong> <span id="finalDx"></span></p>
+
+    <div class="grid2">
+      <div class="card">
+        <h3 style="margin-top:0;">Your Orders</h3>
+        <div id="orderFeedback"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Recommended Diagnostic Pathway</h3>
+        <div class="summary" id="recommendedPathwayBox"></div>
+
+        <!-- Case 1 only: Wells tool shows AFTER submit (moved under pathway) -->
+        <div id="wellsContainer" class="wells-box hidden">
+          <h4>Wells Score for PE (optional learning tool)</h4>
+          <div class="small muted">Select findings (age is <strong>not</strong> part of Wells). This does not change your grading; it’s for learning.</div>
+          <div style="margin-top:10px;">
+            <label><input type="checkbox" class="wells" data-points="3"> Clinical signs/symptoms of DVT (leg swelling, pain with palpation)</label>
+            <label><input type="checkbox" class="wells" data-points="3"> PE is the most likely diagnosis (no better alternative)</label>
+            <label><input type="checkbox" class="wells" data-points="1.5"> HR &gt; 100 bpm</label>
+            <label><input type="checkbox" class="wells" data-points="1.5"> Immobilization ≥3 days or surgery in previous 4 weeks</label>
+            <label><input type="checkbox" class="wells" data-points="1.5"> Previous DVT/PE</label>
+            <label><input type="checkbox" class="wells" data-points="1"> Hemoptysis</label>
+            <label><input type="checkbox" class="wells" data-points="1"> Malignancy (treatment within 6 months or palliative)</label>
+          </div>
+          <div style="margin-top:10px;" class="small">
+            <strong>Your Wells score:</strong> <span id="wellsScore">0.0</span>
+            <span class="muted"> — Interpretation: <span id="wellsInterp">Low</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:12px;">
+      <div class="card">
+        <h3 style="margin-top:0;">Cost Breakdown</h3>
+        <div id="studentBreakdown"></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Recommended Cost Breakdown</h3>
+        <div id="recommendedBreakdown"></div>
+      </div>
+    </div>
+    <div id="pathwayComparisonSection">
+    <h3 style="margin-top:16px;">Pathway Comparison</h3>
+    <table>
+      <tr>
+        <th></th>
+        <th>Your Pathway</th>
+        <th>Recommended Pathway</th>
+      </tr>
+      <tr>
+        <td id="pathRow1Label"></td>
+        <td id="pathRow1Student"></td>
+        <td id="pathRow1Rec"></td>
+      </tr>
+      <tr>
+        <td id="pathRow2Label"></td>
+        <td id="pathRow2Student"></td>
+        <td id="pathRow2Rec"></td>
+      </tr>
+      <tr>
+        <td><strong>Total diagnostic cost</strong></td>
+        <td id="studentCost"></td>
+        <td id="recommendedCost"></td>
+      </tr>
+    </table>
+    </div>
+
+    <div id="caseAttribution" class="tiny"></div>
+
+
+  </div>
+
+  <div style="margin-top:16px;">
+    <button class="primary hidden" id="continueBtn" type="button" style="width:100%; padding:16px 18px; font-size:18px; border-radius:12px;">
+      Next Case
+    </button>
+  </div>
+</div>
+
+<!-- =========================
+     Case 5 (Module 2) source
+     - Kept isolated in an iframe via srcdoc to prevent ID/CSS/JS collisions.
+     - Added postMessage hooks so the parent module can capture submissions into the same analytics pipeline.
+     ========================= -->
+<template id="case5Srcdoc">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Medication Reconciliation – High Value Care (MS4)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f4f7f9;
+  margin:0;
+  padding:0;
+  color:#333;
+}
+.container {
+  max-width:1100px;
+  margin:30px auto;
+  background:#fff;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+h1,h2,h3{color:#2e7d32;}
+.card{border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0;}
+.callout{background:#e8f5e9;border-left:5px solid #2e7d32;padding:15px;border-radius:5px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{background:#f1f8e9;border:1px solid #c8e6c9;padding:6px 10px;border-radius:20px;font-size:13px;}
+
+table{width:100%;border-collapse:collapse;}
+th,td{border-bottom:1px solid #ddd;padding:10px;vertical-align:top;}
+th{background:#f1f8e9;}
+
+.medbox{background:#fafafa;border:1px solid #ddd;padding:10px;border-radius:6px;}
+.medcost{font-size:13px;color:#555;margin-top:6px;}
+.options{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:10px;
+  margin-top:8px;
+}
+.option{
+  background:#f4f7f9;
+  border:1px solid #ccc;
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:13px;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+}
+.option.mutedBox{
+  background:#fff;
+  border:1px dashed #ddd;
+  color:#777;
+}
+
+button{background:#2e7d32;color:#fff;border:none;padding:10px 14px;border-radius:5px;cursor:pointer;}
+button.secondary{background:#9e9e9e;}
+.totals{display:flex;gap:20px;background:#f1f8e9;padding:15px;border-radius:8px;margin-top:15px;}
+.money{font-family:monospace;}
+.hide{display:none;}
+input[type="text"]{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:5px;
+  border:1px solid #ccc;
+}
+label{font-size:13px;}
+.small{font-size:13px;color:#666;}
+.status{margin-top:8px;font-size:13px;}
+.status.ok{color:#2e7d32;}
+.status.warn{color:#ef6c00;}
+.status.err{color:#c62828;}
+
+.hvcRow td{
+  border-bottom:1px solid #ddd;
+}
+.hvcRow.hvcGreen td{ background:#e8f5e9; }
+.hvcRow.hvcOrange td{ background:#fff3e0; }
+.hvcRow.hvcRed td{ background:#ffebee; }
+
+.hvcBox{
+  padding:12px 10px;
+  border-radius:6px;
+}
+.hvcRow.hvcGreen .hvcBox{ border-left:5px solid #2e7d32; }
+.hvcRow.hvcOrange .hvcBox{ border-left:5px solid #ef6c00; }
+.hvcRow.hvcRed .hvcBox{ border-left:5px solid #c62828; }
+.hvcBox a{color:#2e7d32;}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Medication Reconciliation – High Value Care</h1>
+
+<div class="card">
+<h2>Case Presentation</h2>
+<p>
+Ms. Neal is a 65‑year‑old woman with hypertension, hyperlipidemia, mild coronary artery disease,
+and type 2 diabetes mellitus. Four days ago she was admitted for a <b>foot fracture requiring surgical correction</b>.
+</p>
+
+<p>
+She is now recovering very well and is ready to discharge home. Her pain has been controlled well
+post‑operatively, and she has only required tylenol for pain control when working with physical therapy.
+She has overall been sleeping well without issues, but occasionally requires melatonin. She states
+that she has a family member at home who had become dependent on opioids and would like to avoid these
+if at all possible.
+</p>
+</div>
+
+<div class="card">
+<h2>Physical Exam</h2>
+<ul>
+<li>General: Comfortable, no distress</li>
+<li>Cardiac: Regular rate and rhythm</li>
+<li>Lungs: Clear bilaterally</li>
+<li>Abdomen: Soft, non‑tender</li>
+<li>Extremities: Surgical site clean and intact</li>
+</ul>
+</div>
+
+<div class="card grid">
+<div>
+<h3>Vitals</h3>
+<ul>
+<li>Temp: 36.8°C</li>
+<li>HR: 72</li>
+<li>BP: 128/74</li>
+<li>RR: 16</li>
+<li>SpO₂: 98%</li>
+</ul>
+</div>
+
+<div>
+<h3>Labs</h3>
+<ul>
+<li>Na 139</li>
+<li>K 4.2</li>
+<li>Cr 0.9</li>
+<li>Hb 12.8</li>
+<li>WBC 7.1</li>
+</ul>
+<b>Glucose trend past 24h:</b> 110–180 mg/dL
+</div>
+</div>
+
+<div class="card callout">
+<b>Task:</b> Reconcile Ms. Neal’s medications for discharge. Unfortunately, your team needed to switch many of her medications while admitted because they were not on formulary. Your hospital also uses a majority of name brand medications while admitted, which may cost more than their generic alternative.
+<br><br>
+Next to each medication below, decide whether to <b>continue the home medication</b>, <b>continue the inpatient medication</b>, or <b>discontinue</b>.
+</div>
+
+<div class="card grid">
+<div>
+<h3>Home medications</h3>
+<div id="homeList" class="chips"></div>
+</div>
+
+<div>
+<h3>Hospital medications</h3>
+<div id="hospList" class="chips"></div>
+</div>
+</div>
+
+<div class="card">
+<h2>Medication Reconciliation</h2>
+<table id="tbl"></table>
+</div>
+
+<div class="card">
+<h2>Cost Summary</h2>
+<div id="results" class="hide">
+
+<div class="totals">
+  <div><b>Selected monthly total</b><br><span id="total" class="money">$0</span></div>
+  <div><b>Home baseline monthly total</b><br><span id="homeTotal" class="money">$0</span></div>
+  <div><b>Change in monthly price of medications</b><br><span id="delta" class="money">$0</span></div>
+</div>
+
+<div class="totals" style="margin-top:12px;">
+  <div><b>Selected annual total</b><br><span id="annualTotal" class="money">$0</span></div>
+  <div><b>Home baseline annual total</b><br><span id="annualHomeTotal" class="money">$0</span></div>
+  <div><b>Change in annual price of medications</b><br><span id="annualDelta" class="money">$0</span></div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div id="saveStatus" class="status small">Not submitted yet.</div>
+<button id="submit">Submit & Reveal Costs</button>
+<button id="reset" class="secondary">Reset</button>
+</div>
+
+</div>
+
+<script>
+const MODULE_VERSION = "v12";
+const GOOGLE_SHEETS_WEBAPP_URL = ""; // Paste your deployed Google Apps Script Web App URL here (optional)
+
+// Send information back to the parent (Case 1–4 module) for unified analytics.
+function postToParent(msg){
+  try{ window.parent && window.parent.postMessage(msg, "*"); }catch(e){}
+}
+
+function postHeight(){
+  try{
+    const h = Math.max(
+      document.body ? document.body.scrollHeight : 0,
+      document.documentElement ? document.documentElement.scrollHeight : 0
+    );
+    postToParent({ kind: "case5_medrec_height", height: h });
+  }catch(e){}
+}
+
+try{
+  // Best-effort auto-resize
+  if (window.ResizeObserver){
+    const ro = new ResizeObserver(()=>postHeight());
+    ro.observe(document.documentElement);
+  }
+  window.addEventListener("load", ()=>{ postHeight(); postToParent({ kind: "case5_medrec_ready" }); });
+  window.addEventListener("resize", ()=>postHeight());
+}catch(e){}
+
+
+// De-identified participant code (stable per device/browser via localStorage)
+function getAnonId(){
+  const key = "ms4_medrec_anon_id_v1";
+  try{
+    const existing = localStorage.getItem(key);
+    if(existing) return existing;
+
+    // 12-digit numeric code: last 6 digits of timestamp + 6 digits of crypto-random
+    const arr = new Uint32Array(1);
+    (window.crypto && window.crypto.getRandomValues) ? window.crypto.getRandomValues(arr) : (arr[0] = Math.floor(Math.random()*1e9));
+    const now6 = Date.now().toString().slice(-6);
+    const rand6 = String(arr[0] % 1000000).padStart(6, "0");
+    const id = now6 + rand6;
+
+    localStorage.setItem(key, id);
+    return id;
+  }catch(e){
+    // Fallback if localStorage is blocked
+    return String(Math.floor(100000000000 + Math.random()*900000000000));
+  }
+}
+const ANON_ID = getAnonId();
+
+
+function setStatus(msg, level){
+  const el = document.getElementById("saveStatus");
+  if(!el) return;
+  el.textContent = msg;
+  el.className = "status small " + (level ? level : "");
+  postHeight();
+}
+
+function postToGoogleSheet(payload){
+  if(!GOOGLE_SHEETS_WEBAPP_URL){
+    setStatus("Response capture is not configured (no Google Sheet link set).", "warn");
+    return;
+  }
+  try{
+    const body = new URLSearchParams(payload);
+
+    // Prefer sendBeacon when available (reliable, minimal CORS issues)
+    if(navigator.sendBeacon){
+      const blob = new Blob([body.toString()], {type:"application/x-www-form-urlencoded"});
+      const ok = navigator.sendBeacon(GOOGLE_SHEETS_WEBAPP_URL, blob);
+      if(ok){
+        setStatus("Response sent to Google Sheet.", "ok");
+        return;
+      }
+    }
+
+    fetch(GOOGLE_SHEETS_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body
+    }).then(()=>{
+      setStatus("Response sent to Google Sheet.", "ok");
+    }).catch(()=>{
+      setStatus("Could not send response to Google Sheet. Please try again or notify your instructor.", "err");
+    });
+  }catch(e){
+    setStatus("Could not send response to Google Sheet. Please try again or notify your instructor.", "err");
+  }
+}
+
+
+const ROWS=[
+{id:"lisinopril",home:{l:"Lisinopril (generic) 20 mg daily",c:2.19},hosp:{l:"Prinivil (lisinopril) 20 mg daily",c:50.99}},
+{id:"hctz",home:{l:"Hydrochlorothiazide (generic) 25 mg daily",c:3.00},hosp:{l:"Hydrochlorothiazide (generic) 25 mg daily",c:3.00}},
+{id:"bb",home:{l:"Metoprolol tartrate (generic) 50 mg BID",c:7.20},hosp:{l:"Coreg (carvedilol) 25 mg BID",c:717.12}},
+{id:"hydral",home:null,hosp:{l:"Hydralazine (generic) 25 mg PO PRN SBP >160",c:4.00}},
+
+{id:"ins",home:{l:"Insulin glargine (Lantus) 20 units daily",c:35.00},hosp:{l:"Insulin detemir (Levemir) 30 units daily",c:112.41}},
+{id:"met",home:{l:"Metformin (generic) 1000 mg BID",c:5.24},hosp:null},
+
+{id:"asp",home:{l:"Aspirin (generic) 81 mg daily",c:4.51},hosp:{l:"Ecotrin (Aspirin) 81 mg daily",c:4.51}},
+{id:"statin",home:{l:"Pravastatin (generic) 40 mg daily",c:14.40},hosp:{l:"Crestor (rosuvastatin) 10 mg daily",c:285.97}},
+{id:"ppi",home:null,hosp:{l:"Nexium (esomeprazole) 20 mg daily",c:7.45}},
+
+{id:"hep",home:null,hosp:{l:"Subcutaneous heparin (generic) 5000 units BID",c:48.32}},
+{id:"abx",home:null,hosp:{l:"Cefpodoxime (generic) 100 mg q12h (prophylaxis)",c:34.00}},
+
+{id:"tyl",home:null,hosp:{l:"Acetaminophen (generic) 650 mg q6h PRN",c:3.74}},
+{id:"ibu",home:null,hosp:{l:"Ibuprofen (generic) 500 mg q6h PRN",c:2.48}},
+{id:"oxy",home:null,hosp:{l:"Oxycodone (generic) 5 mg q4h PRN",c:24.09}},
+{id:"oxycont",home:null,hosp:{l:"OxyContin (oxycodone ER) 10 mg q12h PRN",c:135.34}},
+
+{id:"mel",home:{l:"Melatonin (generic) 3 mg PO QHS PRN",c:2.87},hosp:{l:"Melatonin (generic) 3 mg PO QHS PRN",c:2.87}},
+{id:"quet",home:null,hosp:{l:"Quetiapine (generic) 50 mg nightly",c:9.00}},
+{id:"loraz",home:null,hosp:{l:"Lorazepam (generic) 1 mg PO nightly PRN",c:10.51}}
+];
+
+const HVC = {
+  lisinopril: `Name brand medications are often more expensive than their generic alternatives. This patient should be maintained on generic lisinopril.`,
+  hctz: `Reasonable to continue this medication.`,
+  bb: `Name brand medications are often more expensive than their generic alternatives. This patient should be maintained on generic metoprolol or carvedilol, but name brand medications should be avoided.`,
+  hydral: `It is best to avoid prescribing “as needed” medications to patients, as this raises the risk for medication mismanagement and mistakes. Her blood pressure has been stable inpatient and does not require PRNs.`,
+  ins: `Name brand insulin remains very expensive. Many states and companies offer patient assistance programs for insulin (including glargine). Consider affordability and access at discharge.`,
+  met: `Reasonable to restart on discharge. Metformin is sometimes held peri-operatively due to concern for lactic acidosis in patients with renal impairment or after extensive surgery.`,
+  asp: `Should continue for history of coronary artery disease unless contraindicated.`,
+  statin: `Name brand medications are often more expensive than their generic alternatives. Consider a lower-cost statin option when clinically appropriate.`,
+  ppi: `No indication for a proton pump inhibitor inpatient or outpatient for stress ulcer prophylaxis. PPIs are commonly overprescribed and are primarily indicated for critically ill patients (e.g., intubated) or those on high-dose steroids. Inappropriate PPI use increases risk for C. difficile infection, community-acquired pneumonia, bone fracture, nutritional deficiencies, and drug interactions (including interference with antiplatelet metabolism). <br><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3388523/" target="_blank" rel="noopener">Citation</a>`,
+  hep: `While it is reasonable to prescribe DVT prophylaxis inpatient and post-operatively, this should be discontinued outpatient if the patient is ambulatory and has lower risk of developing a DVT such as in someone with ankle surgery but who is still able to walk or participate with physical therapy. Strategies to prevent blood clots may be necessary in patients who are expected to have prolonged immobility.`,
+  abx: `Some patients will receive a one-time peri-operative antibiotic to reduce infection risk. There is little utility to continuing post-operative prophylactic antibiotics. <br><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10823856/" target="_blank" rel="noopener">Citation</a>`,
+  tyl: `Reasonable to continue.`,
+  ibu: `Reasonable to continue in moderation (consider renal function, GI risk, and bleeding risk).`,
+  oxy: `The patient has not needed opioid medications after her surgery, and she has stated she would like to avoid opioids at this time.`,
+  oxycont: `Clinicians should not treat acute pain such as a fracture with long-acting opioids, and should not prescribe long-acting opioids for intermittent or as-needed use. This is associated with higher overdose risk. <br><a href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm" target="_blank" rel="noopener">Citation</a>`,
+  mel: `Reasonable to continue.`,
+  quet: `Antipsychotics are seldom needed for sleep. This should not be prescribed inpatient or outpatient in most circumstances.`,
+  loraz: `Benzodiazepines are generally discouraged for sleep due to risks of addiction, dependency, daytime drowsiness, rebound insomnia after stopping, and increased fall risk in older adults.`
+};
+
+
+const homeList=document.getElementById("homeList");
+const hospList=document.getElementById("hospList");
+
+ROWS.forEach(r=>{
+if(r.home){let s=document.createElement("span");s.className="chip";s.textContent=r.home.l;homeList.appendChild(s)}
+if(r.hosp){let s=document.createElement("span");s.className="chip";s.textContent=r.hosp.l;hospList.appendChild(s)}
+});
+
+const tbl=document.getElementById("tbl");
+tbl.innerHTML="<tr><th>Home</th><th>Hospital</th><th>Decision</th></tr>";
+
+
+ROWS.forEach(r=>{
+  // main row
+  let tr=document.createElement("tr");
+  tr.id = "row_"+r.id;
+  tr.innerHTML=`
+  <td>${r.home?'<div class="medbox">'+r.home.l+'<div class="medcost hide">$'+(Math.round(r.home.c*100)/100).toFixed(2)+' per month</div></div>':'—'}</td>
+  <td>${r.hosp?'<div class="medbox">'+r.hosp.l+'<div class="medcost hide">$'+(Math.round(r.hosp.c*100)/100).toFixed(2)+' per month</div></div>':'—'}</td>
+  <td>
+    <div class="options">
+      ${r.home ? '<label class="option"><input type="radio" name="'+r.id+'" value="home"> Home</label>' : '<div class="option mutedBox">—</div>'}
+      ${r.hosp ? '<label class="option"><input type="radio" name="'+r.id+'" value="hosp"> Hospital</label>' : '<div class="option mutedBox">—</div>'}
+      <label class="option"><input type="radio" name="${r.id}" value="dc"> Discontinue</label>
+    </div>
+  </td>`;
+  tbl.appendChild(tr);
+
+  // HVC guidance row (hidden until submit)
+  let hvc=document.createElement("tr");
+  hvc.className="hvcRow hide hvcGreen";
+  hvc.id="hvc_"+r.id;
+  hvc.innerHTML = `<td colspan="3">
+      <div class="hvcBox">
+        <div id="hvcText_${r.id}"></div>
+      </div>
+    </td>`;
+  tbl.appendChild(hvc);
+});
+
+// Populate HVC guidance text (hidden until submit)
+ROWS.forEach(r=>{
+  const el = document.getElementById("hvcText_"+r.id);
+  if(el){
+    el.innerHTML = HVC[r.id] || "—";
+  }
+});
+
+
+
+document.getElementById("submit").onclick=()=>{
+  document.querySelectorAll(".medcost").forEach(e=>e.classList.remove("hide"));
+  document.querySelectorAll(".hvcRow").forEach(e=>e.classList.remove("hide"));
+
+  let total=0, homeTotal=0;
+
+  // If these are selected as HOSPITAL meds, they represent low-value care -> RED.
+  const lowValueHosp = new Set(["ppi","oxy","oxycont","hep","abx","hydral","quet","loraz"]);
+
+  // If these are selected as HOSPITAL meds, they are higher-cost choices when a lower-cost alternative exists -> ORANGE.
+  const higherCostHosp = new Set(["lisinopril","bb","statin","ins"]);
+
+  // If these are DISCONTINUED, that is inappropriate (indicated chronic meds) -> RED.
+  const indicatedChronic = new Set(["lisinopril","hctz","bb","ins","met","asp","statin"]);
+
+  // For these, either HOSPITAL or DISCONTINUE is acceptable -> keep GREEN per your guidance.
+  const greenHospOrDc = new Set(["tyl","ibu"]);
+  const payload = {
+    module_version: MODULE_VERSION,
+    submitted_at: new Date().toISOString(),
+    anon_id: ANON_ID
+  };
+
+  const choicesSummary = [];
+  const hvcSummary = [];
+
+  ROWS.forEach(r=>{
+    if(r.home) homeTotal += r.home.c;
+
+    const sel = document.querySelector('input[name="'+r.id+'"]:checked');
+    const choice = sel ? sel.value : "";
+    payload["choice_"+r.id] = choice;
+    choicesSummary.push(r.id + ":" + (choice || ""));
+
+    if(choice==="home" && r.home) total += r.home.c;
+    if(choice==="hosp" && r.hosp) total += r.hosp.c;
+
+    // Apply color to the HVC row based on student choice
+    const hvcContainer = document.getElementById("hvc_"+r.id);
+    if(hvcContainer){
+      hvcContainer.classList.remove("hvcGreen","hvcOrange","hvcRed");
+
+      let status = "green";
+      if(greenHospOrDc.has(r.id) && (choice==="hosp" || choice==="dc")){
+        status = "green";
+      } else if(choice==="hosp" && lowValueHosp.has(r.id)){
+        status = "red";
+      } else if(choice==="dc" && indicatedChronic.has(r.id)){
+        status = "red";
+      } else if(choice==="hosp" && higherCostHosp.has(r.id)){
+        status = "orange";
+      } else {
+        status = "green";
+      }
+
+      hvcContainer.classList.add(status==="green" ? "hvcGreen" : status==="orange" ? "hvcOrange" : "hvcRed");
+      payload["hvc_"+r.id] = status;
+      hvcSummary.push(r.id + ":" + status);
+    }
+  });
+
+  payload["choices_summary"] = choicesSummary.join("|");
+  payload["hvc_summary"] = hvcSummary.join("|");
+
+  const annualTotal = total * 12;
+  const annualHomeTotal = homeTotal * 12;
+
+  document.getElementById("results").classList.remove("hide");
+
+  const fmt = (n)=>"$"+(Math.round(n*100)/100).toFixed(2);
+
+  document.getElementById("total").textContent = fmt(total);
+  document.getElementById("homeTotal").textContent = fmt(homeTotal);
+  document.getElementById("delta").textContent = fmt(total - homeTotal);
+
+  document.getElementById("annualTotal").textContent = fmt(annualTotal);
+  document.getElementById("annualHomeTotal").textContent = fmt(annualHomeTotal);
+  document.getElementById("annualDelta").textContent = fmt(annualTotal - annualHomeTotal);
+
+  payload["selected_monthly_total"] = (Math.round(total*100)/100).toFixed(2);
+  payload["home_monthly_total"] = (Math.round(homeTotal*100)/100).toFixed(2);
+  payload["monthly_change"] = (Math.round((total-homeTotal)*100)/100).toFixed(2);
+
+  payload["selected_annual_total"] = (Math.round(annualTotal*100)/100).toFixed(2);
+  payload["home_annual_total"] = (Math.round(annualHomeTotal*100)/100).toFixed(2);
+  payload["annual_change"] = (Math.round((annualTotal-annualHomeTotal)*100)/100).toFixed(2);
+
+  // Notify parent for unified analytics and navigation gating
+  postToParent({
+    kind: "case5_medrec_submission",
+    payload
+  });
+  postHeight();
+
+  setStatus("Submitting anonymous response...", "warn");
+  postToGoogleSheet(payload);
+};
+
+document.getElementById("reset").onclick=()=>location.reload();
+</script>
+
+</body>
+</html>
+</template>
+
+<script>
+/* =========================
+   Order catalog
+   - Costs hidden until submission (we do NOT display cost in search list)
+   - Includes "No diagnostic testing necessary" pinned at top
+   ========================= */
+const orderCatalog = [
+  { id:"NO_TESTING", name:"No diagnostic testing necessary", cost:0.00, synonyms:["no testing", "none", "no diagnostic testing"] },
+  { id:"PDF_4562150", name:"Amylase", cost:30.00, synonyms:[] },
+  { id:"BLOOD_CX", name:"Blood culture (set)", cost:430.00, synonyms:["blood culture", "blood cx", "bld cx"] },
+  { id:"BMP", name:"BMP", cost:210.00, synonyms:["basic metabolic panel"] },
+  { id:"PDF_4567070", name:"Body Fluid Culture", cost:111.00, synonyms:[] },
+  { id:"PDF_4569740", name:"Body Fluid Panel Cell Count", cost:70.00, synonyms:[] },
+  { id:"CBC", name:"CBC", cost:140.00, synonyms:["cbc w diff", "cbc with differential", "cbc w/ diff"] },
+  { id:"CXR", name:"Chest X-ray (CXR)", cost:360.00, synonyms:["cxr", "xr chest", "chest xray", "chest x-ray", "portable cxr", "pa lateral"] },
+  { id:"PDF_4569815", name:"Chlamydophila Pneumoniae PCR", cost:182.00, synonyms:[] },
+  { id:"CMP", name:"CMP", cost:340.00, synonyms:["comprehensive metabolic panel"] },
+  { id:"COVID_PCR", name:"COVID-19 PCR (SARS-CoV-2)", cost:210.00, synonyms:["covid", "sars cov 2", "sars-cov-2", "covid pcr"] },
+  { id:"PDF_4569724", name:"Csf Culture", cost:111.00, synonyms:[] },
+  { id:"PDF_4569744", name:"Csf Panel Culture Cpt3", cost:111.00, synonyms:[] },
+  { id:"PDF_4569745", name:"Csf Panel Giemsa Stain Cpt4", cost:30.00, synonyms:[] },
+  { id:"PDF_4569746", name:"Csf Panel Glucose Cpt5", cost:30.00, synonyms:[] },
+  { id:"PDF_4569743", name:"Csf Panel Protein Cpt2", cost:30.00, synonyms:[] },
+  { id:"PDF_4634196", name:"CT abdomen/pelvis without contrast", cost:4135.00, synonyms:[] },
+  { id:"PDF_4634195", name:"CT abdomen/pelvis with contrast", cost:4826.00, synonyms:[] },
+  { id:"PDF_4634197", name:"CT abdomen/pelvis with/without contrast", cost:5100.00, synonyms:[] },
+  { id:"PDF_4634160", name:"CT abdomen with contrast", cost:3625.00, synonyms:[] },
+  { id:"PDF_4634150", name:"CT abdomen without contrast", cost:3170.00, synonyms:[] },
+  { id:"PDF_4634170", name:"CT abdomen with/without contrast", cost:3749.00, synonyms:[] },
+  { id:"PDF_4630440", name:"CT bone length study", cost:692.00, synonyms:[] },
+  { id:"PDF_4632191", name:"CT bony pelvis for fracture", cost:2811.00, synonyms:[] },
+  { id:"PDF_4631260", name:"CT chest with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4631270", name:"CT chest with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4631250", name:"CT chest without contrast", cost:2940.00, synonyms:[] },
+  { id:"PDF_4630297", name:"Low dose CT chest without", cost:3213.00, synonyms:[] },
+  { id:"PDF_4633701", name:"CT left lower extremity with contrast", cost:2620.00, synonyms:[] },
+  { id:"PDF_4633705", name:"CT left lower extremity without contrast", cost:2247.00, synonyms:[] },
+  { id:"PDF_4633706", name:"CT left lower extremity with/without contrast", cost:3447.00, synonyms:[] },
+  { id:"PDF_4633206", name:"CT left upper extremity with contrast", cost:2819.00, synonyms:[] },
+  { id:"PDF_4633200", name:"CT left upper extremity without contrast", cost:2412.00, synonyms:[] },
+  { id:"PDF_4633207", name:"CT left upper extremity with/without contrast", cost:3447.00, synonyms:[] },
+  { id:"CT_L_SPINE", name:"CT lumbar spine (no contrast)", cost:2940.00, synonyms:["ct l spine", "ct back", "lumbar ct", "ct spine lumbar"] },
+  { id:"PDF_4630491", name:"CT neck with contrast", cost:2828.00, synonyms:[] },
+  { id:"PDF_4630492", name:"CT neck with/without contrast", cost:2909.00, synonyms:[] },
+  { id:"PDF_4630490", name:"CT neck without contrast", cost:2288.00, synonyms:[] },
+  { id:"PDF_4632193", name:"CT pelvis with contrast", cost:3213.00, synonyms:[] },
+  { id:"PDF_4632192", name:"CT pelvis without contrast", cost:2811.00, synonyms:[] },
+  { id:"PDF_4634194", name:"CT pelvis with/without contrast", cost:3447.00, synonyms:[] },
+  { id:"PDF_4634198", name:"CT renal stone protocol", cost:4135.00, synonyms:[] },
+  { id:"PDF_4633704", name:"CT right lower extremity with contrast", cost:2620.00, synonyms:[] },
+  { id:"PDF_4633702", name:"CT right lower extremity without contrast", cost:2247.00, synonyms:[] },
+  { id:"PDF_4633708", name:"CT right lower extremity with/without contrast", cost:3447.00, synonyms:[] },
+  { id:"PDF_4633202", name:"CT right upper extremity with contrast", cost:2819.00, synonyms:[] },
+  { id:"PDF_4633201", name:"CT right upper extremity without contrast", cost:2412.00, synonyms:[] },
+  { id:"PDF_4633205", name:"CT right upper extremity with/without contrast", cost:3447.00, synonyms:[] },
+  { id:"PDF_4632127", name:"CT spine cervical without contrast", cost:3157.00, synonyms:[] },
+  { id:"PDF_4632132", name:"CT spine lumbar with contrast", cost:2839.00, synonyms:[] },
+  { id:"PDF_4639508", name:"CT spine lumbar with/without contrast", cost:3761.00, synonyms:[] },
+  { id:"PDF_4632129", name:"CT spine thoracic with contrast", cost:3132.00, synonyms:[] },
+  { id:"PDF_4632128", name:"CT spine thoracic without contrast", cost:2744.00, synonyms:[] },
+  { id:"PDF_4364178", name:"CT urogram", cost:5100.00, synonyms:[] },
+  { id:"PDF_4639513", name:"CTA abdomen", cost:4272.00, synonyms:[] },
+  { id:"PDF_4639520", name:"CTA abdomen/pelvis", cost:6413.00, synonyms:[] },
+  { id:"PDF_4639510", name:"CTA aorto bifemoral", cost:3721.00, synonyms:[] },
+  { id:"CTPA", name:"CTA chest – pe protocol (ctpa)", cost:4990.00, synonyms:["cta", "ctpa", "pe protocol", "ct angio pulmonary", "pulmonary embolism"] },
+  { id:"PDF_4639512", name:"CTA lower extremity left", cost:2000.00, synonyms:[] },
+  { id:"PDF_4639514", name:"CTA lower extremity right", cost:2000.00, synonyms:[] },
+  { id:"PDF_4639509", name:"CTA pelvis", cost:4412.00, synonyms:[] },
+  { id:"PDF_4639519", name:"CTA thoracic aorta", cost:3859.00, synonyms:[] },
+  { id:"PDF_4639511", name:"CTA upper extremity", cost:4412.00, synonyms:[] },
+  { id:"PDF_4569725", name:"Culture Aerobic", cost:111.00, synonyms:[] },
+  { id:"PDF_4567075", name:"Culture Anaerobic", cost:104.00, synonyms:[] },
+  { id:"PDF_4562251", name:"Direct Bilirubin", cost:24.00, synonyms:[] },
+  { id:"PDF_4563718", name:"Direct Hdl", cost:84.00, synonyms:[] },
+  { id:"ECHO", name:"Echocardiogram (Echo/TTE)", cost:3470.00, synonyms:["echo", "tte", "transthoracic echo"] },
+  { id:"EKG", name:"EKG", cost:500.00, synonyms:["ecg", "electrocardiogram"] },
+  { id:"PDF_4569726", name:"Eye Culture", cost:111.00, synonyms:[] },
+  { id:"PDF_4569811", name:"Gastrointestinal Panel Biofire Film (22)", cost:973.00, synonyms:[] },
+  { id:"PDF_4566588", name:"Group A Strep By PCR", cost:63.00, synonyms:[] },
+  { id:"PDF_4569806", name:"Hemoglobin A1c", cost:52.00, synonyms:[] },
+  { id:"PDF_4560058", name:"Hepatic Function Panel", cost:188.00, synonyms:[] },
+  { id:"PDF_4520097", name:"Herpes Simplex/Varicella Rapid Culture", cost:83.00, synonyms:[] },
+  { id:"FLU_PCR", name:"INFLUENZA A&B RNA REAL-TIME PCR", cost:170.00, synonyms:["flu pcr", "influenza pcr", "influenza a/b"] },
+  { id:"PDF_4569727", name:"Joint Fld Culture", cost:111.00, synonyms:[] },
+  { id:"PDF_4569051", name:"Joint Fluid Panel", cost:70.00, synonyms:[] },
+  { id:"PDF_4563615", name:"Ldh", cost:28.00, synonyms:[] },
+  { id:"LACTATE", name:"Lactate (Lactic acid)", cost:250.00, synonyms:["lactate","lactic acid"] },
+  { id:"PDF_4569777", name:"Legionella Dna Qualitative Reat-time PCR", cost:126.00, synonyms:[] },
+  { id:"PDF_4563690", name:"Lipase", cost:31.00, synonyms:[] },
+  { id:"PDF_4560061", name:"Lipid Panel", cost:100.00, synonyms:[] },
+  { id:"DVT_US", name:"Lower extremity venous ultrasound (DVT)", cost:2100.00, synonyms:["dvt ultrasound", "venous doppler", "duplex", "dvt scan", "leg doppler"] },
+  { id:"XR_L_SPINE", name:"Lumbar spine X-ray (2–3 views)", cost:670.00, synonyms:["xr lumbar", "lumbar xray", "xray back"] },
+  { id:"PDF_4567076", name:"MRSA Screening Culture", cost:111.00, synonyms:[] },
+  { id:"PDF_4562010", name:"Prenatal Panel 1", cost:158.00, synonyms:[] },
+  { id:"PDF_4569759", name:"Pro-bnp Ii", cost:162.00, synonyms:[] },
+  { id:"PDF_4569819", name:"Procalcitonin", cost:109.00, synonyms:[] },
+  { id:"PT_INR", name:"Prothrombin time (PT/INR)", cost:110.00, synonyms:["pt", "inr", "protime"] },
+  { id:"PDF_4560008", name:"Psa Panel", cost:160.00, synonyms:[] },
+  { id:"PTT", name:"PTT", cost:140.00, synonyms:["aptt", "activated partial thromboplastin time"] },
+  { id:"DDIMER_QUANT", name:"QUANT D-DIMER", cost:240.00, synonyms:["d-dimer", "ddimer", "quant d dimer"] },
+  { id:"RPP", name:"Respiratory Pathogen Panel (PCR)", cost:1320.00, synonyms:["rpp", "resp virus panel", "respiratory virus panel"] },
+  { id:"PDF_4569813", name:"Respiratory Virus PCR X19", cost:736.00, synonyms:[] },
+  { id:"PDF_4566756", name:"Rsv By PCR", cost:120.00, synonyms:[] },
+  { id:"PDF_4564703", name:"Serum Hcg Urine Qualitative", cost:66.00, synonyms:[] },
+  { id:"PDF_4564702", name:"Serum Quantitative Hcg", cost:160.00, synonyms:[] },
+  { id:"PDF_4560099", name:"Spinal Fluid Panel", cost:70.00, synonyms:[] },
+  { id:"SPUTUM_CX", name:"Sputum culture", cost:210.00, synonyms:["sputum cx", "respiratory culture"] },
+  { id:"PDF_4567045", name:"Stool Culture", cost:111.00, synonyms:[] },
+  { id:"PDF_4567060", name:"Throat Culture", cost:111.00, synonyms:[] },
+  { id:"TROP", name:"Troponin", cost:240.00, synonyms:["hs troponin", "high sensitivity troponin", "troponin t"] },
+  { id:"PDF_4564443", name:"Tsh", cost:81.00, synonyms:[] },
+  { id:"PDF_4636700", name:"Ultrasound abdomen complete", cost:1061.00, synonyms:[] },
+  { id:"PDF_4636664", name:"Ultrasound abdomen paracentesis ltd", cost:827.00, synonyms:[] },
+  { id:"PDF_4636705", name:"Ultrasound abdomen single organ", cost:827.00, synonyms:[] },
+  { id:"PDF_4633968", name:"Ultrasound ankle brachial index", cost:276.00, synonyms:[] },
+  { id:"PDF_4633985", name:"Ultrasound breast complete left", cost:468.00, synonyms:[] },
+  { id:"PDF_4633984", name:"Ultrasound breast complete right", cost:468.00, synonyms:[] },
+  { id:"PDF_4633987", name:"Ultrasound breast limited left", cost:468.00, synonyms:[] },
+  { id:"PDF_4633986", name:"Ultrasound breast limited right", cost:468.00, synonyms:[] },
+  { id:"PDF_4633880", name:"Ultrasound carotids", cost:1047.00, synonyms:[] },
+  { id:"PDF_4636605", name:"Ultrasound chest", cost:551.00, synonyms:[] },
+  { id:"PDF_4636878", name:"Ultrasound extremity non vascular complete", cost:592.00, synonyms:[] },
+  { id:"PDF_4636879", name:"Ultrasound extremity non vascular limited", cost:442.00, synonyms:[] },
+  { id:"PDF_4636885", name:"Ultrasound femoral artery bilateral", cost:1241.00, synonyms:[] },
+  { id:"PDF_4630010", name:"Ultrasound fet bioph w non stress", cost:813.00, synonyms:[] },
+  { id:"PDF_4630011", name:"Ultrasound fetal bio wo non stress", cost:813.00, synonyms:[] },
+  { id:"PDF_4636942", name:"Ultrasound guidance for needle placement", cost:877.00, synonyms:[] },
+  { id:"PDF_4636886", name:"Ultrasound infant hips", cost:413.00, synonyms:[] },
+  { id:"PDF_4636887", name:"Ultrasound infant hips w dr manipulation", cost:603.00, synonyms:[] },
+  { id:"PDF_4636856", name:"Ultrasound IUD complete", cost:827.00, synonyms:[] },
+  { id:"PDF_4636770", name:"Ultrasound kidney", cost:924.00, synonyms:[] },
+  { id:"PDF_4637004", name:"Ultrasound liver", cost:827.00, synonyms:[] },
+  { id:"PDF_4633972", name:"Ultrasound lower extremity artery bilateral", cost:2206.00, synonyms:[] },
+  { id:"PDF_4633978", name:"Ultrasound lower extremity artery limited left", cost:993.00, synonyms:[] },
+  { id:"PDF_4633977", name:"Ultrasound lower extremity artery limited right", cost:993.00, synonyms:[] },
+  { id:"PDF_4636883", name:"Ultrasound lower extremity artery left", cost:993.00, synonyms:[] },
+  { id:"PDF_4636880", name:"Ultrasound lower extremity artery right", cost:993.00, synonyms:[] },
+  { id:"PDF_4633971", name:"Ultrasound lower extremity venous bilateral", cost:2206.00, synonyms:[] },
+  { id:"PDF_4633965", name:"Ultrasound lower extremity venous left", cost:1102.00, synonyms:[] },
+  { id:"PDF_4630013", name:"Ultrasound OB trans vaginal", cost:869.00, synonyms:[] },
+  { id:"PDF_4637005", name:"Ultrasound pancreas", cost:827.00, synonyms:[] },
+  { id:"PDF_4633551", name:"Ultrasound pelvic limited", cost:758.00, synonyms:[] },
+  { id:"PDF_4637006", name:"Ultrasound pelvic non OB complete", cost:827.00, synonyms:[] },
+  { id:"PDF_4630012", name:"Ultrasound preg uterus <14 weeks", cost:703.00, synonyms:[] },
+  { id:"PDF_4636805", name:"Ultrasound preg uterus >14 weeks", cost:510.00, synonyms:[] },
+  { id:"PDF_4630009", name:"Ultrasound pseudo aneurysim", cost:1516.00, synonyms:[] },
+  { id:"PDF_4639521", name:"Ultrasound renal artery/ venous", cost:940.00, synonyms:[] },
+  { id:"PDF_4636810", name:"Ultrasound repeat fetal age", cost:280.00, synonyms:[] },
+  { id:"PDF_4637008", name:"Ultrasound retroperit complete", cost:924.00, synonyms:[] },
+  { id:"PDF_4630007", name:"Ultrasound soft tissue abdomen", cost:827.00, synonyms:[] },
+  { id:"PDF_4630004", name:"Ultrasound soft tissue chest", cost:551.00, synonyms:[] },
+  { id:"PDF_4630006", name:"Ultrasound soft tissue head neck", cost:719.00, synonyms:[] },
+  { id:"PDF_4631102", name:"Ultrasound soft tissue neck", cost:719.00, synonyms:[] },
+  { id:"PDF_4630005", name:"Ultrasound soft tissue pelvis", cost:758.00, synonyms:[] },
+  { id:"PDF_4637009", name:"Ultrasound spleen", cost:827.00, synonyms:[] },
+  { id:"PDF_4636870", name:"Ultrasound testicle", cost:965.00, synonyms:[] },
+  { id:"PDF_4636536", name:"Ultrasound thyroid", cost:719.00, synonyms:[] },
+  { id:"PDF_4636830", name:"Ultrasound transvaginal", cost:484.00, synonyms:[] },
+  { id:"UA", name:"Urinalysis (UA)", cost:95.00, synonyms:["ua", "urine test", "dipstick"] },
+  { id:"URINE_CX", name:"Urine culture", cost:170.00, synonyms:["urine cx", "ucx"] },
+  { id:"PDF_4569705", name:"Urine Hcg Manual Quantitative", cost:66.00, synonyms:[] },
+  { id:"PDF_4720655", name:"Venous Ph Blood Gas", cost:56.00, synonyms:[] },
+  { id:"PDF_4569728", name:"Wound Culture", cost:111.00, synonyms:[] },
+];
+
+
+/* =========================
+   Analytics / data capture (deployment hook)
+   - Captures per-case student selections + total cost.
+   - Stores locally (localStorage) and optionally POSTs to a backend endpoint.
+   ========================= */
+const ANALYTICS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwdAsKk0bwlTIgMsdgDw_K9zw2kJrDhsKKINdNDxWOR2ukjKsb32iyPJFcNy6re6lxrEg/exec"; // <-- Set to your Google Apps Script Web App URL (ending in /exec)
+// Optional shared key if your endpoint requires it (recommended)
+const ANALYTICS_KEY = "12345"; // e.g., "myLongRandomKey"
+// Admin passcode (client-side only; not secure). Prefer server-side keying above.
+const ADMIN_PASSCODE = "12345";
+// Optional: link to the underlying Google Sheet for faculty review (admin panel button)
+const GOOGLE_SHEET_URL = ""; // set if you want a simple prompt gate, e.g. "admin123"
+
+const ANALYTICS_TIMEOUT_MS = 4000;
+
+
+// Build / version info (helps auditing in Google Sheets)
+const APP_VERSION = "HVC_SIM_V25_PRO_2026_03_05_5_CASES_INTEGRATED";
+const ANALYTICS_FETCH_MODE = "no-cors"; // "no-cors" is most compatible (e.g., Google Apps Script)
+
+function getFetchMode(){
+  try{
+    if (ANALYTICS_FETCH_MODE && ANALYTICS_FETCH_MODE !== "auto") return ANALYTICS_FETCH_MODE;
+    return (location.protocol === "file:") ? "no-cors" : "cors";
+  }catch(e){
+    return "no-cors";
+  }
+}
+
+function getContextMeta(){
+  const meta = { appVersion: APP_VERSION };
+  try { meta.pageUrl = location.href || ""; } catch(e){ meta.pageUrl = ""; }
+  try { meta.referrer = document.referrer || ""; } catch(e){ meta.referrer = ""; }
+  try { meta.ua = navigator.userAgent || ""; } catch(e){ meta.ua = ""; }
+  try { meta.lang = navigator.language || ""; } catch(e){ meta.lang = ""; }
+  try { meta.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch(e){ meta.timezone = ""; }
+  return meta;
+}
+
+
+let MODULE_MODE = null; // "fun" | "teaching"
+let SESSION_ID = null;
+let CASE_LOG = []; // per-session in-memory log
+
+function getSessionId(){
+  // Lightweight UUID-ish
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return "sess_" + Math.random().toString(16).slice(2) + "_" + Date.now();
+}
+
+
+function newEventId(kind, caseId){
+  // Unique per event; also helps de-duplicate local vs Google Sheet rows in the admin view.
+  const base = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : ("evt_" + Math.random().toString(16).slice(2) + "_" + Date.now());
+
+  const parts = [];
+  if (kind) parts.push(String(kind));
+  if (caseId != null && caseId !== "") parts.push("case" + String(caseId));
+  parts.push(base);
+  return parts.join("_");
+}
+
+
+function nowIso(){
+  try { return new Date().toISOString(); } catch(e){ return ""; }
+}
+
+function safeJson(obj){
+  try { return JSON.stringify(obj); } catch(e){ return "{}"; }
+}
+
+function persistLocal(payload){
+  try{
+    const key = "hvc_simulator_attempts";
+    const prev = JSON.parse(localStorage.getItem(key) || "[]");
+    const copy = Object.assign({ receivedAt: nowIso() }, payload || {});
+    prev.push(copy);
+    localStorage.setItem(key, JSON.stringify(prev));
+  }catch(e){
+    // ignore storage failures
+  }
+}
+
+async function postToBackend(payload){
+  if (!ANALYTICS_ENDPOINT) return;
+
+  // Attach lightweight context for auditability
+  const fullPayload = Object.assign({}, payload || {}, getContextMeta());
+
+  // Build URL with key/query params
+  let url = ANALYTICS_ENDPOINT;
+  try{
+    if (typeof buildAnalyticsUrl === "function"){
+      url = buildAnalyticsUrl("collect");
+    } else if (typeof ANALYTICS_KEY !== "undefined" && ANALYTICS_KEY){
+      const sep = url.includes("?") ? "&" : "?";
+      url = url + sep + "key=" + encodeURIComponent(ANALYTICS_KEY);
+    }
+  }catch(e){}
+
+  const mode = getFetchMode();
+
+  try{
+    // Prefer sendBeacon when available (more reliable on navigation/close).
+    // sendBeacon typically behaves like a "no-cors" send: you don't read a response, but the request is delivered.
+    try{
+      if (navigator.sendBeacon && mode === "no-cors"){
+        const blob = new Blob([safeJson(fullPayload)], {type:"text/plain;charset=UTF-8"});
+        navigator.sendBeacon(url, blob);
+        return;
+      }
+    }catch(e){}
+
+    const ctl = new AbortController();
+    const t = setTimeout(()=>ctl.abort(), ANALYTICS_TIMEOUT_MS);
+
+    const headers = (mode === "no-cors")
+      ? {"Content-Type":"text/plain;charset=UTF-8"}
+      : {"Content-Type":"application/json"};
+
+    await fetch(url, {
+      method: "POST",
+      headers,
+      body: safeJson(fullPayload),
+      signal: ctl.signal,
+      mode
+    });
+
+    clearTimeout(t);
+  }catch(e){
+    // fail quietly; localStorage still has a copy
+  }
+}
+
+
+function buildAnalyticsUrl(action){
+  if (!ANALYTICS_ENDPOINT) return "";
+  const params = new URLSearchParams();
+  if (action) params.set("action", action);
+  if (ANALYTICS_KEY) params.set("key", ANALYTICS_KEY);
+  try { params.set("ua", navigator.userAgent || ""); } catch(e){}
+  const sep = ANALYTICS_ENDPOINT.includes("?") ? "&" : "?";
+  return ANALYTICS_ENDPOINT + sep + params.toString();
+}
+
+function setAdminStatus(msg){
+  if (adminStatusEl) adminStatusEl.textContent = msg || "";
+}
+
+function clearAdminTable(){
+  if (!adminTableEl) return;
+  while (adminTableEl.rows.length > 1){
+    adminTableEl.deleteRow(1);
+  }
+}
+
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+
+function getLocalAttempts(){
+  try{
+    const key = "hvc_simulator_attempts";
+    const rows = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(rows) ? rows : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function normalizeAdminRow(r){
+  const rr = Object.assign({}, r || {});
+
+  // If endpoint export returns "raw" rows (timestamp/eventType/payloadJson),
+  // parse payloadJson to reconstruct richer fields for admin display.
+  let payload = null;
+  if (typeof rr.payloadJson === "string" && rr.payloadJson){
+    try { payload = JSON.parse(rr.payloadJson); } catch(e){ payload = null; }
+  }
+
+  // Map common raw export fields
+  if (!rr.receivedAt && rr.timestamp) rr.receivedAt = rr.timestamp;
+  if (!rr.type && rr.eventType) rr.type = rr.eventType;
+
+  // Backfill from payload if available
+  if (payload && typeof payload === "object"){
+    if (!rr.eventId && payload.eventId) rr.eventId = payload.eventId;
+    if (!rr.type && payload.type) rr.type = payload.type;
+    if (!rr.moduleMode && payload.moduleMode) rr.moduleMode = payload.moduleMode;
+    if (!rr.sessionId && payload.sessionId) rr.sessionId = payload.sessionId;
+    if ((rr.caseId == null || rr.caseId === "") && payload.caseId != null) rr.caseId = payload.caseId;
+    if (!rr.caseTitle && payload.caseTitle) rr.caseTitle = payload.caseTitle;
+
+    if (!rr.submittedAt){
+      rr.submittedAt = payload.submittedAt || payload.startedAt || payload.completedAt || "";
+    }
+    if (rr.totalCost == null || rr.totalCost === ""){
+      rr.totalCost = (payload.totalCost ?? payload.totalCostAllCases ?? payload.diagnosticTotalCost ?? "");
+    }
+    if (!rr.costType && payload.costType) rr.costType = payload.costType;
+
+    // Prefer human-readable order names when present
+    if (!rr.orders){
+      const o = payload.orderNames || payload.orders || payload.selectedOrders || payload.orderSelections || "";
+      rr.orders = (Array.isArray(o) || (o && typeof o === "object")) ? JSON.stringify(o) : String(o || "");
+    }
+  }
+
+  // Provide stable defaults expected by the admin table
+  if (!rr.receivedAt) rr.receivedAt = rr.submittedAt || rr.completedAt || rr.startedAt || nowIso();
+  if (!rr.type) rr.type = "unknown";
+  if (rr.totalCost == null && rr.totalCost !== 0) rr.totalCost = "";
+  if (!rr.eventId) rr.eventId = rr.event_id || rr.eventID || "";
+  if (!rr.source) rr.source = rr._source || "";
+  if (!rr.costType) rr.costType = rr.cost_type || "";
+
+  return rr;
+}
+
+
+function mergeAdminRows(endpointRows, localRows){
+  // De-dupe by eventId when possible (preferred: endpoint copy).
+  const out = [];
+  const seen = new Set();
+
+  const add = (r)=>{
+    const id = r && r.eventId ? String(r.eventId) : "";
+    if (id){
+      if (seen.has(id)) return;
+      seen.add(id);
+    }
+    out.push(r);
+  };
+
+  (endpointRows || []).forEach(add);
+  (localRows || []).forEach(add);
+
+  // Most recent first (ISO timestamps sort lexicographically)
+  out.sort((a,b)=> String(b.receivedAt || "").localeCompare(String(a.receivedAt || "")));
+  return out;
+}
+
+
+
+
+async function fetchAdminData(){
+  clearAdminTable();
+
+  // Always show local rows in admin mode (device/browser-specific), even if an endpoint is configured.
+  const local = getLocalAttempts()
+    .map(r => normalizeAdminRow(Object.assign({_source: "local"}, r)));
+
+  if (!ANALYTICS_ENDPOINT){
+    setAdminStatus(`Showing ${local.length} local row(s) from this browser (ANALYTICS_ENDPOINT not set).`);
+    renderAdminRows(local);
+    return local;
+  }
+
+  const url = buildAnalyticsUrl("export");
+  setAdminStatus("Loading…");
+  try{
+    const res = await fetch(url, { method:"GET", mode: "cors" });
+    const data = await res.json();
+    const endpoint = (Array.isArray(data.rows) ? data.rows : [])
+      .map(r => normalizeAdminRow(Object.assign({_source: "endpoint"}, r)));
+
+    const merged = mergeAdminRows(endpoint, local);
+    setAdminStatus(`Loaded ${endpoint.length} endpoint row(s) + ${local.length} local row(s) (merged to ${merged.length}).`);
+    renderAdminRows(merged);
+    return merged;
+  }catch(e){
+    // Fallback to local so faculty can still export something
+    setAdminStatus("Failed to load from endpoint (CORS or endpoint error). Showing local browser data instead.");
+    renderAdminRows(local);
+    return local;
+  }
+}
+
+function renderAdminRows(rows){
+  if (!adminTableEl) return;
+  clearAdminTable();
+
+  for (const raw of (rows || [])){
+    const r = normalizeAdminRow(raw);
+    const tr = adminTableEl.insertRow(-1);
+
+    const ordersArr = Array.isArray(r.orderNames) ? r.orderNames
+                     : Array.isArray(r.orders) ? r.orders
+                     : null;
+    const ordersText = ordersArr ? ordersArr.join(", ")
+                     : (r.ordersJson || "");
+
+    const cells = [
+      r.receivedAt,
+      r.source || "",
+      r.eventId || "",
+      r.type,
+      r.moduleMode,
+      r.sessionId,
+      r.caseId,
+      r.caseTitle,
+      r.submittedAt || r.completedAt || r.startedAt || "",
+      r.totalCost,
+      r.costType || "",
+      ordersText
+    ];
+
+    for (const c of cells){
+      const td = tr.insertCell(-1);
+      td.innerHTML = escapeHtml(c);
+    }
+  }
+}
+
+function rowsToCsv(rows){
+  const header = ["receivedAt","source","eventId","type","moduleMode","sessionId","caseId","caseTitle","eventAt","totalCost","costType","orders"];
+  const lines = [header];
+
+  for (const raw of (rows || [])){
+    const r = normalizeAdminRow(raw);
+
+    const ordersArr = Array.isArray(r.orderNames) ? r.orderNames
+                     : Array.isArray(r.orders) ? r.orders
+                     : null;
+    const ordersText = ordersArr ? ordersArr.join(" | ")
+                     : (r.ordersJson || "");
+
+    lines.push([
+      r.receivedAt || "",
+      r.source || "",
+      r.eventId || "",
+      r.type || "",
+      r.moduleMode || "",
+      r.sessionId || "",
+      r.caseId || "",
+      r.caseTitle || "",
+      r.submittedAt || r.completedAt || r.startedAt || "",
+      (r.totalCost != null ? String(r.totalCost) : ""),
+      r.costType || "",
+      ordersText
+    ]);
+  }
+
+  return lines.map(row => row.map(v => {
+    const s = String(v ?? "");
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+    return s;
+  }).join(",")).join("\n");
+}
+
+function downloadTextFile(filename, text){
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+
+function logModuleStart(){
+  if (MODULE_MODE === "fun") return;
+  const payload = Object.assign({
+    type: "module_start",
+    eventId: newEventId("module_start"),
+    moduleMode: MODULE_MODE,
+    sessionId: SESSION_ID,
+    learnerId: null,
+    startedAt: nowIso()
+  }, getContextMeta());
+
+  CASE_LOG.push(payload);
+  persistLocal(payload);
+  postToBackend(payload);
+}
+
+function logCaseSubmission(caseId, selectedIds, totalCost, extra){
+  if (MODULE_MODE === "fun") return;
+
+  const cfg = CASES[caseId];
+  const ids = Array.from(selectedIds || []).filter(id => idToOrder.has(id));
+  const names = ids.map(id => (idToOrder.get(id)?.name || id));
+
+  const payload = Object.assign({
+    type: "case_submission",
+    eventId: newEventId("case_submission", caseId),
+    moduleMode: MODULE_MODE,
+    sessionId: SESSION_ID,
+    learnerId: null,
+    caseId: caseId,
+    caseTitle: cfg ? cfg.title : ("Case " + caseId),
+    caseDiagnosis: cfg ? cfg.diagnosis : "",
+    submittedAt: nowIso(),
+    orders: ids,
+    orderNames: names,
+    totalCost: Number(totalCost || 0),
+    costType: "diagnostic"
+  }, (extra || {}), getContextMeta());
+
+  CASE_LOG.push(payload);
+  persistLocal(payload);
+  postToBackend(payload);
+}
+
+// Case 5 (Medication Reconciliation) submission logger
+// - Uses the same schema as other case submissions so the existing admin dashboard and Google Sheet export continue to work.
+function logMedRecSubmission(medPayload){
+  if (MODULE_MODE === "fun") return;
+  if (!medPayload || typeof medPayload !== "object") return;
+
+  const cfg = CASES[5];
+  const submittedAt = medPayload.submitted_at || nowIso();
+
+  const choices = String(medPayload.choices_summary || "")
+    .split("|")
+    .map(s=>s.trim())
+    .filter(Boolean);
+
+  const orders = choices.length ? choices : Object.keys(medPayload)
+    .filter(k => k.startsWith("choice_"))
+    .map(k => `${k.replace(/^choice_/, "")}:${String(medPayload[k] || "").trim()}`)
+    .filter(s => !s.endsWith(":"));
+
+  const payload = Object.assign({
+    type: "case_submission",
+    eventId: newEventId("case_submission", 5),
+    moduleMode: MODULE_MODE,
+    sessionId: SESSION_ID,
+    learnerId: null,
+    caseId: 5,
+    caseTitle: (cfg && cfg.title) ? cfg.title : "Case 5 – Medication reconciliation",
+    caseDiagnosis: (cfg && cfg.diagnosis) ? cfg.diagnosis : "Medication reconciliation",
+    submittedAt,
+    orders,
+    orderNames: orders,
+    // Store the selected monthly medication total in the standard totalCost field for compatibility
+    totalCost: Number(medPayload.selected_monthly_total || 0),
+    costType: "medications_monthly",
+
+    // Additional med-rec specific fields (kept for Google Sheet analysis)
+    medrecAnonId: medPayload.anon_id || "",
+    medrecModuleVersion: medPayload.module_version || "",
+    medrecMonthlyTotals: {
+      selected: Number(medPayload.selected_monthly_total || 0),
+      home: Number(medPayload.home_monthly_total || 0),
+      change: Number(medPayload.monthly_change || 0)
+    },
+    medrecAnnualTotals: {
+      selected: Number(medPayload.selected_annual_total || 0),
+      home: Number(medPayload.home_annual_total || 0),
+      change: Number(medPayload.annual_change || 0)
+    },
+    medrecHvcSummary: String(medPayload.hvc_summary || "")
+      .split("|")
+      .map(s=>s.trim())
+      .filter(Boolean),
+    medrecRaw: medPayload
+  }, getContextMeta());
+
+  CASE_LOG.push(payload);
+  persistLocal(payload);
+  postToBackend(payload);
+}
+
+function logModuleComplete(){
+  if (MODULE_MODE === "fun") return;
+
+  const caseSubs = CASE_LOG.filter(x => x.type === "case_submission");
+  const sumCost = caseSubs.reduce((s,x)=>s+Number(x.totalCost||0), 0);
+
+  // Note: totalCost is an "encounter diagnostic cost" for Cases 1–4,
+  // and the "selected monthly medication total" for Case 5 (med reconciliation).
+  const diagnosticTotal = caseSubs
+    .filter(x => Number(x.caseId || 0) !== 5)
+    .reduce((s,x)=>s+Number(x.totalCost||0), 0);
+  const medSubs = caseSubs.filter(x => Number(x.caseId || 0) === 5);
+  const medLatest = medSubs.length ? medSubs[medSubs.length - 1] : null;
+
+  const payload = Object.assign({
+    type: "module_complete",
+    eventId: newEventId("module_complete"),
+    moduleMode: MODULE_MODE,
+    sessionId: SESSION_ID,
+    learnerId: null,
+    completedAt: nowIso(),
+    totalCostAllCases: Number(sumCost || 0),
+    diagnosticTotalCost: Number(diagnosticTotal || 0),
+    medrecSelectedMonthlyTotalLatest: medLatest ? Number(medLatest.totalCost || 0) : 0,
+    medrecMonthlyChangeLatest: (medLatest && medLatest.medrecMonthlyTotals) ? Number(medLatest.medrecMonthlyTotals.change || 0) : 0,
+    medrecAnonIdLatest: medLatest ? (medLatest.medrecAnonId || "") : "",
+    cases: caseSubs.map(x => ({
+      caseId: x.caseId,
+      caseTitle: x.caseTitle,
+      caseDiagnosis: x.caseDiagnosis || "",
+      orders: x.orders,
+      orderNames: x.orderNames,
+      totalCost: x.totalCost,
+      costType: x.costType || "",
+      recommendedCost: x.recommendedCost,
+      deltaCost: x.deltaCost,
+      valueCounts: x.valueCounts,
+      submittedAt: x.submittedAt
+    }))
+  }, getContextMeta());
+
+  persistLocal(payload);
+  postToBackend(payload);
+}
+
+const idToOrder = new Map(orderCatalog.map(o => [o.id, o]));
+
+function getOrderById(orderId){
+  try { return idToOrder.get(orderId); } catch(e){ return null; }
+}
+
+function normalize(s){
+  return String(s||"").toLowerCase().replace(/\s+/g," ").trim();
+}
+
+/* =========================
+   Lightweight fuzzy matching (bounded Levenshtein)
+   ========================= */
+function levenshteinBounded(a, b, maxDist){
+  a = String(a||""); b = String(b||"");
+  if (a === b) return 0;
+  const al = a.length, bl = b.length;
+  if (Math.abs(al - bl) > maxDist) return maxDist + 1;
+  if (al > bl) { const t=a; a=b; b=t; }
+
+  const m = a.length, n = b.length;
+  let prev = new Array(m+1), curr = new Array(m+1);
+  for (let i=0;i<=m;i++) prev[i]=i;
+
+  for (let j=1;j<=n;j++){
+    curr[0]=j;
+    let rowMin = curr[0];
+    const bj = b.charCodeAt(j-1);
+    for (let i=1;i<=m;i++){
+      const cost = (a.charCodeAt(i-1) === bj) ? 0 : 1;
+      const v = Math.min(prev[i] + 1, curr[i-1] + 1, prev[i-1] + cost);
+      curr[i]=v;
+      if (v < rowMin) rowMin = v;
+    }
+    if (rowMin > maxDist) return maxDist + 1;
+    const tmp = prev; prev = curr; curr = tmp;
+  }
+  return prev[m];
+}
+
+function fuzzyTokenMatch(query, text){
+  const q = normalize(query);
+  if (!q || q.length < 4) return false;
+  const maxDist = (q.length <= 5) ? 1 : 2;
+  const tokens = normalize(text).split(/[^a-z0-9]+/).filter(Boolean).slice(0, 18);
+  for (const t of tokens){
+    if (t.length < 4) continue;
+    if (Math.abs(t.length - q.length) > maxDist) continue;
+    if (levenshteinBounded(q, t, maxDist) <= maxDist) return true;
+  }
+  return false;
+}
+
+/* =========================
+   Case definitions
+   ========================= */
+let ACTIVE_CASE = 1;
+const CASES = {
+  1: {
+    title: "Case 1 – Chest pain",
+    diagnosis: "Pulmonary Embolism",
+    attribution: "This case was derived from cases by healthvaluelab.org",
+    contentHtml: `
+      <p>
+        A 73-year-old man with no significant past medical history presents to the emergency department
+        with <strong>shortness of breath and pleuritic chest pain</strong>. Two weeks ago he suffered a fall and has had
+        difficulty ambulating since, spending most of his time in bed.
+      </p>
+      <div class="grid2">
+        <div class="summary">
+          <h3 style="margin-top:0;">Vitals</h3>
+          <ul>
+            <li><strong>HR:</strong> 110 bpm (sinus tachycardia)</li>
+            <li><strong>RR:</strong> 24 / min (tachypnea)</li>
+            <li><strong>SpO₂:</strong> 90% on room air</li>
+            <li><strong>BP:</strong> 105/65</li>
+            <li><strong>Temp:</strong> Afebrile</li>
+          </ul>
+        </div>
+        <div class="summary">
+          <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+          <p class="small"><strong>General:</strong> Uncomfortable-appearing, mildly dyspneic, speaking in full sentences.</p>
+          <p class="small"><strong>Cardiovascular:</strong> Tachycardic, regular rhythm. No murmurs, rubs, or gallops.</p>
+          <p class="small"><strong>Respiratory:</strong> Slightly increased work of breathing. Lungs clear to auscultation bilaterally.</p>
+          <p class="small"><strong>Extremities:</strong> No peripheral edema.</p>
+        </div>
+      </div>
+    `,
+    highValueIds: new Set(["EKG","TROP","CBC","BMP","CMP","CXR","CTPA"]),
+highValueReasons: new Map([
+  ["EKG","High Value – Initial chest pain evaluation should include EKG to assess for ischemia or arrhythmia."],
+  ["TROP","High Value – Evaluates for myocardial injury in the setting of chest pain."],
+  ["CBC","High Value – Assesses for anemia or infection that could contribute to dyspnea or chest pain."],
+  ["BMP","High Value – Evaluates electrolytes and renal function prior to contrast imaging."],
+  ["CMP","High Value – Acceptable alternative to BMP; broader metabolic assessment."],
+  ["CXR","Intermediate (conditional) – Useful to evaluate alternate causes (pneumonia, pneumothorax); may be optional if CTA already obtained."],
+  ["CTPA","High Value – Definitive imaging for suspected pulmonary embolism in high pre-test probability."]
+]),
+    intermediateIds: new Map([
+  ["DDIMER_QUANT","Intermediate – In high pre-test probability patients, D-dimer is not required prior to definitive imaging."],
+  ["ECHO","Intermediate – May be obtained later in hospitalization; not required in initial ED evaluation without signs of heart failure."],
+  ["DVT_US","Intermediate – May be helpful if DVT suspected; not necessary if proceeding directly to CTA."],
+  ["PTT","Intermediate – Coagulation studies may be obtained if anticoagulation is planned; not diagnostic for PE."],
+  ["PT_INR","Intermediate – Helpful before anticoagulation but not diagnostic for PE."]
+]),
+lowValueReasons: new Map([
+  ["PDF_4631260","Low Value – Does not specifically evaluate pulmonary arteries; CTA PE protocol is preferred."],
+  ["PDF_4631250","Low Value – Insufficient to evaluate pulmonary embolism (and not PE protocol)."],
+  ["NO_TESTING","Low Value – Patient has concerning features; diagnostic evaluation is indicated."]
+]),
+    recommendedIds: ["EKG","TROP","CBC","BMP","CTPA"],
+    pathwayHtml: `<strong>How to think about high-value testing in this case</strong>
+<p class="small">
+  This patient has <strong>high pre-test probability</strong> for pulmonary embolism (PE): acute dyspnea + pleuritic chest pain + tachycardia/tachypnea +
+  recent immobilization. High-value care here is <strong>not</strong> “ordering fewer tests at all costs” — it’s ordering the tests that rapidly change management
+  while avoiding low-yield studies that don’t answer the clinical question.
+</p>
+
+<strong>Step 1: Stabilize and rule out other life-threatening causes of chest pain</strong>
+<p class="small">
+  Even when PE is likely, you should still screen for alternative emergent diagnoses (MI/ischemia, arrhythmia, pneumothorax, pneumonia) because the initial
+  presentation overlaps and early treatment differs.
+</p>
+<ul class="small">
+  <li><strong>EKG</strong> – rapid screen for ischemia and arrhythmias; also provides supportive findings (e.g., sinus tachycardia) but is not diagnostic for PE.</li>
+  <li><strong>Troponin</strong> – evaluates myocardial injury/strain; helps risk stratify chest pain and can reflect RV strain in PE.</li>
+  <li><strong>CBC</strong> – checks for anemia or infection as alternative contributors; may also inform bleeding risk considerations if anticoagulation is planned.</li>
+  <li><strong>BMP (or CMP)</strong> – renal function/electrolytes, especially important before iodinated contrast (CTPA) and for safe medication dosing.</li>
+</ul>
+
+<strong>Step 2: Definitive PE evaluation</strong>
+<p class="small">
+  With <strong>high pre-test probability</strong>, the high-value move is to proceed to a test that can <strong>confirm/exclude PE</strong> and guide anticoagulation/thrombolysis decisions.
+</p>
+<ul class="small">
+  <li><strong>CTA Chest – PE protocol (CTPA)</strong> – evaluates the pulmonary arteries directly; this is the definitive test in many ED settings.</li>
+  <li class="muted">A <strong>Chest X-ray (CXR)</strong> can be helpful for alternate diagnoses (pneumothorax, pneumonia) and for interpreting V/Q scans, but if you are already obtaining CTPA it may be reasonable to omit CXR depending on local practice and timing.</li>
+</ul>
+
+<strong>Intermediate-yield (context-dependent)</strong>
+<ul class="small">
+  <li><strong>D-dimer</strong> – useful to <em>rule out</em> PE in <strong>low</strong> pre-test probability patients; in high probability cases it adds cost and delay without changing the need for definitive imaging.</li>
+  <li><strong>Lower extremity venous ultrasound</strong> – can help if leg symptoms suggest DVT or if CT is contraindicated; otherwise not required when proceeding directly to CTPA.</li>
+  <li><strong>PT/INR, PTT</strong> – can be appropriate if anticoagulation is imminent or baseline coagulopathy is a concern, but they do not diagnose PE.</li>
+  <li><strong>Echocardiogram</strong> – may be useful for risk stratification (RV strain) or shock, but is not part of the minimal initial diagnostic pathway in a stable patient.</li>
+</ul>
+
+<strong>Common low-value pitfalls</strong>
+<ul class="small">
+  <li><strong>Non-PE protocol CT chest</strong> (with or without contrast) – does not reliably evaluate the pulmonary arteries; if PE is the question, order <strong>CTPA</strong>.</li>
+  <li><strong>CT head / CT abdomen-pelvis</strong> – not indicated without focal symptoms; broad “pan-scanning” increases incidental findings, radiation, and downstream testing.</li>
+  <li><strong>“No testing”</strong> – this presentation has red flags and high pre-test probability for a life-threatening diagnosis; evaluation is indicated.</li>
+</ul>
+
+<p class="small">
+  <strong>High-value care is contextual:</strong> if the patient were unstable, pregnant, had contrast allergy/renal failure, or if a V/Q scan pathway were used, the highest-value pathway could change.
+</p>`
+  },
+
+2: {
+  title: "Case 2 – Fevers",
+  diagnosis: "COVID-19",
+  attribution: "",
+  contentHtml: `
+    <p>
+      A <strong>healthy 15-year-old woman</strong> with no significant past medical history presents to your outpatient clinic with
+      <strong>3 days of cough, fevers, and malaise</strong>. She reports myalgias and fatigue.
+      She also notes <strong>murky urine</strong> but denies <strong>dysuria</strong>, <strong>urgency</strong>, <strong>frequency</strong>,
+      or <strong>hematuria</strong>.
+    </p>
+    <div class="grid2">
+      <div class="summary">
+        <h3 style="margin-top:0;">Vitals</h3>
+        <ul>
+          <li><strong>Temp:</strong> 38.3°C (101°F)</li>
+          <li><strong>HR:</strong> 82 bpm</li>
+          <li><strong>RR:</strong> 18 / min</li>
+          <li><strong>SpO₂:</strong> 98% on room air</li>
+          <li><strong>BP:</strong> 110/70</li>
+        </ul>
+      </div>
+      <div class="summary">
+        <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+        <p class="small"><strong>General:</strong> Well-appearing adolescent, non-toxic, no acute distress.</p>
+        <p class="small"><strong>HEENT:</strong> Mild nasal congestion; oropharynx without exudates.</p>
+        <p class="small"><strong>Respiratory:</strong> Mild cough; lungs clear to auscultation bilaterally; no increased work of breathing.</p>
+        <p class="small"><strong>Abd/GU:</strong> Soft, non-tender; no suprapubic tenderness; no CVA tenderness.</p>
+      </div>
+    </div>
+  `,
+  highValueIds: new Set(["COVID_PCR","FLU_PCR"]),
+highValueReasons: new Map([
+    ["COVID_PCR","High Value – Viral syndrome symptoms; result guides counseling, isolation, and return-to-school guidance."],
+    ["FLU_PCR","High Value – Confirms influenza; can influence counseling and (in select early cases) antiviral decisions."]
+  ]),
+lowValueReasons: new Map([
+  ["UA","Low Value – In nonpregnant patients, there is no indication to treat asymptomatic bacteriuria; testing without urinary symptoms can lead to unnecessary antibiotics."],
+  ["URINE_CX","Low Value – Urine culture is not indicated without urinary symptoms; positives often reflect asymptomatic bacteriuria and can drive unnecessary antibiotics."]
+]),
+  intermediateIds: new Map([
+    ["CBC","Intermediate (conditional) – may be reasonable if concern for bacterial infection or more severe illness."],
+    ["BMP","Intermediate (conditional) – consider with dehydration, poor PO intake, or systemic illness concern."],
+    ["CMP","Intermediate (conditional) – acceptable alternative to BMP if broader metabolic/hepatic assessment needed."],
+    ["CXR","Intermediate (conditional) – consider if clinical concern for pneumonia (focal findings, worsening symptoms, hypoxia)."],
+    ["BLOOD_CX","Intermediate – consider only if toxic-appearing, immunocompromised, or concern for sepsis/severe pneumonia."],
+    ["SPUTUM_CX","Intermediate – usually reserved for severe/hospitalized pneumonia or concern for resistant pathogens."],
+    ["RPP","Intermediate – broad and costly; consider if results would change management in high-risk/severe cases."]
+  ]),
+  recommendedIds: ["COVID_PCR","FLU_PCR"],
+    optionalRecommendedIds: ["CXR","CBC","BMP","CMP"],
+  pathwayHtml: `
+<strong>Why this high-value pathway fits</strong>
+<p class="small">
+  This is a stable outpatient adolescent with a short, viral-sounding illness (cough, fever, myalgias).
+  High-value care prioritizes <em>targeted</em> testing that changes counseling/management and avoids workups with low pre-test probability.
+</p>
+
+<strong>Core recommended workup</strong>
+<ul>
+  <li><strong>COVID-19 PCR</strong> – confirms diagnosis and guides isolation/school guidance.</li>
+  <li><strong>Influenza A&amp;B PCR</strong> – helps confirm influenza; may influence counseling and (in select cases) early antiviral decisions.</li>
+</ul>
+
+<strong>Optional (clinical judgment; consider if concern for pneumonia or dehydration)</strong>
+<ul class="small">
+  <li><strong>Chest X-ray (CXR)</strong> – consider with focal exam findings, worsening symptoms, hypoxia, or clinician concern for pneumonia.</li>
+  <li><strong>CBC</strong> – may be helpful if bacterial infection is a concern or symptoms are more severe.</li>
+  <li><strong>BMP</strong> (or CMP) – consider if dehydration/poor PO intake or systemic illness concern.</li>
+</ul>
+
+<strong>Common pitfalls (low-value care)</strong>
+<ul class="small">
+  <li><strong>UA/urine culture for “murky urine” without urinary symptoms</strong> → often asymptomatic bacteriuria; avoid unnecessary antibiotics.</li>
+  <li><strong>Broad respiratory pathogen panel (RPP) by default</strong> → higher cost and often doesn’t change outpatient management.</li>
+  <li><strong>Blood cultures in a well-appearing outpatient</strong> → low yield; reserve for severe illness/sepsis risk.</li>
+</ul>
+
+<strong>Clinical pearl: asymptomatic bacteriuria</strong>
+<p class="small">
+  In nonpregnant patients, do not screen or treat asymptomatic bacteriuria—no benefit and increased harms (adverse effects, resistance, C. difficile).
+</p>
+`
+},
+
+3: {
+  title: "Case 3 – Fevers part 2",
+  diagnosis: "Sepsis from superimposed pneumonia after viral respiratory infection",
+  attribution: "",
+  contentHtml: `
+<p>
+  Your otherwise healthy <strong>15-year-old woman</strong> returns to the emergency department <strong>5 days</strong> after being seen in your clinic for the presumed viral URI.
+  Her fevers initially improved, but she now has <strong>persistent fevers again</strong>, a <strong>worsening cough</strong>, and feels significantly more malaised.
+  She notes that she has been feeling a lot more tired.
+</p>
+    <div class="grid2">
+      <div class="summary">
+        <h3 style="margin-top:0;">Vitals</h3>
+        <ul>
+          <li><strong>Temp:</strong> 39.2°C (102.6°F)</li>
+          <li><strong>HR:</strong> 118 bpm</li>
+          <li><strong>RR:</strong> 24 / min</li>
+          <li><strong>SpO₂:</strong> 93% on room air</li>
+          <li><strong>BP:</strong> 98/60</li>
+        </ul>
+      </div>
+      <div class="summary">
+        <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+        <p class="small"><strong>General:</strong> Ill-appearing, uncomfortable, febrile.</p>
+        <p class="small"><strong>Respiratory:</strong> Increased cough; <strong>crackles in the left lower lobe</strong>; mild increased work of breathing.</p>
+        <p class="small"><strong>CV:</strong> Tachycardic, regular rhythm.</p>
+        <p class="small"><strong>Abd:</strong> Soft, non-tender.</p>
+      </div>
+    </div>
+  `,
+  highValueIds: new Set(["CBC","BMP","CMP","CXR","LACTATE","BLOOD_CX","SPUTUM_CX"]),
+  highValueReasons: new Map([
+    ["CBC","High Value – Concern for bacterial pneumonia/sepsis; helps assess leukocytosis and severity."],
+    ["BMP","High Value – Sepsis workup includes renal/electrolyte evaluation; helps guide fluids/med dosing."],
+    ["CXR","High Value – Worsening cough + focal crackles: imaging is appropriate to evaluate pneumonia."],
+    ["LACTATE","High Value – Assesses for tissue hypoperfusion in suspected sepsis and guides resuscitation."],
+    ["BLOOD_CX","High Value – In suspected sepsis, blood cultures are indicated prior to antibiotics when feasible."],
+    ["SPUTUM_CX","High Value – If sputum can be obtained (or severe disease), culture can help tailor therapy."]
+  ]),
+  intermediateIds: new Map([
+    ["COVID_PCR","Intermediate – Consider depending on local prevalence/clinical context, but do not delay sepsis evaluation."],
+    ["FLU_PCR","Intermediate – Consider seasonally or if it would change management; do not delay sepsis evaluation."],
+    ["RPP","Intermediate – Broad/costly; consider if results will change management in severe/high-risk cases."],
+    ["UA","Intermediate – Consider if symptoms/signs suggest urinary source; not routine without urinary symptoms."],
+    ["URINE_CX","Intermediate – Consider only if urinary source suspected; avoid reflex culture without symptoms."]
+  ,
+      ["PDF_4567076","Intermediate (conditional) – MRSA screening culture may be appropriate depending on local resistance patterns, prior MRSA, severe disease, or if it will change empiric therapy."]]),
+  lowValueReasons: new Map([
+  ["PDF_4631260","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
+  ["PDF_4631250","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
+  ["PDF_4631270","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
+  ["CTPA","Low Value – CTA chest is unnecessary for this presentation; prioritize pneumonia/sepsis evaluation with CXR and cultures."],
+  ["RPP","Low Value – In an otherwise healthy, non-immunocompromised patient with suspected bacterial pneumonia/sepsis, RPP is unlikely to change management; focus on treatment and source evaluation."],
+  ["NO_TESTING","Low Value – Ill-appearing with sepsis physiology; diagnostic evaluation is indicated."]
+]),
+    lowValueNamePatterns: [
+      { re: /\bCT\s+Chest\b/i, reason: "Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia." },
+      { re: /Respiratory\s+Pathogen\s+Panel|Resp\s+Virus\s+\d+/i, reason: "Low Value – In an otherwise healthy, non-immunocompromised patient with suspected bacterial pneumonia/sepsis, broad viral panels rarely change management; focus on treatment and source evaluation." }
+    ],
+  recommendedIds: ["CBC","BMP","CXR","LACTATE","BLOOD_CX","SPUTUM_CX"],
+  pathwayHtml: `
+<strong>Answer</strong>
+<p class="small">
+  This return visit is <strong>not</strong> the same as the initial outpatient URI. She now has recurrent fever, worsening cough,
+  tachycardia/tachypnea, borderline blood pressure, lower oxygen saturation, and focal lung findings (LLL crackles).
+  In this setting, a broader evaluation is <strong>high value</strong> because it quickly changes management (fluids, antibiotics, disposition).
+</p>
+
+<div class="summary" id="sepsisChecklist" style="margin-top:12px;">
+  <h3 style="margin-top:0;">SIRS / Sepsis screening (interactive)</h3>
+  <p class="small muted" style="margin-top:6px;">
+    Check criteria that are present. SIRS is <strong>≥2</strong> of 4. “Sepsis” here is <strong>SIRS + suspected infection</strong> (teaching aid only).
+  </p>
+
+  <div style="margin-top:8px;">
+    <label><input type="checkbox" class="sirsChk" data-key="temp"> Temperature &gt; 38°C or &lt; 36°C</label>
+    <label><input type="checkbox" class="sirsChk" data-key="hr"> Heart rate &gt; 90 bpm</label>
+    <label><input type="checkbox" class="sirsChk" data-key="rr"> Respiratory rate &gt; 20/min <span class="muted">(or PaCO₂ &lt; 32 mmHg)</span></label>
+    <label><input type="checkbox" class="sirsChk" data-key="wbc"> WBC &gt; 12,000 or &lt; 4,000 <span class="muted">(or &gt;10% bands)</span></label>
+  </div>
+
+  <div style="margin-top:10px;">
+    <label><input type="checkbox" id="suspectedInfectionChk"> Suspected infection source present (e.g., pneumonia)</label>
+  </div>
+
+  <p class="small" style="margin-top:10px;">
+    <strong>SIRS criteria selected:</strong> <span id="sirsCount">0</span> <span class="muted">/ 4</span>
+    <span id="sirsMessage" class="small" style="margin-left:10px;"></span>
+  </p>
+
+  <p class="small muted" style="margin-top:8px;">
+    Emulates the approach of the MDCalc “SIRS, Sepsis, and Septic Shock Criteria” calculator. Credit: mdcalc.com.
+  </p>
+</div>
+
+<strong>High-value workup (suspected pneumonia + sepsis)</strong>
+<ul>
+  <li><strong>Chest X-ray (CXR)</strong> – first-line imaging to evaluate pneumonia.</li>
+  <li><strong>CBC</strong> – assesses leukocytosis/anemia and overall illness severity.</li>
+  <li><strong>BMP or CMP</strong> – renal function/electrolytes (important for fluids/med dosing).</li>
+  <li><strong>Lactate</strong> – evaluates for hypoperfusion; can help risk-stratify and guide resuscitation.</li>
+  <li><strong>Blood cultures</strong> – obtain before antibiotics when feasible in suspected sepsis.</li>
+  <li><strong>Sputum culture</strong> (if obtainable) – may help tailor therapy in more severe disease.</li>
+</ul>
+
+<strong>Surviving Sepsis Campaign (SSC) framing</strong>
+<p class="small">
+  The SSC emphasizes that sepsis is a medical emergency and recommends early evaluation including <strong>measuring lactate</strong>,
+  <strong>obtaining blood cultures</strong> before antibiotics when feasible, and prompt initiation of treatment. Although not part of this module,
+  patients with suspected sepsis should receive <strong>guideline-directed fluids</strong> (if no contraindications) and <strong>timely antibiotics</strong>.
+</p>
+
+<strong>High-value care is dynamic</strong>
+<p class="small">
+  High value care depends on the presentation and pre-test probability. It is <strong>not</strong> that practicing high value care earlier “caused” pneumonia.
+</p>
+
+<p class="small">
+  Previous studies have demonstrated that most acute URIs are viral, and antibiotics do not reduce the risk of subsequent pneumonia in otherwise healthy patients.
+  Meta-analysis of studies demonstrates that antibiotic treatment of children with URIs does not prevent the development of pneumonia. (PubMed 8426767)
+</p>
+
+<p class="small">
+  In the adult population, large cohort studies show that reducing antibiotic prescribing for self-limiting respiratory tract infections may result in a very slight increase
+  in treatable pneumonia cases, but the absolute risk is low. A UK study found that a 10% reduction in antibiotic prescribing might lead to 1.1 additional pneumonia cases per year
+  in a practice with 7,000 patients, with no increase in serious complications like mastoiditis, empyema, meningitis, or Lemierre's syndrome. Most of the complications identified
+  do not require hospital admission and currently respond well to antibiotics, so simply the occurrence of an uncommon complication rate is not in itself a justification for more widespread
+  prescribing of antibiotics for initially uncomplicated presentations. (PMC4933936)
+</p>
+    `
+},
+
+4: {
+    title: "Case 4 – Back pain",
+    diagnosis: "Mechanical low back pain (lumbar strain)",
+    attribution: "",
+    contentHtml: `
+      <p>
+        A 45-year-old man presents with <strong>3 days of acute low back pain</strong> after lifting a heavy box.
+        He denies <strong>fever</strong>, <strong>trauma</strong>, <strong>unexplained weight loss</strong>, <strong>history of cancer</strong>,
+        <strong>IV drug use</strong>, <strong>bowel/bladder dysfunction</strong>, saddle anesthesia, or progressive neurologic symptoms.
+      </p>
+      <div class="grid2">
+        <div class="summary">
+          <h3 style="margin-top:0;">Vitals</h3>
+          <ul>
+            <li><strong>Temp:</strong> 36.9°C</li>
+            <li><strong>HR:</strong> 84 bpm</li>
+            <li><strong>RR:</strong> 16 / min</li>
+            <li><strong>SpO₂:</strong> 98% on room air</li>
+            <li><strong>BP:</strong> 128/78</li>
+          </ul>
+        </div>
+        <div class="summary">
+          <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+          <p class="small"><strong>General:</strong> Uncomfortable with movement but non-toxic.</p>
+          <p class="small"><strong>Back:</strong> Paraspinal lumbar tenderness; no midline spinal tenderness or step-offs.</p>
+          <p class="small"><strong>Neuro:</strong> Strength 5/5 BLE; sensation intact; reflexes symmetric; normal gait.</p>
+          <p class="small"><strong>Straight leg raise:</strong> Negative bilaterally.</p>
+        </div>
+      </div>
+    `,
+    highValueIds: new Set(["NO_TESTING"]),
+    intermediateIds: new Map([]),
+    recommendedIds: ["NO_TESTING"],
+    pathwayHtml: `
+<strong>Answer</strong>
+<p class="small">
+  This case is designed to practice high-value care for <strong>acute low back pain</strong> without red flags.
+  In most otherwise healthy patients with a short duration of pain and a normal neurologic exam, the most likely cause is
+  a benign musculoskeletal strain, and symptoms improve with time.
+</p>
+
+<strong>High-value approach</strong>
+<ul class="small">
+  <li><strong>History + exam first</strong>: characterize onset, trauma, neurologic symptoms, constitutional symptoms, and risk factors.</li>
+  <li><strong>Supportive care</strong>: activity as tolerated, heat/ice, NSAIDs/acetaminophen when appropriate, and return precautions.</li>
+  <li><strong>Shared decision-making</strong>: explain that early imaging rarely changes management and can lead to incidental findings and downstream testing.</li>
+</ul>
+
+<strong>When imaging/labs may become high value</strong>
+<p class="small">
+  Diagnostic testing is appropriate when there are <strong>red flags</strong> suggesting serious pathology. Examples include:
+</p>
+<ul class="small">
+  <li><strong>Neurologic deficits</strong>: new weakness, foot drop, saddle anesthesia, bowel/bladder dysfunction (concern for cauda equina).</li>
+  <li><strong>Infection risk</strong>: fever, IV drug use, immunocompromise, recent spinal procedure (concern for epidural abscess/osteomyelitis).</li>
+  <li><strong>Malignancy risk</strong>: history of cancer, unexplained weight loss, night pain, age-related risk with concerning features.</li>
+  <li><strong>Fracture risk</strong>: major trauma, osteoporosis, prolonged steroid use.</li>
+  <li><strong>Persistent/progressive symptoms</strong>: severe pain not improving after ~4–6 weeks or progressive neurologic findings.</li>
+</ul>
+
+<strong>Common low-value pitfalls</strong>
+<ul class="small">
+  <li><strong>Early imaging (CT/MRI) without red flags</strong>: increases incidental findings and costs without improving outcomes.</li>
+  <li><strong>Broad lab panels by default</strong>: low yield when there are no systemic symptoms.</li>
+</ul>
+
+<strong>Clinical pearl</strong>
+<p class="small">
+  High-value care is not “doing nothing.” It means doing the right evaluation and choosing tests that are most likely to change management.
+  Clear return precautions (worsening pain, weakness, numbness, fever, urinary retention/incontinence) are part of high-value care.
+</p>
+    `
+  }
+
+  ,5: {
+    title: "Case 5 – Medication reconciliation",
+    diagnosis: "Medication reconciliation (discharge)",
+    attribution: "",
+    contentHtml: `
+      <div class="hint small" style="margin-top:10px;">
+        Complete the embedded medication reconciliation case below. Costs and high-value feedback are revealed after you submit within Case 5.
+        After you submit, a <strong>Finish Module</strong> button will appear.
+      </div>
+    `,
+    // Placeholder fields to keep shared logic safe (diagnostic-testing UI is hidden for Case 5)
+    highValueIds: new Set([]),
+    highValueReasons: new Map([]),
+    intermediateIds: new Map([]),
+    lowValueReasons: new Map([]),
+    recommendedIds: [],
+    pathwayHtml: ``
+  }
+
+};
+
+/* =========================
+   UI
+   ========================= */
+const searchEl = document.getElementById("search");
+const landingEl = document.getElementById("landing");
+const appEl = document.getElementById("app");
+const startFunBtn = document.getElementById("startFun");
+const startTeachingBtn = document.getElementById("startTeaching");
+const backForMoreBtn = document.getElementById("backForMore");
+const continueBtnEl = document.getElementById("continueBtn");
+const adminPanelEl = document.getElementById("adminPanel");
+const adminLoginBtnEl = document.getElementById("adminLoginBtn");
+const adminBackBtnEl = document.getElementById("adminBackBtn");
+const adminRefreshBtnEl = document.getElementById("adminRefreshBtn");
+const adminTestBtnEl = document.getElementById("adminTestBtn");
+const adminOpenExportBtnEl = document.getElementById("adminOpenExportBtn");
+const adminDownloadCsvBtnEl = document.getElementById("adminDownloadCsvBtn");
+const adminStatusEl = document.getElementById("adminStatus");
+const adminTableEl = document.getElementById("adminTable");
+
+
+const matchListEl = document.getElementById("matchList");
+const selectedOrdersBoxEl = document.getElementById("selectedOrdersBox");
+const orderFormEl = document.getElementById("orderForm");
+const resultsEl = document.getElementById("results");
+
+const caseTitleEl = document.getElementById("caseTitle");
+const caseContentEl = document.getElementById("caseContent");
+const finalDxEl = document.getElementById("finalDx");
+
+const dxHeaderEl = document.getElementById("dxHeader");
+const dxHintEl = document.getElementById("dxHint");
+
+// Case 5 (embedded Module 2)
+const case5WrapEl = document.getElementById("case5MedRec");
+const case5StatusEl = document.getElementById("case5Status");
+const medRecFrameEl = document.getElementById("medRecFrame");
+const case5SrcTplEl = document.getElementById("case5Srcdoc");
+
+let CASE5_LOADED = false;
+let CASE5_SUBMITTED = false;
+let CASE5_LAST_PAYLOAD = null;
+
+const orderFeedbackEl = document.getElementById("orderFeedback");
+const recommendedPathwayBoxEl = document.getElementById("recommendedPathwayBox");
+const studentBreakdownEl = document.getElementById("studentBreakdown");
+const recommendedBreakdownEl = document.getElementById("recommendedBreakdown");
+
+const pathRow1LabelEl = document.getElementById("pathRow1Label");
+const pathRow1StudentEl = document.getElementById("pathRow1Student");
+const pathRow1RecEl = document.getElementById("pathRow1Rec");
+const pathRow2LabelEl = document.getElementById("pathRow2Label");
+const pathRow2StudentEl = document.getElementById("pathRow2Student");
+const pathRow2RecEl = document.getElementById("pathRow2Rec");
+const studentCostEl = document.getElementById("studentCost");
+const recommendedCostEl = document.getElementById("recommendedCost");
+const attributionEl = document.getElementById("caseAttribution");
+
+const wellsContainerEl = document.getElementById("wellsContainer");
+const wellsScoreEl = document.getElementById("wellsScore");
+const wellsInterpEl = document.getElementById("wellsInterp");
+
+const selectedIds = new Set();
+const MAX_MATCHES = 140;
+
+
+// Tracks which cases have been submitted in the CURRENT session (for subtle UI checkmarks).
+const COMPLETED_CASES = new Set();
+
+function resetCaseCompletion(){
+  COMPLETED_CASES.clear();
+  try{
+    document.querySelectorAll(".tabs .tab").forEach(b=>b.classList.remove("completed"));
+  }catch(e){}
+}
+
+function markCaseCompleted(caseId){
+  try{
+    COMPLETED_CASES.add(caseId);
+    const tab = document.getElementById("tab" + String(caseId));
+    if (tab) tab.classList.add("completed");
+  }catch(e){}
+}
+
+
+/* =========================
+   Case 5 (embedded Module 2) helpers
+   ========================= */
+function setCase5Status(msg, cls){
+  if (!case5StatusEl) return;
+  case5StatusEl.textContent = msg || "";
+  case5StatusEl.className = "tiny " + (cls || "");
+}
+
+function ensureCase5Loaded(){
+  if (CASE5_LOADED) return;
+  if (!medRecFrameEl || !case5SrcTplEl) return;
+  medRecFrameEl.srcdoc = case5SrcTplEl.innerHTML;
+  CASE5_LOADED = true;
+}
+
+function setDxUiVisible(visible){
+  const show = !!visible;
+  const setDisp = (el, v)=>{ if (!el) return; el.style.display = v ? "" : "none"; };
+  setDisp(dxHeaderEl, show);
+  setDisp(dxHintEl, show);
+  setDisp(searchEl, show);
+  setDisp(orderFormEl, show);
+}
+
+function setCase5Visible(visible){
+  const show = !!visible;
+  if (!case5WrapEl) return;
+  case5WrapEl.classList.toggle("hidden", !show);
+  case5WrapEl.style.display = show ? "block" : "none";
+  if (show) ensureCase5Loaded();
+}
+
+function setMedRecFrameHeight(px){
+  if (!medRecFrameEl) return;
+  const h = Math.max(900, Math.min(5000, Number(px || 0)));
+  medRecFrameEl.style.height = h + "px";
+}
+
+// Receive updates/submissions from Case 5 iframe
+window.addEventListener("message", (evt)=>{
+  const data = evt && evt.data;
+  if (!data || typeof data !== "object") return;
+
+  // Accept messages only from our embedded Case 5 iframe (avoids accidental/hostile postMessage from elsewhere)
+  try{
+    if (medRecFrameEl && evt.source && medRecFrameEl.contentWindow && evt.source !== medRecFrameEl.contentWindow) return;
+  }catch(e){}
+
+  if (data.kind === "case5_medrec_height"){
+    setMedRecFrameHeight(Number(data.height || 0));
+    return;
+  }
+  if (data.kind === "case5_medrec_ready"){
+    setCase5Status("Ready. Complete the medication reconciliation, then submit to reveal costs.", "muted");
+    // If the learner already submitted earlier in this session, keep the Finish button visible.
+    if (CASE5_SUBMITTED && continueBtnEl){
+      continueBtnEl.classList.remove("hidden");
+      continueBtnEl.textContent = "Finish Module";
+    }
+    return;
+  }
+  if (data.kind === "case5_medrec_submission"){
+    CASE5_SUBMITTED = true;
+    markCaseCompleted(5);
+    CASE5_LAST_PAYLOAD = data.payload || null;
+    setCase5Status("Submission received. You can now finish the module.", "good");
+    // Log to the same analytics pipeline as Cases 1–4
+    logMedRecSubmission(CASE5_LAST_PAYLOAD);
+    if (continueBtnEl){
+      continueBtnEl.classList.remove("hidden");
+      continueBtnEl.textContent = "Finish Module";
+    }
+  }
+});
+
+/* =========================
+   Search
+   ========================= */
+function expandQuery(q){
+  const s = normalize(q);
+  const extras = [];
+  if (s.includes("cxr")) extras.push("chest x-ray","chest xray","xr chest");
+  if (s === "cta" || s.includes("cta")) extras.push("ctpa","ct angio pulmonary","pe protocol","pulmonary embol");
+  if (s.includes("ctpa")) extras.push("cta","pe protocol","pulmonary embol");
+  if (s === "ua" || s.includes("ua")) extras.push("urinalysis","urine");
+  if (s === "rpp" || s.includes("rpp")) extras.push("respiratory pathogen panel","respiratory panel");
+  if (s === "echo" || s.includes("echo")) extras.push("echocardiogram","tte","transthoracic");
+  return [s, ...extras.filter(Boolean)];
+}
+
+function orderMatchesQuery(order, rawQuery){
+  const qs = expandQuery(rawQuery);
+  const q0 = qs[0];
+  if (!q0) return true;
+
+  const name = normalize(order.name);
+  const syn = (order.synonyms || []).map(normalize).join(" ");
+
+  for (const q of qs){
+    if (!q) continue;
+    if (name.includes(q) || syn.includes(q)) return true;
+  }
+  return fuzzyTokenMatch(q0, name + " " + syn);
+}
+
+function renderMatches(){
+  const q = searchEl.value || "";
+  let matches = orderCatalog
+    .slice()
+    .filter(o => orderMatchesQuery(o, q))
+    .sort((a,b) => a.name.localeCompare(b.name));
+
+  const idxNo = matches.findIndex(o => o.id === "NO_TESTING");
+  if (idxNo > 0) {
+    const [noOpt] = matches.splice(idxNo, 1);
+    matches.unshift(noOpt);
+  }
+
+  matches = matches.slice(0, MAX_MATCHES);
+
+  matchListEl.innerHTML = "";
+  for (const o of matches){
+    const checked = selectedIds.has(o.id) ? "checked" : "";
+    matchListEl.innerHTML += `
+      <label>
+        <input type="checkbox" value="${o.id}" ${checked} />
+        ${o.name}
+      </label>
+    `;
+  }
+}
+
+function renderSelectedOrders(){
+  if (!selectedOrdersBoxEl) return;
+
+  const ids = Array.from(selectedIds).filter(id => idToOrder.has(id));
+  if (ids.length === 0){
+    selectedOrdersBoxEl.innerHTML = '<span class="muted">No orders selected yet.</span>';
+    return;
+  }
+
+  const rows = ids
+    .map(id => idToOrder.get(id))
+    .filter(Boolean)
+    .sort((a,b)=>a.name.localeCompare(b.name));
+
+  let html = '<ul style="margin:0; padding-left:18px;">';
+  for (const o of rows){
+    html += `<li style="margin:4px 0;">
+      ${o.name}
+      <button type="button" class="tab" style="padding:4px 8px; border-radius:999px; margin-left:8px; background:#f1f1f1;"
+        data-remove-id="${o.id}" aria-label="Remove ${o.name}">Remove</button>
+    </li>`;
+  }
+  html += '</ul>';
+  selectedOrdersBoxEl.innerHTML = html;
+}
+
+
+/* =========================
+   Grading per case
+   ========================= */
+function gradeOrder(orderId){
+  const cfg = CASES[ACTIVE_CASE];
+
+  if (ACTIVE_CASE === 1 && orderId === "NO_TESTING"){
+    let lr = (cfg.lowValueReasons && cfg.lowValueReasons.has(orderId)) ? cfg.lowValueReasons.get(orderId) : null;
+    // Optional name-based low-value rules (useful when catalog IDs differ)
+    if (!lr && cfg.lowValueNamePatterns) {
+      const name = (getOrderById(orderId)?.name || "");
+      for (const rule of cfg.lowValueNamePatterns) {
+        if (rule.re.test(name)) { lr = rule.reason; break; }
+      }
+    }
+    if (!lr) lr = "Not recommended for this presentation; low pre-test probability and unlikely to change management.";
+    return { cls:"bad", tag:"❌ Low-value", reason: lr };
+  }
+
+  if (cfg.highValueIds && cfg.highValueIds.has(orderId)){
+    const r = (cfg.highValueReasons && cfg.highValueReasons.has(orderId)) ? cfg.highValueReasons.get(orderId) : "High-value for this presentation.";
+    return { cls:"good", tag:"✅ High-value", reason: r };
+  }
+
+  if (cfg.intermediateIds && cfg.intermediateIds.has(orderId)){
+    return { cls:"warn", tag:"⚠️ Intermediate-yield", reason: cfg.intermediateIds.get(orderId) || "May be appropriate in selected scenarios." };
+  }
+
+  const lr = (cfg.lowValueReasons && cfg.lowValueReasons.has(orderId)) ? cfg.lowValueReasons.get(orderId) : "Not recommended for this presentation; low pre-test probability and unlikely to change management.";
+    return { cls:"bad", tag:"❌ Low-value", reason: lr };
+}
+
+/* =========================
+   Recommended orders
+   ========================= */
+function getRecommendedOrderIds(studentSelectedIds){
+  const cfg = CASES[ACTIVE_CASE];
+  let rec = (cfg.recommendedIds || []).slice();
+
+  if (ACTIVE_CASE === 1){
+    // CXR optional if CTA obtained: don't include in recommended cost by default
+    if (studentSelectedIds.has("CTPA")){
+      rec = rec.filter(id => id !== "CXR");
+    }
+    // Ensure QUANT D-DIMER not included
+    rec = rec.filter(id => id !== "DDIMER_QUANT");
+  }
+
+  rec = rec.filter(id => idToOrder.has(id));
+  return Array.from(new Set(rec));
+}
+
+/* =========================
+   Breakdown tables
+   ========================= */
+function formatMoney(n){
+  return "$" + Number(n||0).toFixed(2);
+}
+
+function initSepsisChecklist(){
+  const box = document.getElementById("sepsisChecklist");
+  if(!box) return;
+
+  const sirsChks = [...box.querySelectorAll(".sirsChk")];
+  const infChk = document.getElementById("suspectedInfectionChk");
+  const countEl = document.getElementById("sirsCount");
+  const msgEl = document.getElementById("sirsMessage");
+
+  const update = ()=>{
+    const sirs = sirsChks.filter(c=>c.checked).length;
+    const inf = !!(infChk && infChk.checked);
+
+    if(countEl) countEl.innerText = String(sirs);
+    if(!msgEl) return;
+
+    msgEl.className = "small";
+    if(sirs >= 2 && inf){
+      msgEl.innerText = "SIRS ≥2 + suspected infection → consistent with “sepsis” (teaching definition). Prioritize sepsis evaluation/early management.";
+      msgEl.className = "small bad";
+    } else if(sirs >= 2){
+      msgEl.innerText = "SIRS positive (≥2). Assess for infectious vs noninfectious causes; if infection suspected, treat as sepsis risk.";
+      msgEl.className = "small warn";
+    } else {
+      msgEl.innerText = "";
+    }
+  };
+
+  sirsChks.forEach(c=>c.addEventListener("change", update));
+  if(infChk) infChk.addEventListener("change", update);
+  update();
+}
+
+function renderBreakdownTable(orderIds, title){
+  const rows = orderIds
+    .map(id => idToOrder.get(id))
+    .filter(Boolean)
+    .sort((a,b) => a.name.localeCompare(b.name));
+
+  const total = rows.reduce((s,o)=>s+Number(o.cost||0), 0);
+
+  let html = `
+    <div class="small" style="margin-bottom:6px;"><strong>${title}</strong></div>
+    <table>
+      <tr><th>Order</th><th>Cost</th></tr>
+  `;
+  for (const o of rows){
+    html += `<tr><td>${o.name}</td><td>${formatMoney(o.cost)}</td></tr>`;
+  }
+  html += `<tr><td><strong>Total</strong></td><td><strong>${formatMoney(total)}</strong></td></tr></table>`;
+  return { html, total };
+}
+
+/* =========================
+   Wells (case 1 only) – shown after submit under pathway
+   ========================= */
+function resetWellsUI(){
+  wellsScoreEl.textContent = "0.0";
+  wellsInterpEl.textContent = "Low";
+  wellsContainerEl.querySelectorAll("input.wells").forEach(cb => { cb.checked = false; });
+}
+function computeWells(){
+  const boxes = wellsContainerEl.querySelectorAll("input.wells");
+  let score = 0;
+  boxes.forEach(cb => { if (cb.checked) score += Number(cb.dataset.points || 0); });
+
+  let interp = "Low";
+  if (score > 6) interp = "High";
+  else if (score >= 2) interp = "Moderate";
+
+  wellsScoreEl.textContent = score.toFixed(1);
+  wellsInterpEl.textContent = interp;
+}
+
+/* =========================
+   Case switching
+   ========================= */
+function setActiveCase(caseId){
+  ACTIVE_CASE = caseId;
+  selectedIds.clear();
+  searchEl.value = "";
+
+  document.querySelectorAll("button[id^=\"tab\"]").forEach(b=>b.classList.remove("active"));
+  const activeTab = document.getElementById("tab"+caseId);
+  if (activeTab) activeTab.classList.add("active");
+
+  const cfg = CASES[caseId];
+  caseTitleEl.textContent = cfg ? cfg.title : ("Case " + caseId);
+  caseContentEl.innerHTML = cfg ? cfg.contentHtml : "";
+
+  resultsEl.classList.add("hidden");
+  if (continueBtnEl) continueBtnEl.classList.add("hidden");
+  orderFeedbackEl.innerHTML = "";
+  studentBreakdownEl.innerHTML = "";
+  recommendedBreakdownEl.innerHTML = "";
+  recommendedPathwayBoxEl.innerHTML = "";
+  studentCostEl.textContent = "";
+  recommendedCostEl.textContent = "";
+  attributionEl.textContent = "";
+
+  wellsContainerEl.classList.add("hidden");
+  resetWellsUI();
+
+  // Toggle between the diagnostic-testing UI (Cases 1–4) and the embedded med-rec UI (Case 5)
+  if (caseId === 5){
+    setDxUiVisible(false);
+    setCase5Visible(true);
+
+    // If the learner already submitted earlier in this session, don't force a re-submit just to finish.
+    if (CASE5_SUBMITTED){
+      setCase5Status("Submission already received for this case. You can finish the module, or adjust and re-submit within Case 5 if desired.", "good");
+      if (continueBtnEl){
+        continueBtnEl.classList.remove("hidden");
+        continueBtnEl.textContent = "Finish Module";
+      }
+    } else {
+      setCase5Status("Complete the medication reconciliation. After you submit inside Case 5, the Finish Module button will appear.", "muted");
+    }
+
+    // No diagnostic search rendering for Case 5
+    return;
+  }
+
+  setCase5Visible(false);
+  setDxUiVisible(true);
+
+  renderMatches();
+  renderSelectedOrders();
+}
+
+/* =========================
+   Events
+   ========================= */
+searchEl.addEventListener("input", renderMatches);
+
+matchListEl.addEventListener("change", (e)=>{
+  if (e.target && e.target.type === "checkbox"){
+    const id = e.target.value;
+    if (e.target.checked) selectedIds.add(id);
+    else selectedIds.delete(id);
+
+    // Clear search box after selection, return to full list, and keep rapid entry flow
+    searchEl.value = "";
+    renderMatches();
+    renderSelectedOrders();
+    searchEl.focus();
+  }
+});
+
+selectedOrdersBoxEl.addEventListener("click", (e)=>{
+  const btn = e.target && e.target.closest ? e.target.closest("button[data-remove-id]") : null;
+  if (!btn) return;
+  const id = btn.getAttribute("data-remove-id");
+  if (!id) return;
+
+  selectedIds.delete(id);
+
+  // Uncheck in the match list if currently rendered
+  const cb = matchListEl.querySelector(`input[type="checkbox"][value="${id}"]`);
+  if (cb) cb.checked = false;
+
+  renderSelectedOrders();
+});
+
+wellsContainerEl.addEventListener("change", (e)=>{
+  if (e.target && e.target.classList && e.target.classList.contains("wells")){
+    computeWells();
+  }
+});
+
+orderFormEl.addEventListener("submit", (e)=>{
+  e.preventDefault();
+  if (ACTIVE_CASE === 5) return;
+  if (selectedIds.size === 0){
+    alert("Please select at least one option.");
+    return;
+  }
+
+  const cfg = CASES[ACTIVE_CASE];
+  finalDxEl.textContent = cfg.diagnosis;
+  recommendedPathwayBoxEl.innerHTML = cfg.pathwayHtml || "";
+  attributionEl.textContent = cfg.attribution || "";
+
+  if (ACTIVE_CASE === 1){
+    wellsContainerEl.classList.remove("hidden");
+    resetWellsUI();
+  } else {
+    wellsContainerEl.classList.add("hidden");
+  }
+
+  let studentTotal = 0;
+  let feedbackHtml = "<ul>";
+  const chosen = Array.from(selectedIds).map(id => idToOrder.get(id)).filter(Boolean);
+
+  for (const o of chosen){
+    const g = gradeOrder(o.id);
+    studentTotal += Number(o.cost||0);
+    feedbackHtml += `
+      <li class="${g.cls}">
+        ${o.name}
+        <span class="pill ${g.cls}">${g.tag}</span>
+        – ${formatMoney(o.cost)}
+        <div class="small muted">${g.reason}</div>
+      </li>
+    `;
+  }
+  feedbackHtml += `</ul><p><strong>Total Cost:</strong> ${formatMoney(studentTotal)}</p>`;
+  orderFeedbackEl.innerHTML = feedbackHtml;
+
+  // Data capture (Teaching mode only)
+  // Include recommended cost and simple value counts for easier faculty review
+  const recIdsForLog = getRecommendedOrderIds(selectedIds);
+  const recTotalForLog = recIdsForLog
+    .map(id => idToOrder.get(id))
+    .filter(Boolean)
+    .reduce((s,o)=>s+Number(o.cost||0), 0);
+
+  const valueCounts = { high: 0, intermediate: 0, low: 0 };
+  // Also capture *which* tests fell into each value tier (names) for clearer downstream analytics.
+  const orderedAppropriate = [];
+  const orderedIntermediate = [];
+  const orderedLowValue = [];
+  const orderedAll = [];
+
+  for (const o of chosen){
+    const g = gradeOrder(o.id);
+    const nm = (o.name || (idToOrder.get(o.id)?.name) || o.id);
+    orderedAll.push(nm);
+
+    if (g.cls === "good") { valueCounts.high++; orderedAppropriate.push(nm); }
+    else if (g.cls === "warn") { valueCounts.intermediate++; orderedIntermediate.push(nm); }
+    else { valueCounts.low++; orderedLowValue.push(nm); }
+  }
+
+  logCaseSubmission(ACTIVE_CASE, selectedIds, studentTotal, {
+    recommendedIds: recIdsForLog,
+    recommendedCost: Number(recTotalForLog || 0),
+    deltaCost: Number((studentTotal - recTotalForLog) || 0),
+    valueCounts: valueCounts,
+    orderedAll: orderedAll,
+    orderedAppropriate: orderedAppropriate,
+    orderedIntermediate: orderedIntermediate,
+    orderedLowValue: orderedLowValue
+  });
+  markCaseCompleted(ACTIVE_CASE);
+
+  const recIds = getRecommendedOrderIds(selectedIds);
+  const studentTable = renderBreakdownTable(Array.from(selectedIds), "Your ordered tests");
+  const recTable = renderBreakdownTable(recIds, "Recommended tests");
+
+  studentBreakdownEl.innerHTML = studentTable.html;
+  recommendedBreakdownEl.innerHTML = recTable.html;
+
+  studentCostEl.textContent = formatMoney(studentTable.total);
+  recommendedCostEl.textContent = formatMoney(recTable.total);
+
+  // Pathway comparison
+  if (ACTIVE_CASE === 1){
+    const hasEKG = selectedIds.has("EKG");
+    const hasTrop = selectedIds.has("TROP");
+    const hasCTPA = selectedIds.has("CTPA");
+    const hasCXR = selectedIds.has("CXR");
+
+    pathRow1LabelEl.textContent = "Baseline chest pain evaluation";
+    pathRow1StudentEl.textContent = (hasEKG && hasTrop) ? "Completed (EKG + Troponin)" : "Incomplete";
+    pathRow1RecEl.textContent = "EKG + Troponin + CBC w/ diff + BMP (± CXR)";
+
+    pathRow2LabelEl.textContent = "Definitive PE imaging";
+    pathRow2StudentEl.textContent = hasCTPA ? "CTA/CTPA obtained" : "Not obtained";
+    pathRow2RecEl.textContent = "CTA Chest – PE protocol (CTPA)";
+
+    if (hasCTPA && !hasCXR){
+      pathRow1StudentEl.textContent += " (CXR skipped—OK if CTA obtained)";
+    }
+  } else if (ACTIVE_CASE === 2){
+    const hasCovid = selectedIds.has("COVID_PCR");
+    const hasFlu = selectedIds.has("FLU_PCR");
+    const hasCBC = selectedIds.has("CBC") || selectedIds.has("CBC_DIFF");
+    const hasBMPorCMP = selectedIds.has("BMP") || selectedIds.has("CMP");
+    const hasCXR = selectedIds.has("CXR");
+
+    pathRow1LabelEl.textContent = "Viral testing";
+    pathRow1StudentEl.textContent = (hasCovid && hasFlu) ? "Completed (COVID + Flu)" : "Incomplete";
+    pathRow1RecEl.textContent = "COVID PCR + Influenza PCR";
+
+    pathRow2LabelEl.textContent = "Basic evaluation";
+    pathRow2StudentEl.textContent = (hasCBC && hasBMPorCMP) ? ("Labs done" + (hasCXR ? " + CXR" : "")) : "Incomplete";
+    pathRow2RecEl.textContent = "CBC + CMP/BMP + CXR";
+  } else {
+    const hasNoTesting = selectedIds.has("NO_TESTING");
+    const hasImaging = selectedIds.has("CT_L_SPINE") || selectedIds.has("CT_L_SPINE") || selectedIds.has("XR_L_SPINE");
+
+    pathRow1LabelEl.textContent = "Diagnostic testing";
+    pathRow1StudentEl.textContent = hasNoTesting ? "No testing ordered" : "Testing ordered";
+    pathRow1RecEl.textContent = "No diagnostic testing necessary";
+
+    pathRow2LabelEl.textContent = "Imaging";
+    pathRow2StudentEl.textContent = hasImaging ? "Imaging ordered" : "No imaging";
+    pathRow2RecEl.textContent = "Avoid imaging without red flags";
+  }
+
+  resultsEl.classList.remove("hidden");
+  if (continueBtnEl) {
+    continueBtnEl.classList.remove("hidden");
+    continueBtnEl.textContent = (ACTIVE_CASE < 5) ? "Next Case" : "Finish Module";
+  }
+  // Show pathway comparison only for Case 1
+  const pc = document.getElementById("pathwayComparisonSection");
+  if (pc) pc.style.display = (ACTIVE_CASE === 1 ? "block" : "none");
+  // Initialize any post-submit interactive elements (e.g., sepsis checklist)
+  initSepsisChecklist();
+});
+
+document.getElementById("tab1").addEventListener("click", ()=>setActiveCase(1));
+document.getElementById("tab2").addEventListener("click", ()=>setActiveCase(2));
+document.getElementById("tab3").addEventListener("click", ()=>setActiveCase(3));
+document.getElementById("tab4").addEventListener("click", ()=>setActiveCase(4));
+document.getElementById("tab5").addEventListener("click", ()=>setActiveCase(5));
+
+if (continueBtnEl){
+  continueBtnEl.addEventListener("click", ()=>{
+    // Case 5 finishes the module, and is gated by the embedded case's own submit button.
+    if (ACTIVE_CASE === 5){
+      if (!CASE5_SUBMITTED) return;
+      logModuleComplete();
+      // Hide Case 5 UI and show a completion card
+      setCase5Visible(false);
+      resultsEl.classList.remove("hidden");
+      resultsEl.innerHTML = '<div class="card"><h2>Module Complete</h2><p class="muted">Thank you for completing the High-Value Care Simulator.</p><p class="small">You may close this window or refresh the page to restart.</p></div>';
+      if (continueBtnEl) continueBtnEl.classList.add("hidden");
+      window.scrollTo({top: 0, behavior: "smooth"});
+      return;
+    }
+
+    // For Cases 1–4, prevent advancing before diagnostic-test submission results are visible
+    if (resultsEl.classList.contains("hidden")) return;
+
+    if (ACTIVE_CASE < 5){
+      setActiveCase(ACTIVE_CASE + 1);
+      window.scrollTo({top: 0, behavior: "smooth"});
+    } else {
+      // Safety fallback
+      logModuleComplete();
+      resultsEl.innerHTML = '<div class="card"><h2>Module Complete</h2><p class="muted">Thank you for completing the High-Value Care Simulator.</p><p class="small">You may close this window or refresh the page to restart.</p></div>';
+      if (continueBtnEl) continueBtnEl.classList.add("hidden");
+      window.scrollTo({top: 0, behavior: "smooth"});
+    }
+  });
+}
+
+// Landing page start controls
+function startModule(mode){
+  MODULE_MODE = mode;
+  SESSION_ID = getSessionId();
+  CASE_LOG = [];
+  resetCaseCompletion();
+  CASE5_SUBMITTED = false;
+  CASE5_LAST_PAYLOAD = null;
+  // Reload the embedded Case 5 iframe to reset its internal state for a new session.
+  try{
+    if (medRecFrameEl && case5SrcTplEl){
+      medRecFrameEl.srcdoc = case5SrcTplEl.innerHTML;
+      CASE5_LOADED = true;
+    }
+  }catch(e){}
+  logModuleStart();
+  // Enter module view (hard hide landing to prevent overlay/click issues)
+  try {
+    if (landingEl) { landingEl.classList.add("hidden"); landingEl.style.display = "none"; landingEl.style.pointerEvents = "none"; }
+    if (adminPanelEl) { adminPanelEl.classList.add("hidden"); }
+    if (appEl) { appEl.classList.remove("hidden"); appEl.style.display = "block"; }
+  } catch(e) {}
+
+
+setActiveCase(1);
+  // Put cursor in search box for rapid entry
+  if (searchEl) searchEl.focus();
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+if (startFunBtn) startFunBtn.addEventListener("click", ()=>startModule("fun"));
+if (startTeachingBtn) startTeachingBtn.addEventListener("click", ()=>startModule("teaching"));
+if (backForMoreBtn) backForMoreBtn.addEventListener("click", ()=>startModule("teaching"));
+
+// Start on landing by default
+if (appEl) appEl.classList.add("hidden");
+if (landingEl) landingEl.classList.remove("hidden");
+
+
+/* =========================
+   Admin panel events
+   ========================= */
+function showAdminPanel(){
+  try{
+    if (landingEl){ landingEl.classList.add("hidden"); landingEl.style.display = "none"; landingEl.style.pointerEvents = "none"; }
+    if (appEl){ appEl.classList.add("hidden"); appEl.style.display = "none"; }
+    if (adminPanelEl){ adminPanelEl.classList.remove("hidden"); adminPanelEl.style.display = "block"; }
+  }catch(e){}
+}
+
+function showLanding(){
+  try{
+    if (adminPanelEl){ adminPanelEl.classList.add("hidden"); adminPanelEl.style.display = "none"; }
+    if (appEl){ appEl.classList.add("hidden"); appEl.style.display = "none"; }
+    if (landingEl){ landingEl.classList.remove("hidden"); landingEl.style.display = "block"; landingEl.style.pointerEvents = "auto"; }
+  }catch(e){}
+}
+
+if (adminLoginBtnEl){
+  adminLoginBtnEl.addEventListener("click", async ()=>{
+    if (ADMIN_PASSCODE){
+      const entered = prompt("Enter admin passcode:");
+      if (entered !== ADMIN_PASSCODE){
+        alert("Incorrect passcode.");
+        return;
+      }
+    }
+    showAdminPanel();
+    await fetchAdminData();
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+}
+
+// Note: adminOpenSheetBtnEl was referenced in older builds but no corresponding button exists in this HTML.
+// Keeping this block removed prevents a runtime ReferenceError.
+
+if (adminBackBtnEl){
+  adminBackBtnEl.addEventListener("click", ()=>{
+    showLanding();
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+}
+
+if (adminRefreshBtnEl){
+  adminRefreshBtnEl.addEventListener("click", ()=>fetchAdminData());
+}
+
+if (adminTestBtnEl){
+  adminTestBtnEl.addEventListener("click", async ()=>{
+    if (!ANALYTICS_ENDPOINT){
+      setAdminStatus("ANALYTICS_ENDPOINT is not set. Data will be local-only.");
+      return;
+    }
+    const url = buildAnalyticsUrl("ping");
+    setAdminStatus("Pinging endpoint…");
+    try{
+      const res = await fetch(url, { method:"GET", mode:"cors" });
+      // Endpoint might not return JSON; handle gracefully
+      let ok = false;
+      try{
+        const j = await res.json();
+        ok = !!(j && (j.ok || j.status === "ok"));
+      }catch(e){
+        ok = res.ok;
+      }
+      setAdminStatus(ok ? "Endpoint reachable." : "Endpoint responded but did not confirm OK.");
+    }catch(e){
+      setAdminStatus("Failed to reach endpoint (CORS/network). Consider testing after deploying on GitHub Pages.");
+    }
+  });
+}
+
+
+if (adminOpenExportBtnEl){
+  adminOpenExportBtnEl.addEventListener("click", ()=>{
+    if (!ANALYTICS_ENDPOINT){
+      alert("ANALYTICS_ENDPOINT is not set. There is no export URL to open.");
+      return;
+    }
+    window.open(buildAnalyticsUrl("export"), "_blank", "noopener");
+  });
+}
+
+if (adminDownloadCsvBtnEl){
+  adminDownloadCsvBtnEl.addEventListener("click", async ()=>{
+    // Prefer whatever is in the table; if empty, fetch
+    let rows = [];
+    try{
+      rows = await fetchAdminData();
+    }catch(e){
+      rows = getLocalAttempts().map(normalizeAdminRow);
+    }
+    const csv = rowsToCsv(rows);
+    downloadTextFile("hvc_simulator_submissions.csv", csv);
+  });
+}
+
+
+</script>
+
+<div class="global-footer">Module developed at the UCLA David Geffen School of Medicine by Dr. Ghadi Ghanem and Dr. Alexandra Glaeser.</div>
+</body>
+</html>
