@@ -178,6 +178,25 @@ table th{
 }
 
 
+
+  .field-group { margin-top:14px; }
+  .field-label { display:block; font-weight:600; margin-bottom:6px; }
+  .field-help { font-size:12px; color:#666; margin-top:4px; }
+  select, textarea {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:5px;
+    border:1px solid #ccc;
+    font: inherit;
+    background:#fff;
+  }
+  textarea { min-height: 120px; resize: vertical; }
+  .required-star { color:#b00020; }
+  .launch-error { color:#b00020; margin-top:10px; font-size:14px; }
+  .likert-table th, .likert-table td { text-align:center; }
+  .likert-table td:first-child, .likert-table th:first-child { text-align:left; }
+  .survey-card { margin-top:12px; }
   .global-footer{position:fixed;left:0;right:0;bottom:0;padding:10px 14px;font-size:12px;color:#555;text-align:center;background:rgba(244,247,249,0.92);border-top:1px solid rgba(0,0,0,0.08);backdrop-filter: blur(4px);}
 </style>
 </head>
@@ -192,6 +211,13 @@ table th{
   </div>
 
   <div class="card" style="margin-top:16px; background:#ffffff;">
+    <h2 style="margin-top:0;">What is High Value Care?</h2>
+    <p class="small">
+      High value care is the delivery of the best possible health outcomes for patients at the lowest necessary cost. It does not entail ordering fewer tests, but rather, the most effective testing for the presentation while minimizing harms and waste.
+    </p>
+  </div>
+
+  <div class="card" style="margin-top:16px; background:#ffffff;">
     <h2 style="margin-top:0;">Before you start</h2>
     <ul class="small">
       <li><strong>No multiple-choice spoilers:</strong> you choose your own diagnostic pathway.</li>
@@ -200,7 +226,7 @@ table th{
       <li><strong>High-value care is dynamic:</strong> what’s high value depends on the patient, timing, and pre-test probability.</li>
       <li><strong>This information is for educational purposes only and should not be considered medical advice or be used in place of clinician judgement.</strong></li>
     </ul>
-    <div class="muted" style="margin-top:10px; font-size:13px;">Module developed at the UCLA David Geffen School of Medicine by Dr. Ghadi Ghanem and Dr. Alexandra Glaeser.</div>
+    <div class="muted" style="margin-top:10px; font-size:13px;">Module developed by Dr. Ghadi Ghanem and Dr. Alexandra Glaeser at the UCLA David Geffen School of Medicine. This is not an official service or website of DGSOM. The following modules were developed utilizing ChatGPT (OpenAI, 2026). The cases and responses were written and verified by the authors utilizing current society guidelines and expert opinions</div>
   </div>
 
   <div class="grid2" style="margin-top:14px;">
@@ -209,13 +235,61 @@ table th{
     <p class="small muted" style="margin-top:6px;">
       This is the default mode. Your selections and total cost per case are captured for review.
     </p>
+
+    <div class="field-group">
+      <label class="field-label" for="institutionInput">Institution <span class="required-star">*</span></label>
+      <input type="text" id="institutionInput" placeholder="Enter your institution" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="trainingLevelSelect">Level of training <span class="required-star">*</span></label>
+      <select id="trainingLevelSelect">
+        <option value="">Select one</option>
+        <option>Pre-Med</option>
+        <option>MS1</option>
+        <option>MS2</option>
+        <option>MS3</option>
+        <option>MS4</option>
+        <option>Other medical student</option>
+        <option>PGY1</option>
+        <option>PGY2</option>
+        <option>PGY3</option>
+        <option>PGY4</option>
+        <option>PGY5</option>
+        <option>PGY6</option>
+        <option>PGY7</option>
+        <option>PGY8</option>
+        <option>PGY9</option>
+        <option>Early career attending (less than 10 years out of residency)</option>
+        <option>Late career attending (10+ years out of residency)</option>
+        <option>Researcher</option>
+        <option>Nurse Practitioner</option>
+        <option>Nurse Practitioner in training</option>
+        <option>Physician's assistant</option>
+        <option>Physician's assistant in training</option>
+        <option>Nurse</option>
+        <option>Nursing school student</option>
+        <option>Non-medical personnel</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="trainingLevelOtherInput" class="hidden" placeholder="Please specify" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="siteUsernameInput">Username <span class="required-star">*</span></label>
+      <input type="text" id="siteUsernameInput" placeholder="Enter username" autocomplete="username" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="sitePasswordInput">Password <span class="required-star">*</span></label>
+      <input type="password" id="sitePasswordInput" placeholder="Enter password" autocomplete="current-password" />
+    </div>
+
+    <div id="launchValidationError" class="launch-error hidden"></div>
+
     <button class="primary" id="startTeaching" type="button" style="width:100%; padding:16px 18px; font-size:18px; border-radius:12px;">
       Start Module
     </button>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-      <button class="tab" id="startFun" type="button">Just for fun mode</button>
-      <button class="tab" id="backForMore" type="button">Back for more practice</button>
-    </div>
     <div style="margin-top:14px; display:flex; justify-content:flex-end;">
   <button class="tab" id="adminLoginBtn" type="button" style="padding:10px 14px; border-radius:12px;">Admin login</button>
 </div>
@@ -282,11 +356,13 @@ table th{
   </div>
 
   <div class="tabs" role="tablist">
-    <button class="tab active" id="tab1" type="button">Case 1: Chest pain</button>
+    <button class="tab active" id="tab0" type="button">Pre-test</button>
+    <button class="tab" id="tab1" type="button">Case 1: Chest pain</button>
     <button class="tab" id="tab2" type="button">Case 2: Fevers</button>
     <button class="tab" id="tab3" type="button">Case 3: Fevers part 2</button>
     <button class="tab" id="tab4" type="button">Case 4: Back pain</button>
     <button class="tab" id="tab5" type="button">Case 5: Med reconciliation</button>
+    <button class="tab" id="tab6" type="button">Post-test</button>
   </div>
 
   <h2 id="caseTitle"></h2>
@@ -296,6 +372,86 @@ table th{
   <div id="case5MedRec" class="hidden" style="margin-top:12px;">
     <iframe id="medRecFrame" title="Medication reconciliation case" style="width:100%; border:0; border-radius:12px; min-height:1200px; background:#f4f7f9;"></iframe>
     <div class="tiny" id="case5Status" style="margin-top:10px;"></div>
+  </div>
+
+  <div id="pretestSection" class="hidden survey-card">
+    <div class="card">
+      <h3 style="margin-top:0;">Pre-test</h3>
+      <p class="small">Please rate your level of agreement or disagreement with the following statements.</p>
+      <form id="pretestForm">
+        <table class="likert-table">
+          <tr>
+            <th>Statement</th>
+            <th>1<br><span class="tiny">Strongly Disagree</span></th>
+            <th>2<br><span class="tiny">Disagree</span></th>
+            <th>3<br><span class="tiny">Neither agree nor disagree</span></th>
+            <th>4<br><span class="tiny">Agree</span></th>
+            <th>5<br><span class="tiny">Strongly agree</span></th>
+          </tr>
+          <tr>
+            <td>Prior to this course, I had exposure to formal teaching on high-value care principles.</td>
+            <td><input type="radio" name="pre_q1" value="1"></td><td><input type="radio" name="pre_q1" value="2"></td><td><input type="radio" name="pre_q1" value="3"></td><td><input type="radio" name="pre_q1" value="4"></td><td><input type="radio" name="pre_q1" value="5"></td>
+          </tr>
+          <tr>
+            <td>Prior to this course, I encountered high-value care concepts during clinical rotations.</td>
+            <td><input type="radio" name="pre_q2" value="1"></td><td><input type="radio" name="pre_q2" value="2"></td><td><input type="radio" name="pre_q2" value="3"></td><td><input type="radio" name="pre_q2" value="4"></td><td><input type="radio" name="pre_q2" value="5"></td>
+          </tr>
+          <tr>
+            <td>I feel comfortable applying high-value care principles in clinical decision-making.</td>
+            <td><input type="radio" name="pre_q3" value="1"></td><td><input type="radio" name="pre_q3" value="2"></td><td><input type="radio" name="pre_q3" value="3"></td><td><input type="radio" name="pre_q3" value="4"></td><td><input type="radio" name="pre_q3" value="5"></td>
+          </tr>
+          <tr>
+            <td>I routinely consider cost and value when recommending tests or treatments.</td>
+            <td><input type="radio" name="pre_q4" value="1"></td><td><input type="radio" name="pre_q4" value="2"></td><td><input type="radio" name="pre_q4" value="3"></td><td><input type="radio" name="pre_q4" value="4"></td><td><input type="radio" name="pre_q4" value="5"></td>
+          </tr>
+        </table>
+        <div id="pretestValidationError" class="launch-error hidden"></div>
+        <button class="primary" type="submit">Submit Pre-test</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="posttestSection" class="hidden survey-card">
+    <div class="card">
+      <h3 style="margin-top:0;">Post-test</h3>
+      <p class="small">Please rate your level of agreement or disagreement with the following statements.</p>
+      <form id="posttestForm">
+        <table class="likert-table">
+          <tr>
+            <th>Statement</th>
+            <th>1<br><span class="tiny">Strongly Disagree</span></th>
+            <th>2<br><span class="tiny">Disagree</span></th>
+            <th>3<br><span class="tiny">Neither agree nor disagree</span></th>
+            <th>4<br><span class="tiny">Agree</span></th>
+            <th>5<br><span class="tiny">Strongly agree</span></th>
+          </tr>
+          <tr>
+            <td>The session improved my understanding of high-value care principles.</td>
+            <td><input type="radio" name="post_q1" value="1"></td><td><input type="radio" name="post_q1" value="2"></td><td><input type="radio" name="post_q1" value="3"></td><td><input type="radio" name="post_q1" value="4"></td><td><input type="radio" name="post_q1" value="5"></td>
+          </tr>
+          <tr>
+            <td>The feedback provided during the session was clear and helpful.</td>
+            <td><input type="radio" name="post_q2" value="1"></td><td><input type="radio" name="post_q2" value="2"></td><td><input type="radio" name="post_q2" value="3"></td><td><input type="radio" name="post_q2" value="4"></td><td><input type="radio" name="post_q2" value="5"></td>
+          </tr>
+          <tr>
+            <td>This session increased my awareness of the costs associated with clinical decisions.</td>
+            <td><input type="radio" name="post_q3" value="1"></td><td><input type="radio" name="post_q3" value="2"></td><td><input type="radio" name="post_q3" value="3"></td><td><input type="radio" name="post_q3" value="4"></td><td><input type="radio" name="post_q3" value="5"></td>
+          </tr>
+          <tr>
+            <td>I feel more comfortable applying high-value care principles in clinical decision-making.</td>
+            <td><input type="radio" name="post_q4" value="1"></td><td><input type="radio" name="post_q4" value="2"></td><td><input type="radio" name="post_q4" value="3"></td><td><input type="radio" name="post_q4" value="4"></td><td><input type="radio" name="post_q4" value="5"></td>
+          </tr>
+          <tr>
+            <td>I would recommend incorporating this high-value care session in medical training.</td>
+            <td><input type="radio" name="post_q5" value="1"></td><td><input type="radio" name="post_q5" value="2"></td><td><input type="radio" name="post_q5" value="3"></td><td><input type="radio" name="post_q5" value="4"></td><td><input type="radio" name="post_q5" value="5"></td>
+          </tr>
+        </table>
+        <label class="field-label" for="postFeedbackText">Do you have any additional feedback or suggestions for these modules?</label>
+        <textarea id="postFeedbackText" name="post_feedback" placeholder="Optional free response"></textarea>
+        <div id="posttestValidationError" class="launch-error hidden"></div>
+        <button class="primary" type="submit">Submit Post-test</button>
+      </form>
+    </div>
   </div>
 
   <h3 id="dxHeader">Order Initial Diagnostic Tests</h3>
@@ -1003,7 +1159,7 @@ const orderCatalog = [
   { id:"XR_L_SPINE", name:"Lumbar spine X-ray (2–3 views)", cost:670.00, synonyms:["xr lumbar", "lumbar xray", "xray back"] },
   { id:"PDF_4567076", name:"MRSA Screening Culture", cost:111.00, synonyms:[] },
   { id:"PDF_4562010", name:"Prenatal Panel 1", cost:158.00, synonyms:[] },
-  { id:"PDF_4569759", name:"Pro-bnp Ii", cost:162.00, synonyms:[] },
+  { id:"PDF_4569759", name:"BNP", cost:162.00, synonyms:[] },
   { id:"PDF_4569819", name:"Procalcitonin", cost:109.00, synonyms:[] },
   { id:"PT_INR", name:"Prothrombin time (PT/INR)", cost:110.00, synonyms:["pt", "inr", "protime"] },
   { id:"PDF_4560008", name:"Psa Panel", cost:160.00, synonyms:[] },
@@ -1085,6 +1241,8 @@ const ANALYTICS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwdAsKk0bwlT
 const ANALYTICS_KEY = "12345"; // e.g., "myLongRandomKey"
 // Admin passcode (client-side only; not secure). Prefer server-side keying above.
 const ADMIN_PASSCODE = "12345";
+const SITE_USERNAME = "capstone";
+const SITE_PASSWORD = "highvalue";
 // Optional: link to the underlying Google Sheet for faculty review (admin panel button)
 const GOOGLE_SHEET_URL = ""; // set if you want a simple prompt gate, e.g. "admin123"
 
@@ -1118,6 +1276,9 @@ function getContextMeta(){
 let MODULE_MODE = null; // "fun" | "teaching"
 let SESSION_ID = null;
 let CASE_LOG = []; // per-session in-memory log
+let PARTICIPANT_INFO = { institution:"", trainingLevel:"", trainingLevelOther:"" };
+let PRETEST_RESPONSES = null;
+let POSTTEST_RESPONSES = null;
 
 function getSessionId(){
   // Lightweight UUID-ish
@@ -1239,6 +1400,23 @@ function escapeHtml(s){
   }[c]));
 }
 
+function toTextList(v, sep){
+  const joiner = sep || ", ";
+  if (Array.isArray(v)) return v.map(x => String(x ?? "").trim()).filter(Boolean).join(joiner);
+  if (v && typeof v === "object"){
+    try { return JSON.stringify(v); } catch(e){ return String(v); }
+  }
+  return String(v ?? "").trim();
+}
+
+function normalizeChoiceLabel(v){
+  const s = String(v || "").trim().toLowerCase();
+  if (s === "hosp") return "hospital";
+  if (s === "dc") return "discontinue";
+  if (s === "home") return "home";
+  return s || "blank";
+}
+
 
 function getLocalAttempts(){
   try{
@@ -1281,11 +1459,11 @@ function normalizeAdminRow(r){
     }
     if (!rr.costType && payload.costType) rr.costType = payload.costType;
 
-    // Prefer human-readable order names when present
-    if (!rr.orders){
-      const o = payload.orderNames || payload.orders || payload.selectedOrders || payload.orderSelections || "";
-      rr.orders = (Array.isArray(o) || (o && typeof o === "object")) ? JSON.stringify(o) : String(o || "");
-    }
+    rr.orderNames = Array.isArray(payload.orderNames) ? payload.orderNames.slice() : rr.orderNames;
+    rr.ordersRaw = (payload.orderNames ?? payload.orders ?? payload.selectedOrders ?? payload.orderSelections ?? rr.ordersRaw ?? "");
+    rr.orders = toTextList(rr.ordersRaw, ", ");
+    if (!rr.orders && payload.ordersText) rr.orders = String(payload.ordersText || "");
+    if (!rr.orders && payload.orderedAllText) rr.orders = String(payload.orderedAllText || "");
   }
 
   // Provide stable defaults expected by the admin table
@@ -1366,11 +1544,12 @@ function renderAdminRows(rows){
     const r = normalizeAdminRow(raw);
     const tr = adminTableEl.insertRow(-1);
 
-    const ordersArr = Array.isArray(r.orderNames) ? r.orderNames
-                     : Array.isArray(r.orders) ? r.orders
-                     : null;
-    const ordersText = ordersArr ? ordersArr.join(", ")
-                     : (r.ordersJson || "");
+    const ordersText = toTextList(
+      Array.isArray(r.orderNames) && r.orderNames.length ? r.orderNames
+      : (Array.isArray(r.orders) && r.orders.length ? r.orders
+      : (r.orders || r.ordersText || r.ordersJson || "")),
+      ", "
+    );
 
     const cells = [
       r.receivedAt,
@@ -1401,11 +1580,12 @@ function rowsToCsv(rows){
   for (const raw of (rows || [])){
     const r = normalizeAdminRow(raw);
 
-    const ordersArr = Array.isArray(r.orderNames) ? r.orderNames
-                     : Array.isArray(r.orders) ? r.orders
-                     : null;
-    const ordersText = ordersArr ? ordersArr.join(" | ")
-                     : (r.ordersJson || "");
+    const ordersText = toTextList(
+      Array.isArray(r.orderNames) && r.orderNames.length ? r.orderNames
+      : (Array.isArray(r.orders) && r.orders.length ? r.orders
+      : (r.orders || r.ordersText || r.ordersJson || "")),
+      " | "
+    );
 
     lines.push([
       r.receivedAt || "",
@@ -1440,6 +1620,95 @@ function downloadTextFile(filename, text){
   setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
 }
 
+
+function getParticipantInfo(){
+  const institution = (document.getElementById("institutionInput")?.value || "").trim();
+  const trainingLevel = (document.getElementById("trainingLevelSelect")?.value || "").trim();
+  const trainingLevelOther = (document.getElementById("trainingLevelOtherInput")?.value || "").trim();
+  return { institution, trainingLevel, trainingLevelOther };
+}
+
+function getResolvedTrainingLevel(info){
+  const x = info || PARTICIPANT_INFO || {};
+  return String(x.trainingLevel || "").trim() === "Other" ? (String(x.trainingLevelOther || "").trim() || "Other") : String(x.trainingLevel || "").trim();
+}
+
+function validateLaunchFields(){
+  const errEl = document.getElementById("launchValidationError");
+  const info = getParticipantInfo();
+  const username = (document.getElementById("siteUsernameInput")?.value || "").trim();
+  const password = (document.getElementById("sitePasswordInput")?.value || "").trim();
+  let msg = "";
+  if (!info.institution) msg = "Please enter your institution before starting the module.";
+  else if (!info.trainingLevel) msg = "Please select your level of training before starting the module.";
+  else if (info.trainingLevel === "Other" && !info.trainingLevelOther) msg = "Please specify your level of training.";
+  else if (!username) msg = "Please enter the username before starting the module.";
+  else if (!password) msg = "Please enter the password before starting the module.";
+  else if (username !== SITE_USERNAME || password !== SITE_PASSWORD) msg = "Incorrect username or password.";
+  if (errEl){
+    errEl.textContent = msg;
+    errEl.classList.toggle("hidden", !msg);
+  }
+  return !msg;
+}
+
+function getSurveyResponses(prefix){
+  const out = {};
+  const total = prefix === "pre" ? 4 : 5;
+  for (let i=1; i<=total; i++){
+    const checked = document.querySelector(`input[name="${prefix}_q${i}"]:checked`);
+    out[`${prefix}_q${i}`] = checked ? String(checked.value) : "";
+  }
+  if (prefix === "post"){
+    out.post_feedback = (document.getElementById("postFeedbackText")?.value || "").trim();
+  }
+  return out;
+}
+
+function validateSurvey(prefix){
+  const total = prefix === "pre" ? 4 : 5;
+  const errEl = document.getElementById(prefix === "pre" ? "pretestValidationError" : "posttestValidationError");
+  let ok = true;
+  for (let i=1; i<=total; i++){
+    if (!document.querySelector(`input[name="${prefix}_q${i}"]:checked`)) { ok = false; break; }
+  }
+  if (errEl){
+    errEl.textContent = ok ? "" : "Please answer all required questions before continuing.";
+    errEl.classList.toggle("hidden", ok);
+  }
+  return ok;
+}
+
+function logSurveySubmission(kind, responses){
+  if (MODULE_MODE === "fun") return;
+  const prefix = kind === "pretest_submission" ? "pre" : "post";
+  const payload = Object.assign({
+    type: kind,
+    eventId: newEventId(kind),
+    moduleMode: MODULE_MODE,
+    sessionId: SESSION_ID,
+    learnerId: null,
+    institution: PARTICIPANT_INFO.institution || "",
+    trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
+    trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
+    trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
+    submittedAt: nowIso(),
+    pretestQ1: prefix === "pre" ? (responses.pre_q1 || "") : (PRETEST_RESPONSES?.pre_q1 || ""),
+    pretestQ2: prefix === "pre" ? (responses.pre_q2 || "") : (PRETEST_RESPONSES?.pre_q2 || ""),
+    pretestQ3: prefix === "pre" ? (responses.pre_q3 || "") : (PRETEST_RESPONSES?.pre_q3 || ""),
+    pretestQ4: prefix === "pre" ? (responses.pre_q4 || "") : (PRETEST_RESPONSES?.pre_q4 || ""),
+    posttestQ1: prefix === "post" ? (responses.post_q1 || "") : (POSTTEST_RESPONSES?.post_q1 || ""),
+    posttestQ2: prefix === "post" ? (responses.post_q2 || "") : (POSTTEST_RESPONSES?.post_q2 || ""),
+    posttestQ3: prefix === "post" ? (responses.post_q3 || "") : (POSTTEST_RESPONSES?.post_q3 || ""),
+    posttestQ4: prefix === "post" ? (responses.post_q4 || "") : (POSTTEST_RESPONSES?.post_q4 || ""),
+    posttestQ5: prefix === "post" ? (responses.post_q5 || "") : (POSTTEST_RESPONSES?.post_q5 || ""),
+    posttestFeedback: prefix === "post" ? (responses.post_feedback || "") : (POSTTEST_RESPONSES?.post_feedback || "")
+  }, getContextMeta());
+  CASE_LOG.push(payload);
+  persistLocal(payload);
+  postToBackend(payload);
+}
+
 function logModuleStart(){
   if (MODULE_MODE === "fun") return;
   const payload = Object.assign({
@@ -1448,6 +1717,10 @@ function logModuleStart(){
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
     learnerId: null,
+    institution: PARTICIPANT_INFO.institution || "",
+    trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
+    trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
+    trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
     startedAt: nowIso()
   }, getContextMeta());
 
@@ -1462,6 +1735,22 @@ function logCaseSubmission(caseId, selectedIds, totalCost, extra){
   const cfg = CASES[caseId];
   const ids = Array.from(selectedIds || []).filter(id => idToOrder.has(id));
   const names = ids.map(id => (idToOrder.get(id)?.name || id));
+  const mergedExtra = Object.assign({}, extra || {});
+
+  const orderedAll = Array.isArray(mergedExtra.orderedAll) ? mergedExtra.orderedAll.slice() : names.slice();
+  const orderedAppropriate = Array.isArray(mergedExtra.orderedAppropriate) ? mergedExtra.orderedAppropriate.slice() : [];
+  const orderedIntermediate = Array.isArray(mergedExtra.orderedIntermediate) ? mergedExtra.orderedIntermediate.slice() : [];
+  const orderedLowValue = Array.isArray(mergedExtra.orderedLowValue) ? mergedExtra.orderedLowValue.slice() : [];
+
+  mergedExtra.orderedAll = orderedAll;
+  mergedExtra.orderedAppropriate = orderedAppropriate;
+  mergedExtra.orderedIntermediate = orderedIntermediate;
+  mergedExtra.orderedLowValue = orderedLowValue;
+  mergedExtra.ordersText = toTextList(names, " | ");
+  mergedExtra.orderedAllText = toTextList(orderedAll, " | ");
+  mergedExtra.orderedAppropriateText = toTextList(orderedAppropriate, " | ");
+  mergedExtra.orderedIntermediateText = toTextList(orderedIntermediate, " | ");
+  mergedExtra.orderedLowValueText = toTextList(orderedLowValue, " | ");
 
   const payload = Object.assign({
     type: "case_submission",
@@ -1469,6 +1758,20 @@ function logCaseSubmission(caseId, selectedIds, totalCost, extra){
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
     learnerId: null,
+    institution: PARTICIPANT_INFO.institution || "",
+    trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
+    trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
+    trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
+    pretestQ1: PRETEST_RESPONSES?.pre_q1 || "",
+    pretestQ2: PRETEST_RESPONSES?.pre_q2 || "",
+    pretestQ3: PRETEST_RESPONSES?.pre_q3 || "",
+    pretestQ4: PRETEST_RESPONSES?.pre_q4 || "",
+    posttestQ1: POSTTEST_RESPONSES?.post_q1 || "",
+    posttestQ2: POSTTEST_RESPONSES?.post_q2 || "",
+    posttestQ3: POSTTEST_RESPONSES?.post_q3 || "",
+    posttestQ4: POSTTEST_RESPONSES?.post_q4 || "",
+    posttestQ5: POSTTEST_RESPONSES?.post_q5 || "",
+    posttestFeedback: POSTTEST_RESPONSES?.post_feedback || "",
     caseId: caseId,
     caseTitle: cfg ? cfg.title : ("Case " + caseId),
     caseDiagnosis: cfg ? cfg.diagnosis : "",
@@ -1477,7 +1780,7 @@ function logCaseSubmission(caseId, selectedIds, totalCost, extra){
     orderNames: names,
     totalCost: Number(totalCost || 0),
     costType: "diagnostic"
-  }, (extra || {}), getContextMeta());
+  }, mergedExtra, getContextMeta());
 
   CASE_LOG.push(payload);
   persistLocal(payload);
@@ -1498,10 +1801,20 @@ function logMedRecSubmission(medPayload){
     .map(s=>s.trim())
     .filter(Boolean);
 
-  const orders = choices.length ? choices : Object.keys(medPayload)
+  const rawOrders = choices.length ? choices : Object.keys(medPayload)
     .filter(k => k.startsWith("choice_"))
     .map(k => `${k.replace(/^choice_/, "")}:${String(medPayload[k] || "").trim()}`)
     .filter(s => !s.endsWith(":"));
+
+  const orders = rawOrders.map(s => {
+    const parts = String(s || "").split(":");
+    const medId = (parts[0] || "").trim();
+    const choice = normalizeChoiceLabel(parts.slice(1).join(":").trim());
+    const label = CASE5_MED_LABELS[medId] || medId || "medication";
+    return `${label} (${choice})`;
+  });
+
+  const orderedAll = orders.slice();
 
   const payload = Object.assign({
     type: "case_submission",
@@ -1509,12 +1822,35 @@ function logMedRecSubmission(medPayload){
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
     learnerId: null,
+    institution: PARTICIPANT_INFO.institution || "",
+    trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
+    trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
+    trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
+    pretestQ1: PRETEST_RESPONSES?.pre_q1 || "",
+    pretestQ2: PRETEST_RESPONSES?.pre_q2 || "",
+    pretestQ3: PRETEST_RESPONSES?.pre_q3 || "",
+    pretestQ4: PRETEST_RESPONSES?.pre_q4 || "",
+    posttestQ1: POSTTEST_RESPONSES?.post_q1 || "",
+    posttestQ2: POSTTEST_RESPONSES?.post_q2 || "",
+    posttestQ3: POSTTEST_RESPONSES?.post_q3 || "",
+    posttestQ4: POSTTEST_RESPONSES?.post_q4 || "",
+    posttestQ5: POSTTEST_RESPONSES?.post_q5 || "",
+    posttestFeedback: POSTTEST_RESPONSES?.post_feedback || "",
     caseId: 5,
     caseTitle: (cfg && cfg.title) ? cfg.title : "Case 5 – Medication reconciliation",
     caseDiagnosis: (cfg && cfg.diagnosis) ? cfg.diagnosis : "Medication reconciliation",
     submittedAt,
     orders,
     orderNames: orders,
+    ordersText: toTextList(orders, " | "),
+    orderedAll: orderedAll,
+    orderedAllText: toTextList(orderedAll, " | "),
+    orderedAppropriate: [],
+    orderedAppropriateText: "",
+    orderedIntermediate: [],
+    orderedIntermediateText: "",
+    orderedLowValue: [],
+    orderedLowValueText: "",
     // Store the selected monthly medication total in the standard totalCost field for compatibility
     totalCost: Number(medPayload.selected_monthly_total || 0),
     costType: "medications_monthly",
@@ -1564,6 +1900,20 @@ function logModuleComplete(){
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
     learnerId: null,
+    institution: PARTICIPANT_INFO.institution || "",
+    trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
+    trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
+    trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
+    pretestQ1: PRETEST_RESPONSES?.pre_q1 || "",
+    pretestQ2: PRETEST_RESPONSES?.pre_q2 || "",
+    pretestQ3: PRETEST_RESPONSES?.pre_q3 || "",
+    pretestQ4: PRETEST_RESPONSES?.pre_q4 || "",
+    posttestQ1: POSTTEST_RESPONSES?.post_q1 || "",
+    posttestQ2: POSTTEST_RESPONSES?.post_q2 || "",
+    posttestQ3: POSTTEST_RESPONSES?.post_q3 || "",
+    posttestQ4: POSTTEST_RESPONSES?.post_q4 || "",
+    posttestQ5: POSTTEST_RESPONSES?.post_q5 || "",
+    posttestFeedback: POSTTEST_RESPONSES?.post_feedback || "",
     completedAt: nowIso(),
     totalCostAllCases: Number(sumCost || 0),
     diagnosticTotalCost: Number(diagnosticTotal || 0),
@@ -1642,11 +1992,43 @@ function fuzzyTokenMatch(query, text){
   return false;
 }
 
+const CASE5_MED_LABELS = {
+  lisinopril: "Lisinopril",
+  hctz: "Hydrochlorothiazide",
+  bb: "Beta blocker",
+  hydral: "Hydralazine",
+  ins: "Insulin",
+  met: "Metformin",
+  asp: "Aspirin",
+  statin: "Statin",
+  ppi: "PPI",
+  hep: "Heparin",
+  abx: "Antibiotic",
+  tyl: "Acetaminophen",
+  ibu: "Ibuprofen",
+  oxy: "Oxycodone",
+  oxycont: "OxyContin",
+  mel: "Melatonin",
+  quet: "Quetiapine",
+  loraz: "Lorazepam"
+};
+
 /* =========================
    Case definitions
    ========================= */
-let ACTIVE_CASE = 1;
+let ACTIVE_CASE = 0;
 const CASES = {
+  0: {
+    title: "Pre-test",
+    diagnosis: "",
+    attribution: "",
+    contentHtml: `<div class="hint small">Complete the pre-test below before starting Case 1.</div>`,
+    highValueIds: new Set([]),
+    intermediateIds: new Map([]),
+    lowValueReasons: new Map([]),
+    recommendedIds: [],
+    pathwayHtml: ``
+  },
   1: {
     title: "Case 1 – Chest pain",
     diagnosis: "Pulmonary Embolism",
@@ -1677,17 +2059,19 @@ const CASES = {
         </div>
       </div>
     `,
-    highValueIds: new Set(["EKG","TROP","CBC","BMP","CMP","CXR","CTPA"]),
+    highValueIds: new Set(["EKG","TROP","CBC","BMP","CMP","CTPA","PDF_4569759","LACTATE"]),
 highValueReasons: new Map([
   ["EKG","High Value – Initial chest pain evaluation should include EKG to assess for ischemia or arrhythmia."],
   ["TROP","High Value – Evaluates for myocardial injury in the setting of chest pain."],
   ["CBC","High Value – Assesses for anemia or infection that could contribute to dyspnea or chest pain."],
   ["BMP","High Value – Evaluates electrolytes and renal function prior to contrast imaging."],
   ["CMP","High Value – Acceptable alternative to BMP; broader metabolic assessment."],
-  ["CXR","Intermediate (conditional) – Useful to evaluate alternate causes (pneumonia, pneumothorax); may be optional if CTA already obtained."],
-  ["CTPA","High Value – Definitive imaging for suspected pulmonary embolism in high pre-test probability."]
+  ["CTPA","High Value – Definitive imaging for suspected pulmonary embolism in high pre-test probability."],
+  ["PDF_4569759","High Value – BNP can help risk-stratify pulmonary emboli and act as a surrogate of heart strain, however, it should not be used to confirm the diagnosis. Importantly, BNP lacks specificity; other conditions like heart failure or chronic kidney disease also cause elevations."],
+  ["LACTATE","High Value – Lactate can help risk-stratify patients with pulmonary emboli and act as a surrogate of heart strain. Since this patient is showing signs of hemodynamic changes such as tachycardia and tachypnea, a lactate would be reasonable in this situation."]
 ]),
     intermediateIds: new Map([
+  ["CXR","Intermediate (conditional) – Useful to evaluate alternate causes (pneumonia, pneumothorax); may be optional if CTA already obtained."],
   ["DDIMER_QUANT","Intermediate – In high pre-test probability patients, D-dimer is not required prior to definitive imaging."],
   ["ECHO","Intermediate – May be obtained later in hospitalization; not required in initial ED evaluation without signs of heart failure."],
   ["DVT_US","Intermediate – May be helpful if DVT suspected; not necessary if proceeding directly to CTA."],
@@ -1695,10 +2079,18 @@ highValueReasons: new Map([
   ["PT_INR","Intermediate – Helpful before anticoagulation but not diagnostic for PE."]
 ]),
 lowValueReasons: new Map([
-  ["PDF_4631260","Low Value – Does not specifically evaluate pulmonary arteries; CTA PE protocol is preferred."],
-  ["PDF_4631250","Low Value – Insufficient to evaluate pulmonary embolism (and not PE protocol)."],
+  ["PDF_4631260","Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required."],
+  ["PDF_4631250","Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required."],
+  ["PDF_4631270","Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required."],
+  ["PDF_4630297","Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required."],
+  ["COVID_PCR","Low Value – While viral illness could cause tachycardia and hypoxia, the patient's constellation of symptoms is more concerning for an alternative cause. We would expect someone with COVID to have fever or chills, cough, and often a sore throat."],
+  ["PDF_4720655","Low Value – Blood gas analysis (arterial or venous) does not have sufficient diagnostic value to confirm or exclude PE and would have low utility in this case."],
   ["NO_TESTING","Low Value – Patient has concerning features; diagnostic evaluation is indicated."]
 ]),
+    lowValueNamePatterns: [
+      { re: /\bCT\s+Chest\b/i, reason: "Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required." },
+      { re: /Blood\s+Gas|ABG|Arterial\s+Blood\s+Gas|Venous\s+Ph\s+Blood\s+Gas/i, reason: "Low Value – Blood gas analysis (arterial or venous) does not have sufficient diagnostic value to confirm or exclude PE and would have low utility in this case." }
+    ],
     recommendedIds: ["EKG","TROP","CBC","BMP","CTPA"],
     pathwayHtml: `<strong>How to think about high-value testing in this case</strong>
 <p class="small">
@@ -1786,16 +2178,22 @@ highValueReasons: new Map([
   ]),
 lowValueReasons: new Map([
   ["UA","Low Value – In nonpregnant patients, there is no indication to treat asymptomatic bacteriuria; testing without urinary symptoms can lead to unnecessary antibiotics."],
-  ["URINE_CX","Low Value – Urine culture is not indicated without urinary symptoms; positives often reflect asymptomatic bacteriuria and can drive unnecessary antibiotics."]
+  ["URINE_CX","Low Value – Urine culture is not indicated without urinary symptoms; positives often reflect asymptomatic bacteriuria and can drive unnecessary antibiotics."],
+  ["PDF_4566588","Low Value – This patient is low risk by Centor/CENTAUR features, so testing for strep throat is not recommended."],
+  ["RPP","Low Value – Broad and costly; would not be indicated in this otherwise healthy, immunocompetent patient. Consider only if results would change management in high-risk or severe cases."],
+  ["PDF_4569813","Low Value – Broad and costly; would not be indicated in this otherwise healthy, immunocompetent patient. Consider only if results would change management in high-risk or severe cases."],
+  ["LACTATE","Low Value – This otherwise healthy patient likely has a viral infection. Her vitals are stable and there is no evidence of a severe infection that would require broader workup at this time."],
+  ["PDF_4564703","Low Value – Prior to obtaining invasive testing, it would be prudent to ask the patient about sexual history or menstrual history."],
+  ["PDF_4569705","Low Value – Prior to obtaining invasive testing, it would be prudent to ask the patient about sexual history or menstrual history."]
 ]),
   intermediateIds: new Map([
+    ["NO_TESTING","Intermediate – If the patient appears stable, it would not be unreasonable to defer additional testing and opt for symptomatic management. However, identifying influenza or COVID may open treatment options and improve counseling."],
     ["CBC","Intermediate (conditional) – may be reasonable if concern for bacterial infection or more severe illness."],
     ["BMP","Intermediate (conditional) – consider with dehydration, poor PO intake, or systemic illness concern."],
     ["CMP","Intermediate (conditional) – acceptable alternative to BMP if broader metabolic/hepatic assessment needed."],
     ["CXR","Intermediate (conditional) – consider if clinical concern for pneumonia (focal findings, worsening symptoms, hypoxia)."],
     ["BLOOD_CX","Intermediate – consider only if toxic-appearing, immunocompromised, or concern for sepsis/severe pneumonia."],
-    ["SPUTUM_CX","Intermediate – usually reserved for severe/hospitalized pneumonia or concern for resistant pathogens."],
-    ["RPP","Intermediate – broad and costly; consider if results would change management in high-risk/severe cases."]
+    ["SPUTUM_CX","Intermediate – usually reserved for severe/hospitalized pneumonia or concern for resistant pathogens."]
   ]),
   recommendedIds: ["COVID_PCR","FLU_PCR"],
     optionalRecommendedIds: ["CXR","CBC","BMP","CMP"],
@@ -1873,8 +2271,8 @@ lowValueReasons: new Map([
     ["SPUTUM_CX","High Value – If sputum can be obtained (or severe disease), culture can help tailor therapy."]
   ]),
   intermediateIds: new Map([
-    ["COVID_PCR","Intermediate – Consider depending on local prevalence/clinical context, but do not delay sepsis evaluation."],
-    ["FLU_PCR","Intermediate – Consider seasonally or if it would change management; do not delay sepsis evaluation."],
+    ["COVID_PCR","Intermediate – From the prior case, we know the patient has been diagnosed with COVID. Repeating the testing at this time would yield limited utility."],
+    ["FLU_PCR","From the prior case, we know the patient has been diagnosed with COVID. Repeating the testing at this time would yield limited utility."],
     ["RPP","Intermediate – Broad/costly; consider if results will change management in severe/high-risk cases."],
     ["UA","Intermediate – Consider if symptoms/signs suggest urinary source; not routine without urinary symptoms."],
     ["URINE_CX","Intermediate – Consider only if urinary source suspected; avoid reflex culture without symptoms."]
@@ -1886,7 +2284,8 @@ lowValueReasons: new Map([
   ["PDF_4631270","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
   ["CTPA","Low Value – CTA chest is unnecessary for this presentation; prioritize pneumonia/sepsis evaluation with CXR and cultures."],
   ["RPP","Low Value – In an otherwise healthy, non-immunocompromised patient with suspected bacterial pneumonia/sepsis, RPP is unlikely to change management; focus on treatment and source evaluation."],
-  ["NO_TESTING","Low Value – Ill-appearing with sepsis physiology; diagnostic evaluation is indicated."]
+  ["NO_TESTING","Low Value – Ill-appearing with sepsis physiology; diagnostic evaluation is indicated."],
+  ["PDF_4569819","Low Value – In a patient presenting with sepsis, the decision to start antibiotics should be based on clinical evaluation alone. Procalcitonin may help later with de-escalation or discontinuation, but it is not useful for the initial presentation."]
 ]),
     lowValueNamePatterns: [
       { re: /\bCT\s+Chest\b/i, reason: "Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia." },
@@ -1997,6 +2396,12 @@ lowValueReasons: new Map([
     `,
     highValueIds: new Set(["NO_TESTING"]),
     intermediateIds: new Map([]),
+    lowValueReasons: new Map([
+      ["CT_L_SPINE","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
+      ["XR_L_SPINE","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
+      ["PDF_4632132","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
+      ["PDF_4639508","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."]
+    ]),
     recommendedIds: ["NO_TESTING"],
     pathwayHtml: `
 <strong>Answer</strong>
@@ -2046,12 +2451,23 @@ lowValueReasons: new Map([
     contentHtml: `
       <div class="hint small" style="margin-top:10px;">
         Complete the embedded medication reconciliation case below. Costs and high-value feedback are revealed after you submit within Case 5.
-        After you submit, a <strong>Finish Module</strong> button will appear.
+        After you submit, a <strong>Post-test</strong> button will appear.
       </div>
     `,
     // Placeholder fields to keep shared logic safe (diagnostic-testing UI is hidden for Case 5)
     highValueIds: new Set([]),
     highValueReasons: new Map([]),
+    intermediateIds: new Map([]),
+    lowValueReasons: new Map([]),
+    recommendedIds: [],
+    pathwayHtml: ``
+  },
+  6: {
+    title: "Post-test",
+    diagnosis: "",
+    attribution: "",
+    contentHtml: `<div class="hint small">Complete the post-test below to finish the module.</div>`,
+    highValueIds: new Set([]),
     intermediateIds: new Map([]),
     lowValueReasons: new Map([]),
     recommendedIds: [],
@@ -2098,6 +2514,13 @@ const case5WrapEl = document.getElementById("case5MedRec");
 const case5StatusEl = document.getElementById("case5Status");
 const medRecFrameEl = document.getElementById("medRecFrame");
 const case5SrcTplEl = document.getElementById("case5Srcdoc");
+const pretestSectionEl = document.getElementById("pretestSection");
+const posttestSectionEl = document.getElementById("posttestSection");
+const pretestFormEl = document.getElementById("pretestForm");
+const posttestFormEl = document.getElementById("posttestForm");
+const institutionInputEl = document.getElementById("institutionInput");
+const trainingLevelSelectEl = document.getElementById("trainingLevelSelect");
+const trainingLevelOtherInputEl = document.getElementById("trainingLevelOtherInput");
 
 let CASE5_LOADED = false;
 let CASE5_SUBMITTED = false;
@@ -2177,6 +2600,13 @@ function setCase5Visible(visible){
   case5WrapEl.style.display = show ? "block" : "none";
   if (show) ensureCase5Loaded();
 }
+function setSurveyVisible(which){
+  const showPre = which === "pre";
+  const showPost = which === "post";
+  if (pretestSectionEl){ pretestSectionEl.classList.toggle("hidden", !showPre); pretestSectionEl.style.display = showPre ? "block" : "none"; }
+  if (posttestSectionEl){ posttestSectionEl.classList.toggle("hidden", !showPost); posttestSectionEl.style.display = showPost ? "block" : "none"; }
+}
+
 
 function setMedRecFrameHeight(px){
   if (!medRecFrameEl) return;
@@ -2203,7 +2633,7 @@ window.addEventListener("message", (evt)=>{
     // If the learner already submitted earlier in this session, keep the Finish button visible.
     if (CASE5_SUBMITTED && continueBtnEl){
       continueBtnEl.classList.remove("hidden");
-      continueBtnEl.textContent = "Finish Module";
+      continueBtnEl.textContent = (ACTIVE_CASE === 6 ? "Finish Module" : "Next Section");
     }
     return;
   }
@@ -2216,7 +2646,7 @@ window.addEventListener("message", (evt)=>{
     logMedRecSubmission(CASE5_LAST_PAYLOAD);
     if (continueBtnEl){
       continueBtnEl.classList.remove("hidden");
-      continueBtnEl.textContent = "Finish Module";
+      continueBtnEl.textContent = "Next Section";
     }
   }
 });
@@ -2466,30 +2896,47 @@ function setActiveCase(caseId){
 
   wellsContainerEl.classList.add("hidden");
   resetWellsUI();
+  setSurveyVisible(null);
 
-  // Toggle between the diagnostic-testing UI (Cases 1–4) and the embedded med-rec UI (Case 5)
+  if (caseId === 0){
+    setDxUiVisible(false);
+    setCase5Visible(false);
+    setSurveyVisible("pre");
+    if (continueBtnEl){
+      continueBtnEl.classList.toggle("hidden", !PRETEST_RESPONSES);
+      continueBtnEl.textContent = "Next Case";
+    }
+    return;
+  }
+
   if (caseId === 5){
     setDxUiVisible(false);
     setCase5Visible(true);
-
-    // If the learner already submitted earlier in this session, don't force a re-submit just to finish.
     if (CASE5_SUBMITTED){
-      setCase5Status("Submission already received for this case. You can finish the module, or adjust and re-submit within Case 5 if desired.", "good");
+      setCase5Status("Submission already received for this case. You can continue to the post-test, or adjust and re-submit within Case 5 if desired.", "good");
       if (continueBtnEl){
         continueBtnEl.classList.remove("hidden");
-        continueBtnEl.textContent = "Finish Module";
+        continueBtnEl.textContent = "Next Section";
       }
     } else {
-      setCase5Status("Complete the medication reconciliation. After you submit inside Case 5, the Finish Module button will appear.", "muted");
+      setCase5Status("Complete the medication reconciliation. After you submit inside Case 5, the post-test button will appear.", "muted");
     }
+    return;
+  }
 
-    // No diagnostic search rendering for Case 5
+  if (caseId === 6){
+    setDxUiVisible(false);
+    setCase5Visible(false);
+    setSurveyVisible("post");
+    if (continueBtnEl){
+      continueBtnEl.classList.toggle("hidden", !POSTTEST_RESPONSES);
+      continueBtnEl.textContent = "Finish Module";
+    }
     return;
   }
 
   setCase5Visible(false);
   setDxUiVisible(true);
-
   renderMatches();
   renderSelectedOrders();
 }
@@ -2668,7 +3115,7 @@ orderFormEl.addEventListener("submit", (e)=>{
   resultsEl.classList.remove("hidden");
   if (continueBtnEl) {
     continueBtnEl.classList.remove("hidden");
-    continueBtnEl.textContent = (ACTIVE_CASE < 5) ? "Next Case" : "Finish Module";
+    continueBtnEl.textContent = (ACTIVE_CASE < 5) ? "Next Case" : (ACTIVE_CASE === 5 ? "Next Section" : "Finish Module");
   }
   // Show pathway comparison only for Case 1
   const pc = document.getElementById("pathwayComparisonSection");
@@ -2677,20 +3124,36 @@ orderFormEl.addEventListener("submit", (e)=>{
   initSepsisChecklist();
 });
 
+document.getElementById("tab0").addEventListener("click", ()=>setActiveCase(0));
 document.getElementById("tab1").addEventListener("click", ()=>setActiveCase(1));
 document.getElementById("tab2").addEventListener("click", ()=>setActiveCase(2));
 document.getElementById("tab3").addEventListener("click", ()=>setActiveCase(3));
 document.getElementById("tab4").addEventListener("click", ()=>setActiveCase(4));
 document.getElementById("tab5").addEventListener("click", ()=>setActiveCase(5));
+document.getElementById("tab6").addEventListener("click", ()=>setActiveCase(6));
 
 if (continueBtnEl){
   continueBtnEl.addEventListener("click", ()=>{
-    // Case 5 finishes the module, and is gated by the embedded case's own submit button.
+    if (ACTIVE_CASE === 0){
+      if (!PRETEST_RESPONSES) return;
+      setActiveCase(1);
+      window.scrollTo({top: 0, behavior: "smooth"});
+      return;
+    }
+
     if (ACTIVE_CASE === 5){
       if (!CASE5_SUBMITTED) return;
+      setActiveCase(6);
+      window.scrollTo({top: 0, behavior: "smooth"});
+      return;
+    }
+
+    if (ACTIVE_CASE === 6){
+      if (!POSTTEST_RESPONSES) return;
       logModuleComplete();
-      // Hide Case 5 UI and show a completion card
       setCase5Visible(false);
+      setSurveyVisible(null);
+      setDxUiVisible(false);
       resultsEl.classList.remove("hidden");
       resultsEl.innerHTML = '<div class="card"><h2>Module Complete</h2><p class="muted">Thank you for completing the High-Value Care Simulator.</p><p class="small">You may close this window or refresh the page to restart.</p></div>';
       if (continueBtnEl) continueBtnEl.classList.add("hidden");
@@ -2698,17 +3161,10 @@ if (continueBtnEl){
       return;
     }
 
-    // For Cases 1–4, prevent advancing before diagnostic-test submission results are visible
     if (resultsEl.classList.contains("hidden")) return;
 
     if (ACTIVE_CASE < 5){
       setActiveCase(ACTIVE_CASE + 1);
-      window.scrollTo({top: 0, behavior: "smooth"});
-    } else {
-      // Safety fallback
-      logModuleComplete();
-      resultsEl.innerHTML = '<div class="card"><h2>Module Complete</h2><p class="muted">Thank you for completing the High-Value Care Simulator.</p><p class="small">You may close this window or refresh the page to restart.</p></div>';
-      if (continueBtnEl) continueBtnEl.classList.add("hidden");
       window.scrollTo({top: 0, behavior: "smooth"});
     }
   });
@@ -2716,12 +3172,16 @@ if (continueBtnEl){
 
 // Landing page start controls
 function startModule(mode){
+  if (!validateLaunchFields()) return;
+  PARTICIPANT_INFO = getParticipantInfo();
   MODULE_MODE = mode;
   SESSION_ID = getSessionId();
   CASE_LOG = [];
   resetCaseCompletion();
   CASE5_SUBMITTED = false;
   CASE5_LAST_PAYLOAD = null;
+  PRETEST_RESPONSES = null;
+  POSTTEST_RESPONSES = null;
   // Reload the embedded Case 5 iframe to reset its internal state for a new session.
   try{
     if (medRecFrameEl && case5SrcTplEl){
@@ -2738,10 +3198,49 @@ function startModule(mode){
   } catch(e) {}
 
 
-setActiveCase(1);
+setActiveCase(0);
   // Put cursor in search box for rapid entry
   if (searchEl) searchEl.focus();
   window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+if (trainingLevelSelectEl){
+  trainingLevelSelectEl.addEventListener("change", ()=>{
+    const showOther = trainingLevelSelectEl.value === "Other";
+    if (trainingLevelOtherInputEl){
+      trainingLevelOtherInputEl.classList.toggle("hidden", !showOther);
+      trainingLevelOtherInputEl.style.display = showOther ? "block" : "none";
+      if (!showOther) trainingLevelOtherInputEl.value = "";
+    }
+  });
+}
+
+if (pretestFormEl){
+  pretestFormEl.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    if (!validateSurvey("pre")) return;
+    PRETEST_RESPONSES = getSurveyResponses("pre");
+    logSurveySubmission("pretest_submission", PRETEST_RESPONSES);
+    markCaseCompleted(0);
+    if (continueBtnEl){
+      continueBtnEl.classList.remove("hidden");
+      continueBtnEl.textContent = "Next Case";
+    }
+  });
+}
+
+if (posttestFormEl){
+  posttestFormEl.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    if (!validateSurvey("post")) return;
+    POSTTEST_RESPONSES = getSurveyResponses("post");
+    logSurveySubmission("posttest_submission", POSTTEST_RESPONSES);
+    markCaseCompleted(6);
+    if (continueBtnEl){
+      continueBtnEl.classList.remove("hidden");
+      continueBtnEl.textContent = "Finish Module";
+    }
+  });
 }
 
 if (startFunBtn) startFunBtn.addEventListener("click", ()=>startModule("fun"));
@@ -2751,6 +3250,9 @@ if (backForMoreBtn) backForMoreBtn.addEventListener("click", ()=>startModule("te
 // Start on landing by default
 if (appEl) appEl.classList.add("hidden");
 if (landingEl) landingEl.classList.remove("hidden");
+if (pretestSectionEl) pretestSectionEl.classList.add("hidden");
+if (posttestSectionEl) posttestSectionEl.classList.add("hidden");
+if (trainingLevelOtherInputEl) trainingLevelOtherInputEl.classList.add("hidden");
 
 
 /* =========================
@@ -2854,6 +3356,6 @@ if (adminDownloadCsvBtnEl){
 
 </script>
 
-<div class="global-footer">Module developed at the UCLA David Geffen School of Medicine by Dr. Ghadi Ghanem and Dr. Alexandra Glaeser.</div>
+<div class="global-footer">Module developed by Dr. Ghadi Ghanem and Dr. Alexandra Glaeser</div>
 </body>
 </html>
