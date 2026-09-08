@@ -1,0 +1,10 @@
+# Normalize line endings so diffs stay readable across Windows/macOS/Linux.
+# Without this, a checkout on a different OS can show every line as "changed",
+# which destroys the ability to review what actually changed.
+* text=auto eol=lf
+
+# The module itself. Pinning to LF keeps GitHub diffs meaningful.
+*.html text eol=lf
+*.md    text eol=lf
+*.js    text eol=lf
+*.css   text eol=lf
