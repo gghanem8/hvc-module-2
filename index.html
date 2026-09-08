@@ -55,6 +55,14 @@
   .pill.good { background: rgba(0,128,0,0.10); color: green; }
   .pill.warn { background: rgba(196,122,0,0.12); color: #8a5200; }
   .pill.bad { background: rgba(176,0,32,0.10); color: #b00020; }
+  /* Missed-order feedback (added 2026-09) */
+  .missed-box { margin-top: 14px; padding: 12px 14px; border-radius: 10px;
+                border-left: 4px solid #b00020; background: rgba(176,0,32,0.06); }
+  .missed-box.neutral { border-left-color: #c47a00; background: rgba(196,122,0,0.07); }
+  .missed-box.clear   { border-left-color: green;   background: rgba(0,128,0,0.07); }
+  .missed-title { font-weight: 700; margin-bottom: 2px; }
+  .missed-box ul { margin: 10px 0 0; padding-left: 18px; }
+  .missed-box li { margin-bottom: 10px; }
 
   table { width:100%; border-collapse: collapse; margin-top: 10px; background:#fff; }
   th,td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
@@ -483,6 +491,7 @@ table th{
       <div class="card">
         <h3 style="margin-top:0;">Your Orders</h3>
         <div id="orderFeedback"></div>
+        <div id="missedFeedback"></div>
       </div>
 
       <div class="card">
@@ -1076,18 +1085,18 @@ const orderCatalog = [
   { id:"PDF_4562150", name:"Amylase", cost:30.00, synonyms:[] },
   { id:"BLOOD_CX", name:"Blood culture (set)", cost:430.00, synonyms:["blood culture", "blood cx", "bld cx"] },
   { id:"BMP", name:"BMP", cost:210.00, synonyms:["basic metabolic panel"] },
-  { id:"PDF_4567070", name:"Body Fluid Culture", cost:111.00, synonyms:[] },
-  { id:"PDF_4569740", name:"Body Fluid Panel Cell Count", cost:70.00, synonyms:[] },
+  { id:"PDF_4567070", name:"Body fluid culture", cost:111.00, synonyms:["body fluid culture"] },
+  { id:"PDF_4569740", name:"Body fluid cell count", cost:70.00, synonyms:["body fluid panel cell count"] },
   { id:"CBC", name:"CBC", cost:140.00, synonyms:["cbc w diff", "cbc with differential", "cbc w/ diff"] },
   { id:"CXR", name:"Chest X-ray (CXR)", cost:360.00, synonyms:["cxr", "xr chest", "chest xray", "chest x-ray", "portable cxr", "pa lateral"] },
-  { id:"PDF_4569815", name:"Chlamydophila Pneumoniae PCR", cost:182.00, synonyms:[] },
+  { id:"PDF_4569815", name:"Chlamydophila pneumoniae PCR", cost:182.00, synonyms:["chlamydophila pneumoniae pcr"] },
   { id:"CMP", name:"CMP", cost:340.00, synonyms:["comprehensive metabolic panel"] },
   { id:"COVID_PCR", name:"COVID-19 PCR (SARS-CoV-2)", cost:210.00, synonyms:["covid", "sars cov 2", "sars-cov-2", "covid pcr"] },
-  { id:"PDF_4569724", name:"Csf Culture", cost:111.00, synonyms:[] },
-  { id:"PDF_4569744", name:"Csf Panel Culture Cpt3", cost:111.00, synonyms:[] },
-  { id:"PDF_4569745", name:"Csf Panel Giemsa Stain Cpt4", cost:30.00, synonyms:[] },
-  { id:"PDF_4569746", name:"Csf Panel Glucose Cpt5", cost:30.00, synonyms:[] },
-  { id:"PDF_4569743", name:"Csf Panel Protein Cpt2", cost:30.00, synonyms:[] },
+  { id:"PDF_4569724", name:"CSF culture", cost:111.00, synonyms:["csf culture"] },
+  { id:"PDF_4569744", name:"CSF panel — culture", cost:111.00, synonyms:["csf panel culture cpt3"] },
+  { id:"PDF_4569745", name:"CSF panel — Giemsa stain", cost:30.00, synonyms:["csf panel giemsa stain cpt4"] },
+  { id:"PDF_4569746", name:"CSF panel — glucose", cost:30.00, synonyms:["csf panel glucose cpt5"] },
+  { id:"PDF_4569743", name:"CSF panel — protein", cost:30.00, synonyms:["csf panel protein cpt2"] },
   { id:"PDF_4634196", name:"CT abdomen/pelvis without contrast", cost:4135.00, synonyms:[] },
   { id:"PDF_4634195", name:"CT abdomen/pelvis with contrast", cost:4826.00, synonyms:[] },
   { id:"PDF_4634197", name:"CT abdomen/pelvis with/without contrast", cost:5100.00, synonyms:[] },
@@ -1099,7 +1108,7 @@ const orderCatalog = [
   { id:"PDF_4631260", name:"CT chest with contrast", cost:3680.00, synonyms:[] },
   { id:"PDF_4631270", name:"CT chest with/without contrast", cost:3990.00, synonyms:[] },
   { id:"PDF_4631250", name:"CT chest without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4630297", name:"Low dose CT chest without", cost:3213.00, synonyms:[] },
+  { id:"PDF_4630297", name:"Low-dose CT chest without contrast", cost:3213.00, synonyms:["low dose ct chest without"] },
   { id:"PDF_4633701", name:"CT left lower extremity with contrast", cost:2620.00, synonyms:[] },
   { id:"PDF_4633705", name:"CT left lower extremity without contrast", cost:2247.00, synonyms:[] },
   { id:"PDF_4633706", name:"CT left lower extremity with/without contrast", cost:3447.00, synonyms:[] },
@@ -1120,64 +1129,64 @@ const orderCatalog = [
   { id:"PDF_4633202", name:"CT right upper extremity with contrast", cost:2819.00, synonyms:[] },
   { id:"PDF_4633201", name:"CT right upper extremity without contrast", cost:2412.00, synonyms:[] },
   { id:"PDF_4633205", name:"CT right upper extremity with/without contrast", cost:3447.00, synonyms:[] },
-  { id:"PDF_4632127", name:"CT spine cervical without contrast", cost:3157.00, synonyms:[] },
-  { id:"PDF_4632132", name:"CT spine lumbar with contrast", cost:2839.00, synonyms:[] },
-  { id:"PDF_4639508", name:"CT spine lumbar with/without contrast", cost:3761.00, synonyms:[] },
-  { id:"PDF_4632129", name:"CT spine thoracic with contrast", cost:3132.00, synonyms:[] },
-  { id:"PDF_4632128", name:"CT spine thoracic without contrast", cost:2744.00, synonyms:[] },
+  { id:"PDF_4632127", name:"CT cervical spine without contrast", cost:3157.00, synonyms:["ct spine cervical without contrast"] },
+  { id:"PDF_4632132", name:"CT lumbar spine with contrast", cost:2839.00, synonyms:["ct spine lumbar with contrast"] },
+  { id:"PDF_4639508", name:"CT lumbar spine with and without contrast", cost:3761.00, synonyms:["ct spine lumbar with/without contrast"] },
+  { id:"PDF_4632129", name:"CT thoracic spine with contrast", cost:3132.00, synonyms:["ct spine thoracic with contrast"] },
+  { id:"PDF_4632128", name:"CT thoracic spine without contrast", cost:2744.00, synonyms:["ct spine thoracic without contrast"] },
   { id:"PDF_4364178", name:"CT urogram", cost:5100.00, synonyms:[] },
   { id:"PDF_4639513", name:"CTA abdomen", cost:4272.00, synonyms:[] },
   { id:"PDF_4639520", name:"CTA abdomen/pelvis", cost:6413.00, synonyms:[] },
-  { id:"PDF_4639510", name:"CTA aorto bifemoral", cost:3721.00, synonyms:[] },
-  { id:"CTPA", name:"CTA chest – pe protocol (ctpa)", cost:4990.00, synonyms:["cta", "ctpa", "pe protocol", "ct angio pulmonary", "pulmonary embolism"] },
+  { id:"PDF_4639510", name:"CTA aorto-bifemoral", cost:3721.00, synonyms:["cta aorto bifemoral"] },
+  { id:"CTPA", name:"CT pulmonary angiography (CTPA)", cost:4990.00, synonyms:["cta", "ctpa", "pe protocol", "ct angio pulmonary", "pulmonary embolism", "cta chest – pe protocol (ctpa)"] },
   { id:"PDF_4639512", name:"CTA lower extremity left", cost:2000.00, synonyms:[] },
   { id:"PDF_4639514", name:"CTA lower extremity right", cost:2000.00, synonyms:[] },
   { id:"PDF_4639509", name:"CTA pelvis", cost:4412.00, synonyms:[] },
   { id:"PDF_4639519", name:"CTA thoracic aorta", cost:3859.00, synonyms:[] },
   { id:"PDF_4639511", name:"CTA upper extremity", cost:4412.00, synonyms:[] },
-  { id:"PDF_4569725", name:"Culture Aerobic", cost:111.00, synonyms:[] },
-  { id:"PDF_4567075", name:"Culture Anaerobic", cost:104.00, synonyms:[] },
-  { id:"PDF_4562251", name:"Direct Bilirubin", cost:24.00, synonyms:[] },
-  { id:"PDF_4563718", name:"Direct Hdl", cost:84.00, synonyms:[] },
+  { id:"PDF_4569725", name:"Aerobic culture", cost:111.00, synonyms:["culture aerobic"] },
+  { id:"PDF_4567075", name:"Anaerobic culture", cost:104.00, synonyms:["culture anaerobic"] },
+  { id:"PDF_4562251", name:"Direct bilirubin", cost:24.00, synonyms:["direct bilirubin"] },
+  { id:"PDF_4563718", name:"Direct HDL", cost:84.00, synonyms:["direct hdl"] },
   { id:"ECHO", name:"Echocardiogram (Echo/TTE)", cost:3470.00, synonyms:["echo", "tte", "transthoracic echo"] },
   { id:"EKG", name:"EKG", cost:500.00, synonyms:["ecg", "electrocardiogram"] },
-  { id:"PDF_4569726", name:"Eye Culture", cost:111.00, synonyms:[] },
-  { id:"PDF_4569811", name:"Gastrointestinal Panel Biofire Film (22)", cost:973.00, synonyms:[] },
-  { id:"PDF_4566588", name:"Group A Strep By PCR", cost:63.00, synonyms:[] },
+  { id:"PDF_4569726", name:"Eye culture", cost:111.00, synonyms:["eye culture"] },
+  { id:"PDF_4569811", name:"GI pathogen panel (BioFire, 22 targets)", cost:973.00, synonyms:["gastrointestinal panel biofire film (22)"] },
+  { id:"PDF_4566588", name:"Group A Strep PCR", cost:63.00, synonyms:["group a strep by pcr"] },
   { id:"PDF_4569806", name:"Hemoglobin A1c", cost:52.00, synonyms:[] },
-  { id:"PDF_4560058", name:"Hepatic Function Panel", cost:188.00, synonyms:[] },
-  { id:"PDF_4520097", name:"Herpes Simplex/Varicella Rapid Culture", cost:83.00, synonyms:[] },
-  { id:"FLU_PCR", name:"INFLUENZA A&B RNA REAL-TIME PCR", cost:170.00, synonyms:["flu pcr", "influenza pcr", "influenza a/b"] },
-  { id:"PDF_4569727", name:"Joint Fld Culture", cost:111.00, synonyms:[] },
-  { id:"PDF_4569051", name:"Joint Fluid Panel", cost:70.00, synonyms:[] },
-  { id:"PDF_4563615", name:"Ldh", cost:28.00, synonyms:[] },
+  { id:"PDF_4560058", name:"Hepatic function panel", cost:188.00, synonyms:["hepatic function panel"] },
+  { id:"PDF_4520097", name:"Herpes simplex / varicella rapid culture", cost:83.00, synonyms:["herpes simplex/varicella rapid culture"] },
+  { id:"FLU_PCR", name:"Influenza A/B PCR", cost:170.00, synonyms:["flu pcr", "influenza pcr", "influenza a/b", "influenza a&b rna real-time pcr"] },
+  { id:"PDF_4569727", name:"Joint fluid culture", cost:111.00, synonyms:["joint fld culture"] },
+  { id:"PDF_4569051", name:"Joint fluid panel", cost:70.00, synonyms:["joint fluid panel"] },
+  { id:"PDF_4563615", name:"LDH", cost:28.00, synonyms:["ldh"] },
   { id:"LACTATE", name:"Lactate (Lactic acid)", cost:250.00, synonyms:["lactate","lactic acid"] },
-  { id:"PDF_4569777", name:"Legionella Dna Qualitative Reat-time PCR", cost:126.00, synonyms:[] },
+  { id:"PDF_4569777", name:"Legionella DNA PCR (qualitative, real-time)", cost:126.00, synonyms:["legionella dna qualitative reat-time pcr"] },
   { id:"PDF_4563690", name:"Lipase", cost:31.00, synonyms:[] },
-  { id:"PDF_4560061", name:"Lipid Panel", cost:100.00, synonyms:[] },
+  { id:"PDF_4560061", name:"Lipid panel", cost:100.00, synonyms:["lipid panel"] },
   { id:"DVT_US", name:"Lower extremity venous ultrasound (DVT)", cost:2100.00, synonyms:["dvt ultrasound", "venous doppler", "duplex", "dvt scan", "leg doppler"] },
   { id:"XR_L_SPINE", name:"Lumbar spine X-ray (2–3 views)", cost:670.00, synonyms:["xr lumbar", "lumbar xray", "xray back"] },
-  { id:"PDF_4567076", name:"MRSA Screening Culture", cost:111.00, synonyms:[] },
-  { id:"PDF_4562010", name:"Prenatal Panel 1", cost:158.00, synonyms:[] },
+  { id:"PDF_4567076", name:"MRSA screening culture", cost:111.00, synonyms:["mrsa screening culture"] },
+  { id:"PDF_4562010", name:"Prenatal panel 1", cost:158.00, synonyms:["prenatal panel 1"] },
   { id:"PDF_4569759", name:"BNP", cost:162.00, synonyms:[] },
   { id:"PDF_4569819", name:"Procalcitonin", cost:109.00, synonyms:[] },
   { id:"PT_INR", name:"Prothrombin time (PT/INR)", cost:110.00, synonyms:["pt", "inr", "protime"] },
-  { id:"PDF_4560008", name:"Psa Panel", cost:160.00, synonyms:[] },
+  { id:"PDF_4560008", name:"PSA panel", cost:160.00, synonyms:["psa panel"] },
   { id:"PTT", name:"PTT", cost:140.00, synonyms:["aptt", "activated partial thromboplastin time"] },
-  { id:"DDIMER_QUANT", name:"QUANT D-DIMER", cost:240.00, synonyms:["d-dimer", "ddimer", "quant d dimer"] },
+  { id:"DDIMER_QUANT", name:"D-dimer (quantitative)", cost:240.00, synonyms:["d-dimer", "ddimer", "quant d dimer", "quant d-dimer"] },
   { id:"RPP", name:"Respiratory Pathogen Panel (PCR)", cost:1320.00, synonyms:["rpp", "resp virus panel", "respiratory virus panel"] },
-  { id:"PDF_4569813", name:"Respiratory Virus PCR X19", cost:736.00, synonyms:[] },
-  { id:"PDF_4566756", name:"Rsv By PCR", cost:120.00, synonyms:[] },
-  { id:"PDF_4564703", name:"Serum Hcg Urine Qualitative", cost:66.00, synonyms:[] },
-  { id:"PDF_4564702", name:"Serum Quantitative Hcg", cost:160.00, synonyms:[] },
-  { id:"PDF_4560099", name:"Spinal Fluid Panel", cost:70.00, synonyms:[] },
+  { id:"PDF_4569813", name:"Respiratory virus panel PCR (19 targets)", cost:736.00, synonyms:["respiratory virus pcr x19"] },
+  { id:"PDF_4566756", name:"RSV PCR", cost:120.00, synonyms:["rsv by pcr"] },
+  { id:"PDF_4564703", name:"hCG, urine (qualitative)", cost:66.00, synonyms:["serum hcg urine qualitative"] },
+  { id:"PDF_4564702", name:"hCG, serum (quantitative)", cost:160.00, synonyms:["serum quantitative hcg"] },
+  { id:"PDF_4560099", name:"Spinal fluid panel", cost:70.00, synonyms:["spinal fluid panel"] },
   { id:"SPUTUM_CX", name:"Sputum culture", cost:210.00, synonyms:["sputum cx", "respiratory culture"] },
-  { id:"PDF_4567045", name:"Stool Culture", cost:111.00, synonyms:[] },
-  { id:"PDF_4567060", name:"Throat Culture", cost:111.00, synonyms:[] },
+  { id:"PDF_4567045", name:"Stool culture", cost:111.00, synonyms:["stool culture"] },
+  { id:"PDF_4567060", name:"Throat culture", cost:111.00, synonyms:["throat culture"] },
   { id:"TROP", name:"Troponin", cost:240.00, synonyms:["hs troponin", "high sensitivity troponin", "troponin t"] },
-  { id:"PDF_4564443", name:"Tsh", cost:81.00, synonyms:[] },
+  { id:"PDF_4564443", name:"TSH", cost:81.00, synonyms:["tsh"] },
   { id:"PDF_4636700", name:"Ultrasound abdomen complete", cost:1061.00, synonyms:[] },
-  { id:"PDF_4636664", name:"Ultrasound abdomen paracentesis ltd", cost:827.00, synonyms:[] },
+  { id:"PDF_4636664", name:"Ultrasound abdomen, paracentesis guidance (limited)", cost:827.00, synonyms:["ultrasound abdomen paracentesis ltd"] },
   { id:"PDF_4636705", name:"Ultrasound abdomen single organ", cost:827.00, synonyms:[] },
   { id:"PDF_4633968", name:"Ultrasound ankle brachial index", cost:276.00, synonyms:[] },
   { id:"PDF_4633985", name:"Ultrasound breast complete left", cost:468.00, synonyms:[] },
@@ -1186,15 +1195,15 @@ const orderCatalog = [
   { id:"PDF_4633986", name:"Ultrasound breast limited right", cost:468.00, synonyms:[] },
   { id:"PDF_4633880", name:"Ultrasound carotids", cost:1047.00, synonyms:[] },
   { id:"PDF_4636605", name:"Ultrasound chest", cost:551.00, synonyms:[] },
-  { id:"PDF_4636878", name:"Ultrasound extremity non vascular complete", cost:592.00, synonyms:[] },
-  { id:"PDF_4636879", name:"Ultrasound extremity non vascular limited", cost:442.00, synonyms:[] },
+  { id:"PDF_4636878", name:"Ultrasound extremity, non-vascular, complete", cost:592.00, synonyms:["ultrasound extremity non vascular complete"] },
+  { id:"PDF_4636879", name:"Ultrasound extremity, non-vascular, limited", cost:442.00, synonyms:["ultrasound extremity non vascular limited"] },
   { id:"PDF_4636885", name:"Ultrasound femoral artery bilateral", cost:1241.00, synonyms:[] },
-  { id:"PDF_4630010", name:"Ultrasound fet bioph w non stress", cost:813.00, synonyms:[] },
-  { id:"PDF_4630011", name:"Ultrasound fetal bio wo non stress", cost:813.00, synonyms:[] },
+  { id:"PDF_4630010", name:"Ultrasound fetal biophysical profile with non-stress test", cost:813.00, synonyms:["ultrasound fet bioph w non stress"] },
+  { id:"PDF_4630011", name:"Ultrasound fetal biophysical profile without non-stress test", cost:813.00, synonyms:["ultrasound fetal bio wo non stress"] },
   { id:"PDF_4636942", name:"Ultrasound guidance for needle placement", cost:877.00, synonyms:[] },
   { id:"PDF_4636886", name:"Ultrasound infant hips", cost:413.00, synonyms:[] },
-  { id:"PDF_4636887", name:"Ultrasound infant hips w dr manipulation", cost:603.00, synonyms:[] },
-  { id:"PDF_4636856", name:"Ultrasound IUD complete", cost:827.00, synonyms:[] },
+  { id:"PDF_4636887", name:"Ultrasound infant hips with manipulation", cost:603.00, synonyms:["ultrasound infant hips w dr manipulation"] },
+  { id:"PDF_4636856", name:"Ultrasound IUD, complete", cost:827.00, synonyms:["ultrasound iud complete"] },
   { id:"PDF_4636770", name:"Ultrasound kidney", cost:924.00, synonyms:[] },
   { id:"PDF_4637004", name:"Ultrasound liver", cost:827.00, synonyms:[] },
   { id:"PDF_4633972", name:"Ultrasound lower extremity artery bilateral", cost:2206.00, synonyms:[] },
@@ -1204,16 +1213,16 @@ const orderCatalog = [
   { id:"PDF_4636880", name:"Ultrasound lower extremity artery right", cost:993.00, synonyms:[] },
   { id:"PDF_4633971", name:"Ultrasound lower extremity venous bilateral", cost:2206.00, synonyms:[] },
   { id:"PDF_4633965", name:"Ultrasound lower extremity venous left", cost:1102.00, synonyms:[] },
-  { id:"PDF_4630013", name:"Ultrasound OB trans vaginal", cost:869.00, synonyms:[] },
+  { id:"PDF_4630013", name:"Ultrasound obstetric, transvaginal", cost:869.00, synonyms:["ultrasound ob trans vaginal"] },
   { id:"PDF_4637005", name:"Ultrasound pancreas", cost:827.00, synonyms:[] },
   { id:"PDF_4633551", name:"Ultrasound pelvic limited", cost:758.00, synonyms:[] },
-  { id:"PDF_4637006", name:"Ultrasound pelvic non OB complete", cost:827.00, synonyms:[] },
-  { id:"PDF_4630012", name:"Ultrasound preg uterus <14 weeks", cost:703.00, synonyms:[] },
-  { id:"PDF_4636805", name:"Ultrasound preg uterus >14 weeks", cost:510.00, synonyms:[] },
-  { id:"PDF_4630009", name:"Ultrasound pseudo aneurysim", cost:1516.00, synonyms:[] },
-  { id:"PDF_4639521", name:"Ultrasound renal artery/ venous", cost:940.00, synonyms:[] },
+  { id:"PDF_4637006", name:"Ultrasound pelvic, non-obstetric, complete", cost:827.00, synonyms:["ultrasound pelvic non ob complete"] },
+  { id:"PDF_4630012", name:"Ultrasound pregnant uterus, under 14 weeks", cost:703.00, synonyms:["ultrasound preg uterus <14 weeks"] },
+  { id:"PDF_4636805", name:"Ultrasound pregnant uterus, over 14 weeks", cost:510.00, synonyms:["ultrasound preg uterus >14 weeks"] },
+  { id:"PDF_4630009", name:"Ultrasound pseudoaneurysm", cost:1516.00, synonyms:["ultrasound pseudo aneurysim"] },
+  { id:"PDF_4639521", name:"Ultrasound renal artery and vein", cost:940.00, synonyms:["ultrasound renal artery/ venous"] },
   { id:"PDF_4636810", name:"Ultrasound repeat fetal age", cost:280.00, synonyms:[] },
-  { id:"PDF_4637008", name:"Ultrasound retroperit complete", cost:924.00, synonyms:[] },
+  { id:"PDF_4637008", name:"Ultrasound retroperitoneum, complete", cost:924.00, synonyms:["ultrasound retroperit complete"] },
   { id:"PDF_4630007", name:"Ultrasound soft tissue abdomen", cost:827.00, synonyms:[] },
   { id:"PDF_4630004", name:"Ultrasound soft tissue chest", cost:551.00, synonyms:[] },
   { id:"PDF_4630006", name:"Ultrasound soft tissue head neck", cost:719.00, synonyms:[] },
@@ -1225,9 +1234,9 @@ const orderCatalog = [
   { id:"PDF_4636830", name:"Ultrasound transvaginal", cost:484.00, synonyms:[] },
   { id:"UA", name:"Urinalysis (UA)", cost:95.00, synonyms:["ua", "urine test", "dipstick"] },
   { id:"URINE_CX", name:"Urine culture", cost:170.00, synonyms:["urine cx", "ucx"] },
-  { id:"PDF_4569705", name:"Urine Hcg Manual Quantitative", cost:66.00, synonyms:[] },
-  { id:"PDF_4720655", name:"Venous Ph Blood Gas", cost:56.00, synonyms:[] },
-  { id:"PDF_4569728", name:"Wound Culture", cost:111.00, synonyms:[] },
+  { id:"PDF_4569705", name:"hCG, urine (quantitative)", cost:66.00, synonyms:["urine hcg manual quantitative"] },
+  { id:"PDF_4720655", name:"Venous blood gas (VBG)", cost:56.00, synonyms:["venous ph blood gas"] },
+  { id:"PDF_4569728", name:"Wound culture", cost:111.00, synonyms:["wound culture"] },
 ];
 
 
@@ -2091,6 +2100,15 @@ lowValueReasons: new Map([
       { re: /\bCT\s+Chest\b/i, reason: "Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required." },
       { re: /Blood\s+Gas|ABG|Arterial\s+Blood\s+Gas|Venous\s+Ph\s+Blood\s+Gas/i, reason: "Low Value – Blood gas analysis (arterial or venous) does not have sufficient diagnostic value to confirm or exclude PE and would have low utility in this case." }
     ],
+    missedSeverity: "error",
+    missedReasons: new Map([
+      ["CTPA","This is the definitive test for the suspected diagnosis. With a high pre-test probability (two weeks of immobility, tachycardia, hypoxia, pleuritic pain), no other result excludes PE. Without CT pulmonary angiography this patient leaves without a diagnosis."],
+      ["EKG","The fastest study to identify an alternative or concurrent cause of chest pain, and it may show right heart strain."],
+      ["TROP","Evaluates for myocardial injury. In confirmed PE it also risk-stratifies and helps decide whether the patient needs a higher level of care."],
+      ["CBC","Anemia is a common contributor to dyspnea and tachycardia, and a baseline count is needed before starting anticoagulation."],
+      ["BMP","Renal function is required before contrast-enhanced CT and guides anticoagulant dosing."],
+      ["CXR","Reasonable to omit once CT pulmonary angiography is obtained. Otherwise it is the first-line study for pneumonia, pneumothorax or effusion."]
+    ]),
     recommendedIds: ["EKG","TROP","CBC","BMP","CTPA"],
     pathwayHtml: `<strong>How to think about high-value testing in this case</strong>
 <p class="small">
@@ -2195,6 +2213,11 @@ lowValueReasons: new Map([
     ["BLOOD_CX","Intermediate – consider only if toxic-appearing, immunocompromised, or concern for sepsis/severe pneumonia."],
     ["SPUTUM_CX","Intermediate – usually reserved for severe/hospitalized pneumonia or concern for resistant pathogens."]
   ]),
+  missedSeverity: "neutral",
+  missedReasons: new Map([
+    ["COVID_PCR","A positive result can open treatment options and changes isolation and counseling. Deferring testing in a well-appearing, low-risk patient is defensible; what matters is that the decision is deliberate rather than automatic."],
+    ["FLU_PCR","Within the treatment window a positive influenza test can change management. As above, deferring is defensible here."]
+  ]),
   recommendedIds: ["COVID_PCR","FLU_PCR"],
     optionalRecommendedIds: ["CXR","CBC","BMP","CMP"],
   pathwayHtml: `
@@ -2291,6 +2314,15 @@ lowValueReasons: new Map([
       { re: /\bCT\s+Chest\b/i, reason: "Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia." },
       { re: /Respiratory\s+Pathogen\s+Panel|Resp\s+Virus\s+\d+/i, reason: "Low Value – In an otherwise healthy, non-immunocompromised patient with suspected bacterial pneumonia/sepsis, broad viral panels rarely change management; focus on treatment and source evaluation." }
     ],
+  missedSeverity: "error",
+  missedReasons: new Map([
+    ["LACTATE","This patient meets sepsis criteria (T 39.2, HR 118, RR 24, SBP 98). Lactate identifies occult hypoperfusion, distinguishes sepsis from septic shock, and guides resuscitation."],
+    ["BLOOD_CX","Blood cultures should be drawn before antibiotics whenever doing so does not delay them. After antibiotics the yield falls sharply and you lose the ability to narrow therapy."],
+    ["SPUTUM_CX","In severe or hospitalized pneumonia, sputum culture can identify the pathogen and allow de-escalation from broad empiric coverage."],
+    ["CXR","First-line imaging to confirm pneumonia and assess its extent. The focal left lower lobe crackles make this essential."],
+    ["CBC","Leukocytosis or leukopenia contributes to the sepsis assessment, and the platelet count is part of organ-dysfunction scoring."],
+    ["BMP","Creatinine and bicarbonate identify acute kidney injury and metabolic acidosis, both organ-dysfunction criteria in sepsis."]
+  ]),
   recommendedIds: ["CBC","BMP","CXR","LACTATE","BLOOD_CX","SPUTUM_CX"],
   pathwayHtml: `
 <strong>Answer</strong>
@@ -2401,6 +2433,10 @@ lowValueReasons: new Map([
       ["XR_L_SPINE","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
       ["PDF_4632132","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
       ["PDF_4639508","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."]
+    ]),
+    missedSeverity: "neutral",
+    missedReasons: new Map([
+      ["NO_TESTING","For this presentation, no diagnostic testing is the high-value choice. With a short duration of pain, no red flags and a normal neurologic exam, imaging does not change management and risks incidental findings that drive further testing."]
     ]),
     recommendedIds: ["NO_TESTING"],
     pathwayHtml: `
@@ -2527,6 +2563,7 @@ let CASE5_SUBMITTED = false;
 let CASE5_LAST_PAYLOAD = null;
 
 const orderFeedbackEl = document.getElementById("orderFeedback");
+const missedFeedbackEl = document.getElementById("missedFeedback");
 const recommendedPathwayBoxEl = document.getElementById("recommendedPathwayBox");
 const studentBreakdownEl = document.getElementById("studentBreakdown");
 const recommendedBreakdownEl = document.getElementById("recommendedBreakdown");
@@ -2770,6 +2807,50 @@ function gradeOrder(orderId){
 /* =========================
    Recommended orders
    ========================= */
+function renderMissedFeedback(cfg, recIds, selectedIds){
+  if (!missedFeedbackEl) return;
+  // Survey tabs and Case 5 have no diagnostic pathway; show nothing.
+  if (!recIds || !recIds.length){ missedFeedbackEl.innerHTML = ""; return; }
+  const missed = recIds.filter(id => !selectedIds.has(id));
+
+  if (!missed.length){
+    missedFeedbackEl.innerHTML =
+      '<div class="missed-box clear">' +
+        '<div class="missed-title">No recommended tests missed</div>' +
+        '<div class="small muted">You ordered the full recommended pathway for this presentation.</div>' +
+      '</div>';
+    return;
+  }
+
+  const neutral = (cfg && cfg.missedSeverity === "neutral");
+  const cls   = neutral ? "neutral" : "";
+  const pill  = neutral ? "warn" : "bad";
+  const tag   = neutral ? "Consider" : "❗ Missed";
+  const title = neutral
+    ? ("Also worth considering (" + missed.length + ")")
+    : ("Recommended tests you did not order (" + missed.length + ")");
+  const lead  = neutral
+    ? "Not ordering these can be reasonable here. The goal is that the choice is deliberate."
+    : "High-value care means ordering what the presentation requires. These were indicated and were not ordered.";
+
+  let html = '<div class="missed-box ' + cls + '">' +
+             '<div class="missed-title">' + title + '</div>' +
+             '<div class="small muted">' + lead + '</div><ul>';
+
+  for (const id of missed){
+    const o = idToOrder.get(id);
+    if (!o) continue;
+    const why = (cfg && cfg.missedReasons && cfg.missedReasons.has(id))
+      ? cfg.missedReasons.get(id)
+      : "Indicated for this presentation and not ordered.";
+    html += '<li class="' + pill + '">' + o.name +
+            '<span class="pill ' + pill + '">' + tag + '</span>' +
+            '<div class="small muted">' + why + '</div></li>';
+  }
+  html += '</ul></div>';
+  missedFeedbackEl.innerHTML = html;
+}
+
 function getRecommendedOrderIds(studentSelectedIds){
   const cfg = CASES[ACTIVE_CASE];
   let rec = (cfg.recommendedIds || []).slice();
@@ -2887,6 +2968,7 @@ function setActiveCase(caseId){
   resultsEl.classList.add("hidden");
   if (continueBtnEl) continueBtnEl.classList.add("hidden");
   orderFeedbackEl.innerHTML = "";
+  if (missedFeedbackEl) missedFeedbackEl.innerHTML = "";
   studentBreakdownEl.innerHTML = "";
   recommendedBreakdownEl.innerHTML = "";
   recommendedPathwayBoxEl.innerHTML = "";
@@ -3028,6 +3110,11 @@ orderFormEl.addEventListener("submit", (e)=>{
     .filter(Boolean)
     .reduce((s,o)=>s+Number(o.cost||0), 0);
 
+  // Recommended tests the learner did NOT order (added 2026-09)
+  const missedForLog = recIdsForLog
+    .filter(id => !selectedIds.has(id))
+    .map(id => (idToOrder.get(id)?.name || id));
+
   const valueCounts = { high: 0, intermediate: 0, low: 0 };
   // Also capture *which* tests fell into each value tier (names) for clearer downstream analytics.
   const orderedAppropriate = [];
@@ -3053,7 +3140,10 @@ orderFormEl.addEventListener("submit", (e)=>{
     orderedAll: orderedAll,
     orderedAppropriate: orderedAppropriate,
     orderedIntermediate: orderedIntermediate,
-    orderedLowValue: orderedLowValue
+    orderedLowValue: orderedLowValue,
+    missedRecommended: missedForLog,
+    missedRecommendedText: toTextList(missedForLog, " | "),
+    missedRecommendedCount: missedForLog.length
   });
   markCaseCompleted(ACTIVE_CASE);
 
@@ -3066,6 +3156,10 @@ orderFormEl.addEventListener("submit", (e)=>{
 
   studentCostEl.textContent = formatMoney(studentTable.total);
   recommendedCostEl.textContent = formatMoney(recTable.total);
+
+  // ---- Recommended tests NOT ordered (added 2026-09) ----
+  // Omission was previously invisible: feedback only graded what the learner selected.
+  renderMissedFeedback(cfg, recIds, selectedIds);
 
   // Pathway comparison
   if (ACTIVE_CASE === 1){
@@ -3080,25 +3174,53 @@ orderFormEl.addEventListener("submit", (e)=>{
 
     pathRow2LabelEl.textContent = "Definitive PE imaging";
     pathRow2StudentEl.textContent = hasCTPA ? "CTA/CTPA obtained" : "Not obtained";
-    pathRow2RecEl.textContent = "CTA Chest – PE protocol (CTPA)";
+    pathRow2RecEl.textContent = "CT pulmonary angiography (CTPA)";
 
-    if (hasCTPA && !hasCXR){
-      pathRow1StudentEl.textContent += " (CXR skipped—OK if CTA obtained)";
+    // Only note the CXR omission when the rest of the baseline workup is complete,
+    // otherwise "Incomplete (CXR skipped - OK)" reads as though nothing is missing.
+    if (hasCTPA && !hasCXR && hasEKG && hasTrop){
+      pathRow1StudentEl.textContent += " — CXR reasonably omitted once CTPA obtained";
     }
   } else if (ACTIVE_CASE === 2){
     const hasCovid = selectedIds.has("COVID_PCR");
     const hasFlu = selectedIds.has("FLU_PCR");
-    const hasCBC = selectedIds.has("CBC") || selectedIds.has("CBC_DIFF");
-    const hasBMPorCMP = selectedIds.has("BMP") || selectedIds.has("CMP");
+    const hasUrine = selectedIds.has("UA") || selectedIds.has("URINE_CX");
+    const extras = ["CBC","BMP","CMP","CXR"].filter(id => selectedIds.has(id)).length;
+
+    pathRow1LabelEl.textContent = "Targeted viral testing";
+    pathRow1StudentEl.textContent = (hasCovid && hasFlu)
+      ? "Completed (COVID + influenza)"
+      : (hasCovid || hasFlu ? "Partial" : "Not obtained");
+    pathRow1RecEl.textContent = "COVID PCR + influenza PCR";
+
+    // Previously this row claimed CBC/BMP/CXR were recommended, which contradicted
+    // the grading map (they are conditional, and are excluded from recommended cost).
+    pathRow2LabelEl.textContent = "Additional labs / imaging";
+    pathRow2StudentEl.textContent = (extras || hasUrine)
+      ? (String(extras + (hasUrine ? 1 : 0)) + " additional test(s) ordered"
+         + (hasUrine ? " — including urine studies" : ""))
+      : "None ordered";
+    pathRow2RecEl.textContent = "Not routinely indicated in a well-appearing patient; consider only if severity increases";
+  } else if (ACTIVE_CASE === 3){
+    const hasLactate = selectedIds.has("LACTATE");
+    const hasBloodCx = selectedIds.has("BLOOD_CX");
     const hasCXR = selectedIds.has("CXR");
+    const hasCBC = selectedIds.has("CBC");
+    const hasBMPorCMP = selectedIds.has("BMP") || selectedIds.has("CMP");
+    const hasSputum = selectedIds.has("SPUTUM_CX");
 
-    pathRow1LabelEl.textContent = "Viral testing";
-    pathRow1StudentEl.textContent = (hasCovid && hasFlu) ? "Completed (COVID + Flu)" : "Incomplete";
-    pathRow1RecEl.textContent = "COVID PCR + Influenza PCR";
+    pathRow1LabelEl.textContent = "Sepsis evaluation";
+    pathRow1StudentEl.textContent = (hasLactate && hasBloodCx)
+      ? "Completed (lactate + blood cultures)"
+      : (hasLactate ? "Lactate only — blood cultures not obtained"
+                    : (hasBloodCx ? "Blood cultures only — lactate not obtained" : "Not obtained"));
+    pathRow1RecEl.textContent = "Lactate + blood cultures, drawn before antibiotics";
 
-    pathRow2LabelEl.textContent = "Basic evaluation";
-    pathRow2StudentEl.textContent = (hasCBC && hasBMPorCMP) ? ("Labs done" + (hasCXR ? " + CXR" : "")) : "Incomplete";
-    pathRow2RecEl.textContent = "CBC + CMP/BMP + CXR";
+    pathRow2LabelEl.textContent = "Pneumonia evaluation";
+    pathRow2StudentEl.textContent = (hasCXR && hasCBC && hasBMPorCMP)
+      ? ("Completed (CXR + CBC + BMP)" + (hasSputum ? " + sputum culture" : ""))
+      : "Incomplete";
+    pathRow2RecEl.textContent = "CXR + CBC + BMP + sputum culture";
   } else {
     const hasNoTesting = selectedIds.has("NO_TESTING");
     const hasImaging = selectedIds.has("CT_L_SPINE") || selectedIds.has("CT_L_SPINE") || selectedIds.has("XR_L_SPINE");
@@ -3119,7 +3241,9 @@ orderFormEl.addEventListener("submit", (e)=>{
   }
   // Show pathway comparison only for Case 1
   const pc = document.getElementById("pathwayComparisonSection");
-  if (pc) pc.style.display = (ACTIVE_CASE === 1 ? "block" : "none");
+  // Show the pathway comparison for every diagnostic case (1-4), not just Case 1.
+  // Cases 0/5/6 are surveys and med rec, which have no diagnostic pathway.
+  if (pc) pc.style.display = ((ACTIVE_CASE >= 1 && ACTIVE_CASE <= 4) ? "block" : "none");
   // Initialize any post-submit interactive elements (e.g., sepsis checklist)
   initSepsisChecklist();
 });
