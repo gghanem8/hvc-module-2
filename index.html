@@ -211,6 +211,28 @@ button.primary:active{transform:translateY(1px)}
 #orderFeedback li .small.muted{margin-top:2px;margin-bottom:0;line-height:1.5;
   color:var(--muted);font-weight:400}
 
+/* ---------- management decisions ---------- */
+.decision-set{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+.decision{border:1px solid var(--border);border-radius:var(--radius);padding:15px 17px;background:var(--surface)}
+.decision-q{font-weight:650;margin-bottom:2px;font-size:.97rem;color:var(--heading)}
+.decision-hint{font-size:.83rem;color:var(--muted);margin-bottom:10px}
+.decision-opts{display:flex;flex-direction:column;gap:2px}
+.decision-opts label{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;
+  border-radius:8px;font-size:.94rem;cursor:pointer;margin:0}
+.decision-opts label:hover{background:var(--accent-soft)}
+.decision-opts input[type=radio]{accent-color:var(--accent);margin:3px 0 0;flex:none}
+.decision-unanswered{border-color:var(--no);box-shadow:0 0 0 3px var(--no-soft)}
+
+.dfb{margin-top:16px}
+.dfb h4{margin:0 0 10px;font-size:.75rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);font-weight:650}
+.dfb-item{padding:11px 0;border-bottom:1px solid var(--hairline)}
+.dfb-item:last-child{border-bottom:none}
+.dfb-q{font-size:.83rem;color:var(--muted);margin-bottom:3px}
+.dfb-a{font-weight:600;color:var(--heading);font-size:.95rem}
+.dfb-why{font-size:.88rem;color:var(--muted);line-height:1.5;margin-top:3px}
+.dfb-best{font-size:.88rem;margin-top:5px;color:var(--ok)}
+
 /* ---------- missed-order feedback ---------- */
 .missed-box{
   margin-top:14px;padding:13px 16px;border-radius:10px;
@@ -319,7 +341,7 @@ textarea{min-height:96px;resize:vertical}
     <ul class="small">
       <li><strong>No multiple-choice spoilers:</strong> you choose your own diagnostic pathway.</li>
       <li><strong>Costs are hidden until you submit</strong> for each case.</li>
-      <li><strong>Costs shown in this module are derived from a publicly available price list from UCLA at the Ronald Reagan Medical Center, updated as of June 1, 2025.</strong></li>
+      <li><strong>Costs shown in this module are derived from the publicly available chargemaster for UCLA Ronald Reagan Medical Center, as of June 1, 2026.</strong> These are institutional list prices, not what any payer or patient actually pays.</li>
       <li><strong>High-value care is dynamic:</strong> what’s high value depends on the patient, timing, and pre-test probability.</li>
       <li><strong>This information is for educational purposes only and should not be considered medical advice or be used in place of clinician judgement.</strong></li>
     </ul>
@@ -459,7 +481,10 @@ textarea{min-height:96px;resize:vertical}
     <button class="tab" id="tab3" type="button">Case 3: Return visit</button>
     <button class="tab" id="tab4" type="button">Case 4: Back pain</button>
     <button class="tab" id="tab5" type="button">Case 5: Med reconciliation</button>
-    <button class="tab" id="tab6" type="button">Post-test</button>
+    <button class="tab" id="tab6" type="button">Case 6a: Diabetic foot</button>
+    <button class="tab" id="tab7" type="button">Case 6b: Day 1</button>
+    <button class="tab" id="tab8" type="button">Case 6c: Day 2</button>
+    <button class="tab" id="tab9" type="button">Post-test</button>
   </div>
 
   <h2 id="caseTitle"></h2>
@@ -569,6 +594,8 @@ textarea{min-height:96px;resize:vertical}
     </div>
 
     
+    <div id="decisionBlock" class="hidden"></div>
+
     <button class="primary" type="submit">Submit Orders</button>
   </form>
 
@@ -581,6 +608,7 @@ textarea{min-height:96px;resize:vertical}
         <h3 style="margin-top:0;">Your Orders</h3>
         <div id="orderFeedback"></div>
         <div id="missedFeedback"></div>
+        <div id="decisionFeedback"></div>
       </div>
 
       <div class="card">
@@ -1213,161 +1241,193 @@ document.getElementById("reset").onclick=()=>location.reload();
    ========================= */
 const orderCatalog = [
   { id:"NO_TESTING", name:"No diagnostic testing necessary", cost:0.00, synonyms:["no testing", "none", "no diagnostic testing"] },
-  { id:"PDF_4562150", name:"Amylase", cost:30.00, synonyms:[] },
+  { id:"PDF_4562150", name:"Amylase", cost:150.00, synonyms:[] },
   { id:"BLOOD_CX", name:"Blood culture (set)", cost:430.00, synonyms:["blood culture", "blood cx", "bld cx"] },
   { id:"BMP", name:"BMP", cost:210.00, synonyms:["basic metabolic panel"] },
-  { id:"PDF_4567070", name:"Body fluid culture", cost:111.00, synonyms:["body fluid culture"] },
-  { id:"PDF_4569740", name:"Body fluid cell count", cost:70.00, synonyms:["body fluid panel cell count"] },
+  { id:"PDF_4567070", name:"Body fluid culture", cost:210.00, synonyms:["body fluid culture"] },
+  { id:"PDF_4569740", name:"Body fluid cell count", cost:150.00, synonyms:["body fluid panel cell count"] },
   { id:"CBC", name:"CBC", cost:140.00, synonyms:["cbc w diff", "cbc with differential", "cbc w/ diff"] },
-  { id:"CXR", name:"Chest X-ray (CXR)", cost:360.00, synonyms:["cxr", "xr chest", "chest xray", "chest x-ray", "portable cxr", "pa lateral"] },
-  { id:"PDF_4569815", name:"Chlamydophila pneumoniae PCR", cost:182.00, synonyms:["chlamydophila pneumoniae pcr"] },
+  { id:"CXR", name:"Chest X-ray (CXR)", cost:420.00, synonyms:["cxr", "xr chest", "chest xray", "chest x-ray", "portable cxr", "pa lateral"] },
+  { id:"PDF_4569815", name:"Chlamydophila pneumoniae PCR", cost:120.00, synonyms:["chlamydophila pneumoniae pcr"] },
   { id:"CMP", name:"CMP", cost:340.00, synonyms:["comprehensive metabolic panel"] },
   { id:"COVID_PCR", name:"COVID-19 PCR (SARS-CoV-2)", cost:210.00, synonyms:["covid", "sars cov 2", "sars-cov-2", "covid pcr"] },
-  { id:"PDF_4569724", name:"CSF culture", cost:111.00, synonyms:["csf culture"] },
-  { id:"PDF_4569744", name:"CSF panel — culture", cost:111.00, synonyms:["csf panel culture cpt3"] },
-  { id:"PDF_4569745", name:"CSF panel — Giemsa stain", cost:30.00, synonyms:["csf panel giemsa stain cpt4"] },
-  { id:"PDF_4569746", name:"CSF panel — glucose", cost:30.00, synonyms:["csf panel glucose cpt5"] },
-  { id:"PDF_4569743", name:"CSF panel — protein", cost:30.00, synonyms:["csf panel protein cpt2"] },
-  { id:"PDF_4634196", name:"CT abdomen/pelvis without contrast", cost:4135.00, synonyms:[] },
-  { id:"PDF_4634195", name:"CT abdomen/pelvis with contrast", cost:4826.00, synonyms:[] },
-  { id:"PDF_4634197", name:"CT abdomen/pelvis with/without contrast", cost:5100.00, synonyms:[] },
-  { id:"PDF_4634160", name:"CT abdomen with contrast", cost:3625.00, synonyms:[] },
-  { id:"PDF_4634150", name:"CT abdomen without contrast", cost:3170.00, synonyms:[] },
-  { id:"PDF_4634170", name:"CT abdomen with/without contrast", cost:3749.00, synonyms:[] },
-  { id:"PDF_4630440", name:"CT bone length study", cost:692.00, synonyms:[] },
-  { id:"PDF_4632191", name:"CT bony pelvis for fracture", cost:2811.00, synonyms:[] },
+  { id:"PDF_4569724", name:"CSF culture", cost:210.00, synonyms:["csf culture"] },
+  { id:"PDF_4569744", name:"CSF panel — culture", cost:210.00, synonyms:["csf panel culture cpt3"] },
+  { id:"PDF_4569745", name:"CSF panel — Giemsa stain", cost:100.00, synonyms:["csf panel giemsa stain cpt4"] },
+  { id:"PDF_4569746", name:"CSF panel — glucose", cost:130.00, synonyms:["csf panel glucose cpt5"] },
+  { id:"PDF_4569743", name:"CSF panel — protein", cost:130.00, synonyms:["csf panel protein cpt2"] },
+  { id:"PDF_4634196", name:"CT abdomen/pelvis without contrast", cost:3570.00, synonyms:[] },
+  { id:"PDF_4634195", name:"CT abdomen/pelvis with contrast", cost:4510.00, synonyms:[] },
+  { id:"PDF_4634197", name:"CT abdomen/pelvis with/without contrast", cost:5460.00, synonyms:[] },
+  { id:"PDF_4634160", name:"CT abdomen with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4634150", name:"CT abdomen without contrast", cost:2940.00, synonyms:[] },
+  { id:"PDF_4634170", name:"CT abdomen with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4630440", name:"CT bone length study", cost:490.00, synonyms:[] },
+  { id:"PDF_4632191", name:"CT bony pelvis for fracture", cost:2940.00, synonyms:[] },
   { id:"PDF_4631260", name:"CT chest with contrast", cost:3680.00, synonyms:[] },
   { id:"PDF_4631270", name:"CT chest with/without contrast", cost:3990.00, synonyms:[] },
   { id:"PDF_4631250", name:"CT chest without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4630297", name:"Low-dose CT chest without contrast", cost:3213.00, synonyms:["low dose ct chest without"] },
-  { id:"PDF_4633701", name:"CT left lower extremity with contrast", cost:2620.00, synonyms:[] },
-  { id:"PDF_4633705", name:"CT left lower extremity without contrast", cost:2247.00, synonyms:[] },
-  { id:"PDF_4633706", name:"CT left lower extremity with/without contrast", cost:3447.00, synonyms:[] },
-  { id:"PDF_4633206", name:"CT left upper extremity with contrast", cost:2819.00, synonyms:[] },
-  { id:"PDF_4633200", name:"CT left upper extremity without contrast", cost:2412.00, synonyms:[] },
-  { id:"PDF_4633207", name:"CT left upper extremity with/without contrast", cost:3447.00, synonyms:[] },
+  { id:"PDF_4630297", name:"Low-dose CT chest without contrast", cost:480.00, synonyms:["low dose ct chest without"] },
+  { id:"PDF_4633701", name:"CT left lower extremity with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4633705", name:"CT left lower extremity without contrast", cost:2940.00, synonyms:[] },
+  { id:"PDF_4633706", name:"CT left lower extremity with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4633206", name:"CT left upper extremity with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4633200", name:"CT left upper extremity without contrast", cost:2940.00, synonyms:[] },
+  { id:"PDF_4633207", name:"CT left upper extremity with/without contrast", cost:3990.00, synonyms:[] },
   { id:"CT_L_SPINE", name:"CT lumbar spine (no contrast)", cost:2940.00, synonyms:["ct l spine", "ct back", "lumbar ct", "ct spine lumbar"] },
-  { id:"PDF_4630491", name:"CT neck with contrast", cost:2828.00, synonyms:[] },
-  { id:"PDF_4630492", name:"CT neck with/without contrast", cost:2909.00, synonyms:[] },
-  { id:"PDF_4630490", name:"CT neck without contrast", cost:2288.00, synonyms:[] },
-  { id:"PDF_4632193", name:"CT pelvis with contrast", cost:3213.00, synonyms:[] },
-  { id:"PDF_4632192", name:"CT pelvis without contrast", cost:2811.00, synonyms:[] },
-  { id:"PDF_4634194", name:"CT pelvis with/without contrast", cost:3447.00, synonyms:[] },
-  { id:"PDF_4634198", name:"CT renal stone protocol", cost:4135.00, synonyms:[] },
-  { id:"PDF_4633704", name:"CT right lower extremity with contrast", cost:2620.00, synonyms:[] },
-  { id:"PDF_4633702", name:"CT right lower extremity without contrast", cost:2247.00, synonyms:[] },
-  { id:"PDF_4633708", name:"CT right lower extremity with/without contrast", cost:3447.00, synonyms:[] },
-  { id:"PDF_4633202", name:"CT right upper extremity with contrast", cost:2819.00, synonyms:[] },
-  { id:"PDF_4633201", name:"CT right upper extremity without contrast", cost:2412.00, synonyms:[] },
-  { id:"PDF_4633205", name:"CT right upper extremity with/without contrast", cost:3447.00, synonyms:[] },
-  { id:"PDF_4632127", name:"CT cervical spine without contrast", cost:3157.00, synonyms:["ct spine cervical without contrast"] },
-  { id:"PDF_4632132", name:"CT lumbar spine with contrast", cost:2839.00, synonyms:["ct spine lumbar with contrast"] },
-  { id:"PDF_4639508", name:"CT lumbar spine with and without contrast", cost:3761.00, synonyms:["ct spine lumbar with/without contrast"] },
-  { id:"PDF_4632129", name:"CT thoracic spine with contrast", cost:3132.00, synonyms:["ct spine thoracic with contrast"] },
-  { id:"PDF_4632128", name:"CT thoracic spine without contrast", cost:2744.00, synonyms:["ct spine thoracic without contrast"] },
-  { id:"PDF_4364178", name:"CT urogram", cost:5100.00, synonyms:[] },
-  { id:"PDF_4639513", name:"CTA abdomen", cost:4272.00, synonyms:[] },
-  { id:"PDF_4639520", name:"CTA abdomen/pelvis", cost:6413.00, synonyms:[] },
-  { id:"PDF_4639510", name:"CTA aorto-bifemoral", cost:3721.00, synonyms:["cta aorto bifemoral"] },
+  { id:"PDF_4630491", name:"CT neck with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4630492", name:"CT neck with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4630490", name:"CT neck without contrast", cost:2940.00, synonyms:[] },
+  { id:"PDF_4632193", name:"CT pelvis with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4632192", name:"CT pelvis without contrast", cost:2940.00, synonyms:[] },
+  { id:"PDF_4634194", name:"CT pelvis with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4634198", name:"CT renal stone protocol", cost:3570.00, synonyms:[] },
+  { id:"PDF_4633704", name:"CT right lower extremity with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4633702", name:"CT right lower extremity without contrast", cost:2940.00, synonyms:[] },
+  { id:"PDF_4633708", name:"CT right lower extremity with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4633202", name:"CT right upper extremity with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4633201", name:"CT right upper extremity without contrast", cost:2940.00, synonyms:[] },
+  { id:"PDF_4633205", name:"CT right upper extremity with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4632127", name:"CT cervical spine without contrast", cost:2940.00, synonyms:["ct spine cervical without contrast"] },
+  { id:"PDF_4632132", name:"CT lumbar spine with contrast", cost:3680.00, synonyms:["ct spine lumbar with contrast"] },
+  { id:"PDF_4639508", name:"CT lumbar spine with and without contrast", cost:3990.00, synonyms:["ct spine lumbar with/without contrast"] },
+  { id:"PDF_4632129", name:"CT thoracic spine with contrast", cost:3680.00, synonyms:["ct spine thoracic with contrast"] },
+  { id:"PDF_4632128", name:"CT thoracic spine without contrast", cost:2940.00, synonyms:["ct spine thoracic without contrast"] },
+  { id:"PDF_4364178", name:"CT urogram", cost:5460.00, synonyms:[] },
+  { id:"PDF_4639513", name:"CTA abdomen", cost:6830.00, synonyms:[] },
+  { id:"PDF_4639520", name:"CTA abdomen/pelvis", cost:6830.00, synonyms:[] },
+  { id:"PDF_4639510", name:"CTA aorto-bifemoral", cost:2890.00, synonyms:["cta aorto bifemoral"] },
   { id:"CTPA", name:"CT pulmonary angiography (CTPA)", cost:4990.00, synonyms:["cta", "ctpa", "pe protocol", "ct angio pulmonary", "pulmonary embolism", "cta chest – pe protocol (ctpa)"] },
-  { id:"PDF_4639512", name:"CTA lower extremity left", cost:2000.00, synonyms:[] },
-  { id:"PDF_4639514", name:"CTA lower extremity right", cost:2000.00, synonyms:[] },
-  { id:"PDF_4639509", name:"CTA pelvis", cost:4412.00, synonyms:[] },
-  { id:"PDF_4639519", name:"CTA thoracic aorta", cost:3859.00, synonyms:[] },
-  { id:"PDF_4639511", name:"CTA upper extremity", cost:4412.00, synonyms:[] },
-  { id:"PDF_4569725", name:"Aerobic culture", cost:111.00, synonyms:["culture aerobic"] },
-  { id:"PDF_4567075", name:"Anaerobic culture", cost:104.00, synonyms:["culture anaerobic"] },
-  { id:"PDF_4562251", name:"Direct bilirubin", cost:24.00, synonyms:["direct bilirubin"] },
-  { id:"PDF_4563718", name:"Direct HDL", cost:84.00, synonyms:["direct hdl"] },
-  { id:"ECHO", name:"Echocardiogram (Echo/TTE)", cost:3470.00, synonyms:["echo", "tte", "transthoracic echo"] },
+  { id:"PDF_4639512", name:"CTA lower extremity left", cost:4990.00, synonyms:[] },
+  { id:"PDF_4639514", name:"CTA lower extremity right", cost:4990.00, synonyms:[] },
+  { id:"PDF_4639509", name:"CTA pelvis", cost:4990.00, synonyms:[] },
+  { id:"PDF_4639519", name:"CTA thoracic aorta", cost:4990.00, synonyms:[] },
+  { id:"PDF_4639511", name:"CTA upper extremity", cost:4990.00, synonyms:[] },
+  { id:"PDF_4569725", name:"Aerobic culture", cost:210.00, synonyms:["culture aerobic"] },
+  { id:"PDF_4567075", name:"Anaerobic culture", cost:280.00, synonyms:["culture anaerobic"] },
+  { id:"PDF_4562251", name:"Direct bilirubin", cost:85.00, synonyms:["direct bilirubin"] },
+  { id:"PDF_4563718", name:"Direct HDL", cost:55.00, synonyms:["direct hdl"] },
+  { id:"ECHO", name:"Echocardiogram (Echo/TTE)", cost:3460.00, synonyms:["echo", "tte", "transthoracic echo"] },
   { id:"EKG", name:"EKG", cost:500.00, synonyms:["ecg", "electrocardiogram"] },
-  { id:"PDF_4569726", name:"Eye culture", cost:111.00, synonyms:["eye culture"] },
-  { id:"PDF_4569811", name:"GI pathogen panel (BioFire, 22 targets)", cost:973.00, synonyms:["gastrointestinal panel biofire film (22)"] },
-  { id:"PDF_4566588", name:"Group A Strep PCR", cost:63.00, synonyms:["group a strep by pcr"] },
-  { id:"PDF_4569806", name:"Hemoglobin A1c", cost:52.00, synonyms:[] },
-  { id:"PDF_4560058", name:"Hepatic function panel", cost:188.00, synonyms:["hepatic function panel"] },
-  { id:"PDF_4520097", name:"Herpes simplex / varicella rapid culture", cost:83.00, synonyms:["herpes simplex/varicella rapid culture"] },
-  { id:"FLU_PCR", name:"Influenza A/B PCR", cost:170.00, synonyms:["flu pcr", "influenza pcr", "influenza a/b", "influenza a&b rna real-time pcr"] },
-  { id:"PDF_4569727", name:"Joint fluid culture", cost:111.00, synonyms:["joint fld culture"] },
-  { id:"PDF_4569051", name:"Joint fluid panel", cost:70.00, synonyms:["joint fluid panel"] },
-  { id:"PDF_4563615", name:"LDH", cost:28.00, synonyms:["ldh"] },
+  { id:"PDF_4569726", name:"Eye culture", cost:210.00, synonyms:["eye culture"] },
+  { id:"PDF_4569811", name:"GI pathogen panel (BioFire, 22 targets)", cost:410.00, synonyms:["gastrointestinal panel biofire film (22)"] },
+  { id:"PDF_4566588", name:"Group A Strep PCR", cost:130.00, synonyms:["group a strep by pcr"] },
+  { id:"PDF_4569806", name:"Hemoglobin A1c", cost:65.00, synonyms:[] },
+  { id:"PDF_4560058", name:"Hepatic function panel", cost:250.00, synonyms:["hepatic function panel"] },
+  { id:"PDF_4520097", name:"Herpes simplex / varicella rapid culture", cost:95.00, synonyms:["herpes simplex/varicella rapid culture"] },
+  { id:"FLU_PCR", name:"Influenza A/B PCR", cost:460.00, synonyms:["flu pcr", "influenza pcr", "influenza a/b", "influenza a&b rna real-time pcr"] },
+  { id:"PDF_4569727", name:"Joint fluid culture", cost:210.00, synonyms:["joint fld culture"] },
+  { id:"PDF_4569051", name:"Joint fluid panel", cost:150.00, synonyms:["joint fluid panel"] },
+  { id:"PDF_4563615", name:"LDH", cost:95.00, synonyms:["ldh"] },
   { id:"LACTATE", name:"Lactate (Lactic acid)", cost:250.00, synonyms:["lactate","lactic acid"] },
   { id:"PDF_4569777", name:"Legionella DNA PCR (qualitative, real-time)", cost:126.00, synonyms:["legionella dna qualitative reat-time pcr"] },
-  { id:"PDF_4563690", name:"Lipase", cost:31.00, synonyms:[] },
-  { id:"PDF_4560061", name:"Lipid panel", cost:100.00, synonyms:["lipid panel"] },
-  { id:"DVT_US", name:"Lower extremity venous ultrasound (DVT)", cost:2100.00, synonyms:["dvt ultrasound", "venous doppler", "duplex", "dvt scan", "leg doppler"] },
+  { id:"PDF_4563690", name:"Lipase", cost:160.00, synonyms:[] },
+  { id:"PDF_4560061", name:"Lipid panel", cost:140.00, synonyms:["lipid panel"] },
+  { id:"DVT_US", name:"Lower extremity venous ultrasound (DVT)", cost:1580.00, synonyms:["dvt ultrasound", "venous doppler", "duplex", "dvt scan", "leg doppler"] },
   { id:"XR_L_SPINE", name:"Lumbar spine X-ray (2–3 views)", cost:670.00, synonyms:["xr lumbar", "lumbar xray", "xray back"] },
-  { id:"PDF_4567076", name:"MRSA screening culture", cost:111.00, synonyms:["mrsa screening culture"] },
+  { id:"PDF_4567076", name:"MRSA screening culture", cost:45.00, synonyms:["mrsa screening culture"] },
   { id:"PDF_4562010", name:"Prenatal panel 1", cost:158.00, synonyms:["prenatal panel 1"] },
-  { id:"PDF_4569759", name:"BNP", cost:162.00, synonyms:[] },
-  { id:"PDF_4569819", name:"Procalcitonin", cost:109.00, synonyms:[] },
+  { id:"PDF_4569759", name:"BNP", cost:250.00, synonyms:[] },
+  { id:"PDF_4569819", name:"Procalcitonin", cost:170.00, synonyms:[] },
   { id:"PT_INR", name:"Prothrombin time (PT/INR)", cost:110.00, synonyms:["pt", "inr", "protime"] },
-  { id:"PDF_4560008", name:"PSA panel", cost:160.00, synonyms:["psa panel"] },
+  { id:"PDF_4560008", name:"PSA panel", cost:130.00, synonyms:["psa panel"] },
   { id:"PTT", name:"PTT", cost:140.00, synonyms:["aptt", "activated partial thromboplastin time"] },
   { id:"DDIMER_QUANT", name:"D-dimer (quantitative)", cost:240.00, synonyms:["d-dimer", "ddimer", "quant d dimer", "quant d-dimer"] },
   { id:"RPP", name:"Respiratory Pathogen Panel (PCR)", cost:1320.00, synonyms:["rpp", "resp virus panel", "respiratory virus panel"] },
-  { id:"PDF_4569813", name:"Respiratory virus panel PCR (19 targets)", cost:736.00, synonyms:["respiratory virus pcr x19"] },
-  { id:"PDF_4566756", name:"RSV PCR", cost:120.00, synonyms:["rsv by pcr"] },
-  { id:"PDF_4564703", name:"hCG, serum (qualitative)", cost:66.00, synonyms:["serum hcg urine qualitative"] },
-  { id:"PDF_4564702", name:"hCG, serum (quantitative)", cost:160.00, synonyms:["serum quantitative hcg"] },
-  { id:"PDF_4560099", name:"Spinal fluid panel", cost:70.00, synonyms:["spinal fluid panel"] },
+  { id:"PDF_4569813", name:"Respiratory virus panel PCR (19 targets)", cost:1320.00, synonyms:["respiratory virus pcr x19"] },
+  { id:"PDF_4566756", name:"RSV PCR", cost:150.00, synonyms:["rsv by pcr"] },
+  { id:"PDF_4564703", name:"hCG, serum (qualitative)", cost:210.00, synonyms:["serum hcg urine qualitative"] },
+  { id:"PDF_4564702", name:"hCG, serum (quantitative)", cost:260.00, synonyms:["serum quantitative hcg"] },
+  { id:"PDF_4560099", name:"Spinal fluid panel", cost:150.00, synonyms:["spinal fluid panel"] },
   { id:"SPUTUM_CX", name:"Sputum culture", cost:210.00, synonyms:["sputum cx", "respiratory culture"] },
-  { id:"PDF_4567045", name:"Stool culture", cost:111.00, synonyms:["stool culture"] },
-  { id:"PDF_4567060", name:"Throat culture", cost:111.00, synonyms:["throat culture"] },
+  { id:"PDF_4567045", name:"Stool culture", cost:110.00, synonyms:["stool culture"] },
+  { id:"PDF_4567060", name:"Throat culture", cost:210.00, synonyms:["throat culture"] },
   { id:"TROP", name:"Troponin", cost:240.00, synonyms:["hs troponin", "high sensitivity troponin", "troponin t"] },
-  { id:"PDF_4564443", name:"TSH", cost:81.00, synonyms:["tsh"] },
-  { id:"PDF_4636700", name:"Ultrasound abdomen complete", cost:1061.00, synonyms:[] },
-  { id:"PDF_4636664", name:"Ultrasound abdomen, paracentesis guidance (limited)", cost:827.00, synonyms:["ultrasound abdomen paracentesis ltd"] },
-  { id:"PDF_4636705", name:"Ultrasound abdomen single organ", cost:827.00, synonyms:[] },
-  { id:"PDF_4633968", name:"Ultrasound ankle brachial index", cost:276.00, synonyms:[] },
-  { id:"PDF_4633985", name:"Ultrasound breast complete left", cost:468.00, synonyms:[] },
-  { id:"PDF_4633984", name:"Ultrasound breast complete right", cost:468.00, synonyms:[] },
-  { id:"PDF_4633987", name:"Ultrasound breast limited left", cost:468.00, synonyms:[] },
-  { id:"PDF_4633986", name:"Ultrasound breast limited right", cost:468.00, synonyms:[] },
-  { id:"PDF_4633880", name:"Ultrasound carotids", cost:1047.00, synonyms:[] },
-  { id:"PDF_4636605", name:"Ultrasound chest", cost:551.00, synonyms:[] },
-  { id:"PDF_4636878", name:"Ultrasound extremity, non-vascular, complete", cost:592.00, synonyms:["ultrasound extremity non vascular complete"] },
-  { id:"PDF_4636879", name:"Ultrasound extremity, non-vascular, limited", cost:442.00, synonyms:["ultrasound extremity non vascular limited"] },
-  { id:"PDF_4636885", name:"Ultrasound femoral artery bilateral", cost:1241.00, synonyms:[] },
-  { id:"PDF_4630010", name:"Ultrasound fetal biophysical profile with non-stress test", cost:813.00, synonyms:["ultrasound fet bioph w non stress"] },
-  { id:"PDF_4630011", name:"Ultrasound fetal biophysical profile without non-stress test", cost:813.00, synonyms:["ultrasound fetal bio wo non stress"] },
-  { id:"PDF_4636942", name:"Ultrasound guidance for needle placement", cost:877.00, synonyms:[] },
-  { id:"PDF_4636886", name:"Ultrasound infant hips", cost:413.00, synonyms:[] },
-  { id:"PDF_4636887", name:"Ultrasound infant hips with manipulation", cost:603.00, synonyms:["ultrasound infant hips w dr manipulation"] },
-  { id:"PDF_4636856", name:"Ultrasound IUD, complete", cost:827.00, synonyms:["ultrasound iud complete"] },
-  { id:"PDF_4636770", name:"Ultrasound kidney", cost:924.00, synonyms:[] },
-  { id:"PDF_4637004", name:"Ultrasound liver", cost:827.00, synonyms:[] },
-  { id:"PDF_4633972", name:"Ultrasound lower extremity artery bilateral", cost:2206.00, synonyms:[] },
-  { id:"PDF_4633978", name:"Ultrasound lower extremity artery limited left", cost:993.00, synonyms:[] },
-  { id:"PDF_4633977", name:"Ultrasound lower extremity artery limited right", cost:993.00, synonyms:[] },
-  { id:"PDF_4636883", name:"Ultrasound lower extremity artery left", cost:993.00, synonyms:[] },
-  { id:"PDF_4636880", name:"Ultrasound lower extremity artery right", cost:993.00, synonyms:[] },
-  { id:"PDF_4633971", name:"Ultrasound lower extremity venous bilateral", cost:2206.00, synonyms:[] },
-  { id:"PDF_4633965", name:"Ultrasound lower extremity venous left", cost:1102.00, synonyms:[] },
-  { id:"PDF_4630013", name:"Ultrasound obstetric, transvaginal", cost:869.00, synonyms:["ultrasound ob trans vaginal"] },
-  { id:"PDF_4637005", name:"Ultrasound pancreas", cost:827.00, synonyms:[] },
-  { id:"PDF_4633551", name:"Ultrasound pelvic limited", cost:758.00, synonyms:[] },
-  { id:"PDF_4637006", name:"Ultrasound pelvic, non-obstetric, complete", cost:827.00, synonyms:["ultrasound pelvic non ob complete"] },
-  { id:"PDF_4630012", name:"Ultrasound pregnant uterus, under 14 weeks", cost:703.00, synonyms:["ultrasound preg uterus <14 weeks"] },
-  { id:"PDF_4636805", name:"Ultrasound pregnant uterus, over 14 weeks", cost:510.00, synonyms:["ultrasound preg uterus >14 weeks"] },
-  { id:"PDF_4630009", name:"Ultrasound pseudoaneurysm", cost:1516.00, synonyms:["ultrasound pseudo aneurysim"] },
-  { id:"PDF_4639521", name:"Ultrasound renal artery and vein", cost:940.00, synonyms:["ultrasound renal artery/ venous"] },
-  { id:"PDF_4636810", name:"Ultrasound repeat fetal age", cost:280.00, synonyms:[] },
-  { id:"PDF_4637008", name:"Ultrasound retroperitoneum, complete", cost:924.00, synonyms:["ultrasound retroperit complete"] },
-  { id:"PDF_4630007", name:"Ultrasound soft tissue abdomen", cost:827.00, synonyms:[] },
-  { id:"PDF_4630004", name:"Ultrasound soft tissue chest", cost:551.00, synonyms:[] },
-  { id:"PDF_4630006", name:"Ultrasound soft tissue head neck", cost:719.00, synonyms:[] },
-  { id:"PDF_4631102", name:"Ultrasound soft tissue neck", cost:719.00, synonyms:[] },
-  { id:"PDF_4630005", name:"Ultrasound soft tissue pelvis", cost:758.00, synonyms:[] },
-  { id:"PDF_4637009", name:"Ultrasound spleen", cost:827.00, synonyms:[] },
-  { id:"PDF_4636870", name:"Ultrasound testicle", cost:965.00, synonyms:[] },
-  { id:"PDF_4636536", name:"Ultrasound thyroid", cost:719.00, synonyms:[] },
-  { id:"PDF_4636830", name:"Ultrasound transvaginal", cost:484.00, synonyms:[] },
+  { id:"PDF_4564443", name:"TSH", cost:150.00, synonyms:["tsh"] },
+  { id:"PDF_4636700", name:"Ultrasound abdomen complete", cost:1490.00, synonyms:[] },
+  { id:"PDF_4636664", name:"Ultrasound abdomen, paracentesis guidance (limited)", cost:810.00, synonyms:["ultrasound abdomen paracentesis ltd"] },
+  { id:"PDF_4636705", name:"Ultrasound abdomen single organ", cost:810.00, synonyms:[] },
+  { id:"PDF_4633968", name:"Ultrasound ankle brachial index", cost:1560.00, synonyms:[] },
+  { id:"PDF_4633985", name:"Ultrasound breast complete left", cost:1050.00, synonyms:[] },
+  { id:"PDF_4633984", name:"Ultrasound breast complete right", cost:1050.00, synonyms:[] },
+  { id:"PDF_4633987", name:"Ultrasound breast limited left", cost:740.00, synonyms:[] },
+  { id:"PDF_4633986", name:"Ultrasound breast limited right", cost:740.00, synonyms:[] },
+  { id:"PDF_4633880", name:"Ultrasound carotids", cost:2230.00, synonyms:[] },
+  { id:"PDF_4636605", name:"Ultrasound chest", cost:920.00, synonyms:[] },
+  { id:"PDF_4636878", name:"Ultrasound extremity, non-vascular, complete", cost:1160.00, synonyms:["ultrasound extremity non vascular complete"] },
+  { id:"PDF_4636879", name:"Ultrasound extremity, non-vascular, limited", cost:460.00, synonyms:["ultrasound extremity non vascular limited"] },
+  { id:"PDF_4636885", name:"Ultrasound femoral artery bilateral", cost:2100.00, synonyms:[] },
+  { id:"PDF_4630010", name:"Ultrasound fetal biophysical profile with non-stress test", cost:1050.00, synonyms:["ultrasound fet bioph w non stress"] },
+  { id:"PDF_4630011", name:"Ultrasound fetal biophysical profile without non-stress test", cost:740.00, synonyms:["ultrasound fetal bio wo non stress"] },
+  { id:"PDF_4636942", name:"Ultrasound guidance for needle placement", cost:1180.00, synonyms:[] },
+  { id:"PDF_4636886", name:"Ultrasound infant hips", cost:620.00, synonyms:[] },
+  { id:"PDF_4636887", name:"Ultrasound infant hips with manipulation", cost:1100.00, synonyms:["ultrasound infant hips w dr manipulation"] },
+  { id:"PDF_4636856", name:"Ultrasound IUD, complete", cost:1140.00, synonyms:["ultrasound iud complete"] },
+  { id:"PDF_4636770", name:"Ultrasound kidney", cost:1030.00, synonyms:[] },
+  { id:"PDF_4637004", name:"Ultrasound liver", cost:810.00, synonyms:[] },
+  { id:"PDF_4633972", name:"Ultrasound lower extremity artery bilateral", cost:2100.00, synonyms:[] },
+  { id:"PDF_4633978", name:"Ultrasound lower extremity artery limited left", cost:1400.00, synonyms:[] },
+  { id:"PDF_4633977", name:"Ultrasound lower extremity artery limited right", cost:1400.00, synonyms:[] },
+  { id:"PDF_4636883", name:"Ultrasound lower extremity artery left", cost:1400.00, synonyms:[] },
+  { id:"PDF_4636880", name:"Ultrasound lower extremity artery right", cost:1400.00, synonyms:[] },
+  { id:"PDF_4633971", name:"Ultrasound lower extremity venous bilateral", cost:2380.00, synonyms:[] },
+  { id:"PDF_4633965", name:"Ultrasound lower extremity venous left", cost:1580.00, synonyms:[] },
+  { id:"PDF_4630013", name:"Ultrasound obstetric, transvaginal", cost:530.00, synonyms:["ultrasound ob trans vaginal"] },
+  { id:"PDF_4637005", name:"Ultrasound pancreas", cost:810.00, synonyms:[] },
+  { id:"PDF_4633551", name:"Ultrasound pelvic limited", cost:680.00, synonyms:[] },
+  { id:"PDF_4637006", name:"Ultrasound pelvic, non-obstetric, complete", cost:1440.00, synonyms:["ultrasound pelvic non ob complete"] },
+  { id:"PDF_4630012", name:"Ultrasound pregnant uterus, under 14 weeks", cost:540.00, synonyms:["ultrasound preg uterus <14 weeks"] },
+  { id:"PDF_4636805", name:"Ultrasound pregnant uterus, over 14 weeks", cost:1320.00, synonyms:["ultrasound preg uterus >14 weeks"] },
+  { id:"PDF_4630009", name:"Ultrasound pseudoaneurysm", cost:1250.00, synonyms:["ultrasound pseudo aneurysim"] },
+  { id:"PDF_4639521", name:"Ultrasound renal artery and vein", cost:1950.00, synonyms:["ultrasound renal artery/ venous"] },
+  { id:"PDF_4636810", name:"Ultrasound repeat fetal age", cost:760.00, synonyms:[] },
+  { id:"PDF_4637008", name:"Ultrasound retroperitoneum, complete", cost:1290.00, synonyms:["ultrasound retroperit complete"] },
+  { id:"PDF_4630007", name:"Ultrasound soft tissue abdomen", cost:370.00, synonyms:[] },
+  { id:"PDF_4630004", name:"Ultrasound soft tissue chest", cost:370.00, synonyms:[] },
+  { id:"PDF_4630006", name:"Ultrasound soft tissue head neck", cost:1060.00, synonyms:[] },
+  { id:"PDF_4631102", name:"Ultrasound soft tissue neck", cost:1060.00, synonyms:[] },
+  { id:"PDF_4630005", name:"Ultrasound soft tissue pelvis", cost:370.00, synonyms:[] },
+  { id:"PDF_4637009", name:"Ultrasound spleen", cost:810.00, synonyms:[] },
+  { id:"PDF_4636870", name:"Ultrasound testicle", cost:1470.00, synonyms:[] },
+  { id:"PDF_4636536", name:"Ultrasound thyroid", cost:1060.00, synonyms:[] },
+  { id:"PDF_4636830", name:"Ultrasound transvaginal", cost:1140.00, synonyms:[] },
   { id:"UA", name:"Urinalysis (UA)", cost:95.00, synonyms:["ua", "urine test", "dipstick"] },
   { id:"URINE_CX", name:"Urine culture", cost:170.00, synonyms:["urine cx", "ucx"] },
-  { id:"PDF_4569705", name:"hCG, urine (quantitative)", cost:66.00, synonyms:["urine hcg manual quantitative"] },
-  { id:"PDF_4720655", name:"Venous blood gas (VBG)", cost:56.00, synonyms:["venous ph blood gas"] },
-  { id:"PDF_4569728", name:"Wound culture", cost:111.00, synonyms:["wound culture"] },
+  { id:"PDF_4569705", name:"hCG, urine (quantitative)", cost:260.00, synonyms:["urine hcg manual quantitative"] },
+  { id:"PDF_4720655", name:"Venous blood gas (VBG)", cost:270.00, synonyms:["venous ph blood gas"] },
+  { id:"PDF_4569728", name:"Wound culture", cost:210.00, synonyms:["wound culture"] },
+  { id:"MRI_L_SPINE", name:"MRI lumbar spine without contrast", cost:5570.00, synonyms:["mri lumbar", "mri l spine", "mri back", "lumbar mri"] },
+  { id:"MRI_L_SPINE_WWO", name:"MRI lumbar spine with and without contrast", cost:9200.00, synonyms:["mri lumbar contrast"] },
+  { id:"MRI_T_SPINE", name:"MRI thoracic spine without contrast", cost:5570.00, synonyms:["mri thoracic spine"] },
+  { id:"MRI_C_SPINE_W", name:"MRI cervical spine with contrast", cost:6830.00, synonyms:["mri cervical spine", "mri neck spine"] },
+  { id:"MRI_LE_NONJOINT", name:"MRI foot / lower extremity (non-joint) without contrast", cost:5470.00, synonyms:["mri foot", "mri lower extremity", "mri leg"] },
+  { id:"MRI_LE_NONJOINT_WWO", name:"MRI foot / lower extremity (non-joint) with and without contrast", cost:7670.00, synonyms:["mri foot contrast", "mri osteomyelitis"] },
+  { id:"MRI_LE_JOINT", name:"MRI lower extremity joint without contrast", cost:5700.00, synonyms:["mri knee", "mri ankle", "mri hip"] },
+  { id:"MRI_UE_NONJOINT", name:"MRI upper extremity (non-joint) without contrast", cost:4270.00, synonyms:["mri arm"] },
+  { id:"MRI_BRAIN", name:"MRI brain without contrast", cost:6090.00, synonyms:["mri head", "mri brain"] },
+  { id:"MRI_BRAIN_WWO", name:"MRI brain with and without contrast", cost:9110.00, synonyms:["mri brain contrast"] },
+  { id:"MRI_PELVIS", name:"MRI pelvis without contrast", cost:4880.00, synonyms:["mri pelvis"] },
+  { id:"MRI_ABD", name:"MRI abdomen without contrast", cost:5840.00, synonyms:["mri abdomen", "mrcp"] },
+  { id:"XR_FOOT", name:"Foot X-ray", cost:490.00, synonyms:["xr foot", "foot xray", "foot film", "x-ray foot", "foot radiograph", "foot 2 view", "foot 3 view"] },
+  { id:"XR_ANKLE", name:"Ankle X-ray (2 views)", cost:490.00, synonyms:["xr ankle", "ankle xray"] },
+  { id:"XR_KNEE", name:"Knee X-ray (1–2 views)", cost:490.00, synonyms:["xr knee", "knee xray"] },
+  { id:"XR_HIP", name:"Hip and pelvis X-ray, unilateral (2–3 views)", cost:530.00, synonyms:["xr hip", "hip xray"] },
+  { id:"XR_C_SPINE", name:"Cervical spine X-ray (2–3 views)", cost:590.00, synonyms:["xr c spine", "neck xray", "cervical spine xray"] },
+  { id:"XR_T_SPINE", name:"Thoracic spine X-ray (3 views)", cost:690.00, synonyms:["xr t spine", "thoracic xray"] },
+  { id:"XR_PELVIS", name:"Pelvis X-ray (1–2 views)", cost:490.00, synonyms:["xr pelvis", "pelvis xray"] },
+  { id:"XR_ABDOMEN", name:"Abdominal X-ray (2 views)", cost:660.00, synonyms:["kub", "xr abdomen", "abdominal xray", "abd xray"] },
+  { id:"XR_SHOULDER", name:"Shoulder X-ray (2+ views)", cost:550.00, synonyms:["xr shoulder"] },
+  { id:"XR_TIB_FIB", name:"Tibia/fibula X-ray (2 views)", cost:490.00, synonyms:["xr tib fib", "leg xray"] },
+  { id:"ESR", name:"ESR (erythrocyte sedimentation rate)", cost:60.00, synonyms:["esr", "sed rate", "sedimentation rate"] },
+  { id:"CRP", name:"CRP (C-reactive protein)", cost:120.00, synonyms:["crp", "c reactive protein"] },
+  { id:"ABG", name:"Arterial blood gas (ABG)", cost:270.00, synonyms:["abg", "arterial blood gas"] },
+  { id:"ALBUMIN", name:"Albumin (serum)", cost:60.00, synonyms:["albumin"] },
+  { id:"VANC_LEVEL", name:"Vancomycin level", cost:270.00, synonyms:["vanc trough", "vancomycin trough", "vanc level"] },
+  { id:"GLUCOSE", name:"Glucose, blood (quantitative)", cost:120.00, synonyms:["glucose", "bg", "blood sugar"] },
+  { id:"GRAM_STAIN", name:"Gram stain", cost:100.00, synonyms:["gram stain"] },
+  { id:"WBC_COUNT", name:"White blood cell count", cost:45.00, synonyms:["wbc", "white count"] },
+  { id:"SWAB_SUPERFICIAL", name:"Wound swab, superficial", cost:210.00, synonyms:["superficial swab", "wound swab", "surface swab"] },
+  { id:"BONE_BX", name:"Bone biopsy, open deep (with culture)", cost:7830.00, synonyms:["bone biopsy", "bone culture"] },
 ];
 
 
@@ -2575,6 +2635,10 @@ lowValueReasons: new Map([
     highValueIds: new Set(["NO_TESTING"]),
     intermediateIds: new Map([]),
     lowValueReasons: new Map([
+    ["MRI_L_SPINE","Low Value – MRI of the lumbar spine is not indicated for acute back pain without red flags. It frequently shows disc bulges and degenerative changes that are present in asymptomatic people of this age, and those incidental findings drive further imaging, referrals and sometimes surgery without improving outcomes."],
+    ["MRI_L_SPINE_WWO","Low Value – Contrast adds cost without adding value here. Contrast-enhanced spine MRI is reserved for suspected infection, malignancy, or prior spine surgery — none of which apply to this patient."],
+    ["MRI_T_SPINE","Low Value – His pain is lumbar and his neurologic exam is normal. Imaging a different segment of the spine cannot change management."],
+    ["XR_PELVIS","Low Value – No trauma, no focal hip findings, and a normal neurologic exam. This would not change management."],
       ["CT_L_SPINE","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
       ["XR_L_SPINE","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
       ["PDF_4632132","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
@@ -2645,6 +2709,410 @@ lowValueReasons: new Map([
     pathwayHtml: ``
   },
   6: {
+    title: "Case 6a – Diabetic foot infection",
+    diagnosis: "Sepsis from a diabetic foot infection",
+    attribution: "",
+    contentHtml: `
+      <p>
+        A <strong>58-year-old man with type 2 diabetes</strong> on insulin (glargine 25 units daily), with known
+        peripheral neuropathy, presents to the emergency department with <strong>6 days of worsening right foot
+        pain and redness</strong> after he noticed drainage on his sock. He has not been able to bear weight for
+        two days and reports subjective fevers and chills. His A1c was 9.8% six months ago.
+      </p>
+      <div class="grid2">
+        <div class="summary">
+          <h3 style="margin-top:0;">Vitals</h3>
+          <ul>
+            <li><strong>Temp:</strong> 38.9&deg;C (102.0&deg;F)</li>
+            <li><strong>HR:</strong> 122 bpm</li>
+            <li><strong>RR:</strong> 26 / min</li>
+            <li><strong>BP:</strong> 86/50 (<strong>MAP 62</strong>)</li>
+            <li><strong>SpO&#8322;:</strong> 96% on room air</li>
+            <li><strong>Glucose:</strong> 358 mg/dL</li>
+          </ul>
+        </div>
+        <div class="summary">
+          <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+          <p class="small"><strong>General:</strong> Ill-appearing, diaphoretic. <strong>Drowsy and slow to answer, oriented to person and place only</strong> &mdash; his wife says this is new this morning.</p>
+          <p class="small"><strong>Right foot:</strong> 3 cm plantar ulcer over the first metatarsal head with purulent drainage; surrounding erythema extending 7 cm proximally onto the dorsum; warm, tender, moderate edema. <strong>A sterile probe does not reach bone.</strong> No crepitus, no bullae, no skin necrosis.</p>
+          <p class="small"><strong>Vascular:</strong> Dorsalis pedis faintly palpable; posterior tibial not palpable; capillary refill 4 seconds.</p>
+          <p class="small"><strong>Neuro:</strong> Absent 10-g monofilament sensation at 6 of 10 sites.</p>
+        </div>
+      </div>
+      <div class="hint">
+        He meets SIRS on temperature, heart rate and respiratory rate, and scores <strong>3 on qSOFA</strong>
+        (RR 26, systolic 86, altered mentation). This is sepsis with an identified source.
+      </div>
+    `,
+    highValueIds: new Set(["LACTATE","BLOOD_CX","CBC","BMP","CMP","XR_FOOT","PDF_4569728"]),
+    highValueReasons: new Map([
+      ["LACTATE","High Value – An hour-one sepsis bundle element. Lactate identifies occult hypoperfusion and sets the resuscitation target. If it is above 2, it must be repeated."],
+      ["BLOOD_CX","High Value – Draw before antibiotics whenever that does not delay them. Note the contrast with uncomplicated cellulitis, where blood cultures are low-value: systemic signs change that."],
+      ["CBC","High Value – Leukocytosis or leukopenia contributes to the sepsis assessment, and the platelet count feeds organ-dysfunction scoring."],
+      ["BMP","High Value – Creatinine and bicarbonate are organ-dysfunction criteria, renal function drives antibiotic dosing, and his glucose is 358."],
+      ["CMP","High Value – Acceptable alternative to BMP; adds hepatic assessment."],
+      ["XR_FOOT","High Value – First-line imaging of the foot: gas, foreign body, bony destruction. Cheap and fast, and it is what makes the decision not to image further a reasoned one rather than an omission."],
+      ["PDF_4569728","High Value – Deep tissue culture obtained at debridement. This is the specimen that lets you narrow therapy in 48 hours, and it is the single most consequential microbiology decision in this case."]
+    ]),
+    intermediateIds: new Map([
+      ["PDF_4569806","Intermediate – An A1c will not change anything today, but it will change the discharge plan. Reasonable to send with the initial labs."],
+      ["PDF_4633968","Intermediate – Perfusion determines whether this wound can heal, and his posterior tibial pulse is absent. This belongs in the admission, not in the first hour."],
+      ["ESR","Intermediate – A reasonable baseline, but with no bone involvement suspected it is not driving a decision here."],
+      ["CRP","Intermediate – As above: a baseline you may want to follow, not a test that changes management tonight."],
+      ["PDF_4567076","Intermediate – A negative MRSA screen has a high negative predictive value and may let you stop vancomycin a day earlier. Cheap, and it can genuinely change something."],
+      ["DVT_US","Intermediate – A unilateral hot, swollen leg is a fair thought, but there is a complete alternative explanation in front of you. Reasonable only if the leg findings extend beyond what the infection explains."]
+    ]),
+    lowValueReasons: new Map([
+      ["SWAB_SUPERFICIAL","Low Value – A superficial swab grows skin flora and colonisers, and it sends you after the wrong organism. It costs exactly the same as the deep tissue culture obtained at debridement: same $210, opposite value. This is the clearest example in the module that cost and value are different axes."],
+      ["MRI_LE_NONJOINT","Low Value – The probe does not reach bone and there is no clinical concern for osteomyelitis. This is the most expensive wrong answer available in this case."],
+      ["MRI_LE_NONJOINT_WWO","Low Value – As above, with contrast added on top. Nothing here justifies advanced imaging tonight."],
+      ["BONE_BX","Low Value – The diagnostic gold standard for a diagnosis nobody is making. Invasive and expensive."],
+      ["PDF_4569819","Low Value – Procalcitonin does not change the decision to treat a patient you are already treating. It has a role in guiding later de-escalation, not in this first hour."],
+      ["PDF_4639512","Low Value – CT angiography is not the first-line vascular assessment. An ankle-brachial index or arterial duplex comes first, at a fraction of the cost."],
+      ["PDF_4639514","Low Value – CT angiography is not the first-line vascular assessment. An ankle-brachial index or arterial duplex comes first, at a fraction of the cost."],
+      ["NO_TESTING","Low Value – He is septic with an identified source. Deferring evaluation here is the most dangerous answer on the list."]
+    ]),
+    missedSeverity: "error",
+    missedReasons: new Map([
+      ["LACTATE","An hour-one bundle element, and the measurement that tells you whether he is in septic shock. Without it you are resuscitating blind."],
+      ["BLOOD_CX","Drawn before antibiotics, these are your best chance at an organism if the wound cultures disappoint. After antibiotics the yield falls sharply."],
+      ["CBC","Part of the organ-dysfunction assessment in sepsis, and the baseline every later decision is measured against."],
+      ["BMP","Creatinine and bicarbonate are organ-dysfunction criteria; renal function also determines how you dose his antibiotics."],
+      ["XR_FOOT","$490 and fast. It excludes gas and bony destruction, and it is the imaging that justifies not ordering an MRI."],
+      ["PDF_4569728","Deep tissue culture at debridement is what allows you to narrow antibiotics on day 2. Without it he stays on broad coverage for his whole admission."]
+    ]),
+    recommendedIds: ["LACTATE","BLOOD_CX","CBC","BMP","XR_FOOT","PDF_4569728"],
+    decisions: [
+      { id:"fluids", question:"Fluid resuscitation", hint:"He is hypotensive with a MAP of 62.",
+        options:[
+          {id:"f30", label:"30 mL/kg crystalloid, started now", tier:"high", why:"This is the hour-one bundle target for sepsis with hypotension. He has no heart failure or dialysis dependence that would argue for a more cautious approach."},
+          {id:"f500", label:"500 mL bolus, then reassess", tier:"intermediate", why:"Not unreasonable as a first step, but it under-resuscitates a hypotensive septic patient and delays reaching the target."},
+          {id:"fmaint", label:"Maintenance fluids only", tier:"low", why:"Maintenance fluid does not resuscitate. He is hypotensive with evidence of hypoperfusion."},
+          {id:"fnone", label:"Hold fluids &mdash; he is not hypotensive enough to need them", tier:"low", why:"A MAP of 62 is below the 65 threshold. This is exactly the patient the bundle is written for."}
+        ]},
+      { id:"abxtime", question:"Antibiotic timing", hint:"",
+        options:[
+          {id:"a1h", label:"Broad-spectrum antibiotics within one hour, after drawing blood cultures", tier:"high", why:"Every hour of delay in septic shock is associated with worse outcomes. Cultures first, but only if that does not delay the antibiotics."},
+          {id:"a3h", label:"Within three hours", tier:"intermediate", why:"Acceptable for sepsis without shock, but he is hypotensive. Aim for the hour."},
+          {id:"aimg", label:"After the foot X-ray results", tier:"low", why:"Imaging never precedes antibiotics in septic shock. The X-ray will not change what you give."},
+          {id:"await", label:"Hold until cultures result, to avoid unnecessary broad coverage", tier:"low", why:"Stewardship means narrowing early, not starting late. Withholding antibiotics from a septic patient for 48 hours is dangerous."}
+        ]},
+      { id:"abxchoice", question:"Empiric antibiotic choice", hint:"Moderate-to-severe diabetic foot infection with systemic signs.",
+        options:[
+          {id:"vpt", label:"Vancomycin plus piperacillin-tazobactam", tier:"high", why:"Covers MRSA, streptococci, gram-negatives and anaerobes, which is the appropriate empiric breadth for a severe diabetic foot infection with sepsis."},
+          {id:"vanc", label:"Vancomycin alone", tier:"intermediate", why:"Covers the gram-positives but leaves gram-negative and anaerobic organisms uncovered in a wound that frequently harbours them."},
+          {id:"keflex", label:"Oral cephalexin", tier:"low", why:"Oral therapy for a hypotensive septic patient, with no MRSA or gram-negative coverage."},
+          {id:"cfz", label:"Cefazolin alone", tier:"low", why:"No MRSA and no gram-negative coverage. Reasonable later if cultures allow, not as empiric therapy in sepsis."}
+        ]},
+      { id:"source", question:"Source control", hint:"",
+        options:[
+          {id:"urgent", label:"Urgent surgery or podiatry consult for debridement and deep tissue culture", tier:"high", why:"Source control is the sepsis element most often left out, and it is the only one that is not a drug or a fluid. No antibiotic fixes an undrained foot. It also produces the specimen that lets you narrow therapy later."},
+          {id:"48h", label:"Consult if he is not improving in 48 hours", tier:"intermediate", why:"Delays both the source control and the deep culture. In a septic patient with purulent drainage, this is too slow."},
+          {id:"none", label:"No consult; antibiotics alone", tier:"low", why:"Undrained purulence in a septic patient will not resolve on antibiotics, and you lose the culture that would let you narrow."}
+        ]},
+      { id:"pressors", question:"If the MAP stays below 65 after the fluid bolus", hint:"",
+        options:[
+          {id:"ne", label:"Start norepinephrine and escalate the level of care", tier:"high", why:"Persistent hypotension after adequate fluid resuscitation defines septic shock and is the indication for vasopressors. Norepinephrine is first-line."},
+          {id:"morefluid", label:"Give a further fluid bolus and reassess", tier:"intermediate", why:"Reasonable once, but repeated boluses in a patient who is not responding delay the pressor he needs and risk fluid overload."},
+          {id:"observe", label:"Continue fluids alone and observe on the ward", tier:"low", why:"Observing established septic shock on a general ward without vasopressor support is unsafe."}
+        ]},
+      { id:"dispo", question:"Disposition", hint:"",
+        options:[
+          {id:"mon", label:"Monitored bed with sepsis protocol; ICU if vasopressors are required", tier:"high", why:"Matches his acuity: close monitoring now, with escalation available if he does not respond to fluids."},
+          {id:"ward", label:"General medical ward", tier:"intermediate", why:"He may end up there once stabilised, but a hypotensive septic patient needs closer monitoring for the first several hours."},
+          {id:"obs", label:"Observation unit with a 48-hour recheck", tier:"low", why:"An observation pathway is not designed for septic shock."},
+          {id:"home", label:"Discharge on oral antibiotics with clinic follow-up", tier:"low", why:"He is hypotensive, confused and febrile with an undrained infection."}
+        ]}
+    ],
+    pathwayHtml: `
+<strong>Sepsis with a foot source &mdash; the hour-one bundle</strong>
+<p class="small">
+  This is the case in the module where a broad, expensive workup is unambiguously the high-value answer.
+  The costly mistake here is hesitation, not over-ordering.
+</p>
+<table class="small">
+  <tr><th>Bundle element</th><th>In this patient</th></tr>
+  <tr><td>Measure lactate; repeat if above 2</td><td>Required &mdash; and the repeat is the element most often forgotten</td></tr>
+  <tr><td>Blood cultures before antibiotics</td><td>Required, provided it does not delay them</td></tr>
+  <tr><td>Broad-spectrum antibiotics within the hour</td><td>Vancomycin + piperacillin-tazobactam</td></tr>
+  <tr><td>30 mL/kg crystalloid for hypotension or lactate &ge; 4</td><td>Required &mdash; MAP 62</td></tr>
+  <tr><td>Vasopressors if MAP stays below 65 after fluids</td><td>Norepinephrine, with escalation of care</td></tr>
+  <tr><td><strong>Source control</strong></td><td><strong>Urgent debridement with deep tissue culture</strong></td></tr>
+</table>
+<p class="small">
+  Source control is the element that is not a drug or a fluid, and the one most often omitted.
+  In this patient no antibiotic regimen fixes an undrained foot.
+</p>
+
+<strong>Imaging</strong>
+<ul class="small">
+  <li><strong>Foot X-ray ($490)</strong> &ndash; first-line: gas, foreign body, bony destruction.</li>
+  <li><strong>MRI foot ($5,470&ndash;$7,670)</strong> &ndash; not indicated. The probe does not reach bone and there is no clinical suspicion of osteomyelitis.</li>
+</ul>
+
+<strong>The two cultures that cost the same</strong>
+<p class="small">
+  A superficial ulcer swab and a deep tissue culture obtained at debridement bill identically, at $210.
+  One grows skin flora and misleads your therapy; the other is what lets you narrow antibiotics in 48 hours.
+  Identical price, opposite value.
+</p>
+`
+  },
+  7: {
+    title: "Case 6b – Hospital day 1",
+    diagnosis: "Improving on empiric therapy; organism not yet identified",
+    attribution: "",
+    contentHtml: `
+      <p>
+        <strong>Twenty-four hours after admission.</strong> He is off pressors, afebrile for 12 hours, his lactate
+        has normalised and his white count is falling. The erythema has receded and is marked. He is mobilising to
+        the chair with therapy, not yet back to baseline. <strong>Renal function is normal.</strong>
+      </p>
+      <div class="grid2">
+        <div class="summary">
+          <h3 style="margin-top:0;">Overnight events</h3>
+          <p class="small"><strong>Podiatry, in the ED on day 0:</strong> debrided the wound and obtained deep tissue cultures. The debridement was <strong>minimal</strong>, with negligible bleeding risk, and no further procedure is planned. Documented <strong>no concern for osteomyelitis and no indication for MRI</strong>.</p>
+          <p class="small"><strong>Microbiology so far:</strong> deep tissue Gram stain shows <strong>gram-positive cocci in clusters</strong>. Blood cultures with no growth at 24 hours. <strong>Identification and susceptibilities are still pending.</strong></p>
+          <p class="small"><strong>Diabetes:</strong> he mentions he has <strong>not had his glargine in 24 hours</strong> and is due. He is <strong>eating a normal diet with a normal appetite</strong>. Home regimen is glargine 25 units daily.</p>
+        </div>
+        <div class="summary">
+          <h3 style="margin-top:0;">Still running from admission</h3>
+          <ul class="small">
+            <li>Continuous telemetry</li>
+            <li>Daily CBC, BMP and CRP</li>
+            <li>Vancomycin plus piperacillin-tazobactam</li>
+            <li>Maintenance IV fluids</li>
+            <li>No VTE prophylaxis ordered</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hint">
+        The question today is what comes <strong>off</strong>, what stays <strong>on</strong>, and what should have
+        been <strong>started</strong>. Gram stain clusters point to staphylococcus &mdash; which means MRSA is still
+        on the table until susceptibilities return.
+      </div>
+    `,
+    highValueIds: new Set(["NO_TESTING"]),
+    highValueReasons: new Map([
+      ["NO_TESTING","High Value – He is improving on therapy and no new diagnostic test would change today's management. The work of this stage is stopping things, not adding them."]
+    ]),
+    intermediateIds: new Map([
+      ["PDF_4567076","Intermediate – With clusters on the Gram stain, a negative MRSA nasal screen has a high negative predictive value and could let you stop vancomycin a day earlier. Cheap, and it can genuinely change something."]
+    ]),
+    lowValueReasons: new Map([
+      ["LACTATE","Low Value – Normalised, off pressors, no longer septic. Repeating it answers a question you already have the answer to."],
+      ["CBC","Low Value – He is improving. Daily phlebotomy on a stable patient causes iatrogenic anaemia and generates incidental findings that lead to more testing."],
+      ["BMP","Low Value – Renal function is normal and stable. Daily chemistry on an improving patient is reflex, not reasoning."],
+      ["CMP","Low Value – As above, and broader still."],
+      ["CRP","Low Value – Trending an inflammatory marker daily does not outpace the bedside examination in a patient whose erythema you can see receding."],
+      ["ESR","Low Value – Slow to change and not guiding any decision here."],
+      ["BLOOD_CX","Low Value – No growth at 24 hours in a patient who is improving. Repeat cultures find nothing and prolong the stay."],
+      ["MRI_LE_NONJOINT","Low Value – The consultant who physically examined the wound documented no indication. Ordering $5,470 of imaging to overrule that is the most expensive way to disregard a specialist."],
+      ["MRI_LE_NONJOINT_WWO","Low Value – As above, with contrast added."],
+      ["BONE_BX","Low Value – The gold standard for a diagnosis nobody is making."],
+      ["PDF_4569819","Low Value – Procalcitonin has a role in guiding antibiotic discontinuation, but here the plan is already governed by cultures that return tomorrow."],
+      ["XR_FOOT","Low Value – Already obtained on admission and unchanged clinically. Repeating it adds nothing."]
+    ]),
+    missedSeverity: "neutral",
+    missedReasons: new Map([
+      ["NO_TESTING","For this stage, ordering no new diagnostic testing is the high-value choice. He is improving, and the decisions that matter today are all about stopping and starting treatments rather than adding tests."]
+    ]),
+    recommendedIds: ["NO_TESTING"],
+    decisions: [
+      { id:"tele", question:"Telemetry", hint:"",
+        options:[
+          {id:"stop", label:"Discontinue telemetry", tier:"high", why:"He has no arrhythmia, no cardiac indication and is haemodynamically stable. Continuous monitoring without an indication restricts mobility, generates false alarms and can hold up a bed."},
+          {id:"24h", label:"Continue 24 more hours, then reassess", tier:"intermediate", why:"Defensible on the day he came off pressors, but by 24 hours of stability the indication has passed."},
+          {id:"cont", label:"Continue for the rest of the admission", tier:"low", why:"Default telemetry is one of the most common low-value inpatient practices. There is no cardiac indication here."}
+        ]},
+      { id:"labs", question:"Laboratory monitoring", hint:"",
+        options:[
+          {id:"stoplabs", label:"Stop the daily labs; recheck if the clinical course changes", tier:"high", why:"He is improving on examination. Daily bloodwork in a stable patient causes iatrogenic anaemia, disturbs sleep, and turns up incidental abnormalities that generate further testing."},
+          {id:"qod", label:"Every-other-day CBC only", tier:"intermediate", why:"Better than daily, and reasonable if you want one more data point before stopping."},
+          {id:"daily", label:"Continue daily CBC, BMP and CRP", tier:"low", why:"Three daily tests on a patient whose examination already tells you he is improving."}
+        ]},
+      { id:"abx6b", question:"Antibiotics, with clusters on the Gram stain and susceptibilities pending", hint:"",
+        options:[
+          {id:"continue", label:"Continue vancomycin; narrow once susceptibilities return", tier:"high", why:"Clusters mean staphylococcus, and MRSA cannot be excluded until susceptibilities return tomorrow. This is the honest version of de-escalation: sometimes the data you have tells you to wait."},
+          {id:"stoppt", label:"Continue vancomycin and stop the anti-pseudomonal coverage", tier:"intermediate", why:"A defensible partial narrowing given a gram-positive organism on the stain, though diabetic foot cultures are often polymicrobial and the final result is a day away."},
+          {id:"stopvanc", label:"Stop vancomycin now", tier:"low", why:"Gram-positive cocci in clusters is exactly the pattern that could be MRSA. Stopping vancomycin before susceptibilities is a guess."},
+          {id:"stopall", label:"Stop all antibiotics because he is afebrile", tier:"low", why:"He is 24 hours into treatment for a severe infection. Being afebrile is the treatment working, not evidence that it is unnecessary."}
+        ]},
+      { id:"insulin", question:"Insulin, in a patient eating normally who has missed 24 hours of basal", hint:"Home regimen: glargine 25 units daily. Eating a normal diet.",
+        options:[
+          {id:"basalcorr", label:"Restart home glargine 25 units daily plus correction-scale insulin", tier:"high", why:"Basal insulin should be continued in a patient with type 2 diabetes who takes it at home and is eating, with correction insulin layered on top. Note that this option costs more than sliding scale alone in insulin, glucose checks and nursing time, and is still the right answer."},
+          {id:"basalonly", label:"Restart home glargine 25 units daily alone", tier:"intermediate", why:"The important half is right: his basal insulin goes back. Adding correction insulin would let you respond to hyperglycaemia rather than watch it."},
+          {id:"ssionly", label:"Correction-scale (sliding scale) insulin only", tier:"low", why:"Sliding scale alone is recommended against by both the Endocrine Society and the ADA. It is purely reactive, treating hyperglycaemia only after it has happened, and it leaves a patient who needs basal insulin without any."},
+          {id:"half", label:"Half the glargine dose while inpatient", tier:"low", why:"This comes from a reasonable instinct &mdash; inpatients often eat poorly &mdash; that does not apply here. He is eating a normal diet, so halving his basal produces avoidable hyperglycaemia."},
+          {id:"increase", label:"Increase glargine to 40 units because acutely ill patients need more insulin", tier:"low", why:"Acute illness does raise insulin requirements, but he is 24 hours past his sepsis, off pressors and eating. A 60% empiric increase without titration data invites hypoglycaemia, which in hospital means falls and a longer stay."}
+        ]},
+      { id:"vte", question:"VTE prophylaxis, the day after a minimal debridement in the ED", hint:"Renal function is normal. No further procedure planned.",
+        options:[
+          {id:"lovenox", label:"Prophylactic-dose enoxaparin", tier:"high", why:"He is hospitalised with an acute infection and reduced mobility, and nothing about a minimal debridement performed the previous day contraindicates pharmacologic prophylaxis. Renal function is normal, so enoxaparin dosing is straightforward."},
+          {id:"scds", label:"Sequential compression devices only", tier:"low", why:"Mechanical prophylaxis alone is for patients who cannot receive anticoagulation. He has no contraindication, so this is under-treatment using a less effective measure. Adding compression devices alongside enoxaparin would be perfectly reasonable &mdash; it is the word 'only' that makes this wrong."},
+          {id:"none", label:"No VTE prophylaxis", tier:"low", why:"Hospitalised, acutely infected, and mobilising only to the chair. This is precisely the risk profile prophylaxis exists for."},
+          {id:"drip", label:"Continuous heparin infusion", tier:"low", why:"This is therapeutic anticoagulation for a patient with no thrombosis and no other indication. It carries real bleeding risk a day after a procedure, and it drags in monitoring labs, nursing time and often a higher level of care. Note that it is both the most expensive option here and the most harmful."}
+        ]}
+    ],
+    pathwayHtml: `
+<strong>Two kinds of de-escalation, on two different clocks</strong>
+<p class="small">
+  This is the distinction most learners are never taught explicitly. <strong>Monitoring can be de-escalated
+  as soon as the patient is stable. Antibiotics cannot be de-escalated until the microbiology allows it.</strong>
+  Today he is stable, so the telemetry, the daily phlebotomy and the maintenance fluids should all stop.
+  The organism is not identified, so the antibiotics stay.
+</p>
+
+<strong>What should come off today</strong>
+<ul class="small">
+  <li><strong>Telemetry</strong> &ndash; no cardiac indication, and it restricts his mobility.</li>
+  <li><strong>Daily CBC, BMP and CRP</strong> &ndash; his examination is a better monitor than his labs.</li>
+  <li><strong>Maintenance IV fluids</strong> &ndash; he is eating and drinking.</li>
+</ul>
+
+<strong>What should go on today</strong>
+<ul class="small">
+  <li><strong>His home basal insulin, plus correction</strong> &ndash; he has missed 24 hours and is eating normally.</li>
+  <li><strong>Prophylactic enoxaparin</strong> &ndash; hospitalised, infected, mobilising to the chair only.</li>
+</ul>
+
+<strong>What has to wait</strong>
+<p class="small">
+  Gram-positive cocci <strong>in clusters</strong> is staphylococcus, which means MRSA is still possible.
+  Vancomycin continues until susceptibilities return tomorrow. A learner who stops it today is guessing,
+  and a learner who broadens is treating a patient who is already improving.
+</p>
+
+<strong>Worth noticing about cost</strong>
+<p class="small">
+  Both of today's correct treatment decisions &mdash; full basal insulin with correction, and enoxaparin &mdash;
+  cost <em>more</em> than the wrong answers sitting beside them. High-value care is not the cheap option;
+  it is the one that produces the best outcome for the necessary cost.
+</p>
+`
+  },
+  8: {
+    title: "Case 6c – Hospital day 2",
+    diagnosis: "Methicillin-susceptible Staphylococcus aureus diabetic foot infection",
+    attribution: "",
+    contentHtml: `
+      <p>
+        <strong>Forty-eight hours after admission.</strong> The wound is clean and granulating, the erythema has
+        resolved, he has been afebrile throughout and his glucose is controlled. He is mobilising with therapy.
+      </p>
+      <div class="grid2">
+        <div class="summary">
+          <h3 style="margin-top:0;">Microbiology &mdash; final</h3>
+          <p class="small"><strong>Deep tissue culture:</strong> <em>Staphylococcus aureus</em>, <strong>methicillin-susceptible</strong>.</p>
+          <p class="small"><strong>Blood cultures:</strong> no growth to date at 48 hours.</p>
+          <p class="small"><strong>Imaging:</strong> admission foot X-ray showed soft tissue swelling, no gas and no bony destruction. Podiatry documented no concern for osteomyelitis.</p>
+        </div>
+        <div class="summary">
+          <h3 style="margin-top:0;">Current orders</h3>
+          <ul class="small">
+            <li>Vancomycin plus piperacillin-tazobactam</li>
+            <li>Glargine 25 units daily plus correction insulin</li>
+            <li>Prophylactic enoxaparin</li>
+            <li>Wound care per podiatry</li>
+          </ul>
+          <p class="small"><strong>Social:</strong> lives with his wife, drives, works as a warehouse supervisor. No home health at present.</p>
+        </div>
+      </div>
+      <div class="hint">
+        Susceptibilities are back, so the antibiotics can finally move &mdash; and discharge planning starts today.
+      </div>
+    `,
+    highValueIds: new Set(["NO_TESTING"]),
+    highValueReasons: new Map([
+      ["NO_TESTING","High Value – The microbiology is final, he is improving, and no further diagnostic test would change the plan. Everything that matters today is a treatment or a discharge decision."]
+    ]),
+    intermediateIds: new Map([
+      ["PDF_4569806","Intermediate – If an A1c was not sent on admission, it is worth having before discharge: his home regimen was already failing at 9.8%, and the discharge plan should reflect that."]
+    ]),
+    lowValueReasons: new Map([
+      ["BLOOD_CX","Low Value – No growth at 48 hours in a patient who has clinically resolved. Repeat cultures here prolong the stay and find nothing."],
+      ["CBC","Low Value – He is ready for discharge planning. A repeat count will not change the antibiotic, the duration or the disposition."],
+      ["BMP","Low Value – Renal function has been stable throughout."],
+      ["CMP","Low Value – As above, and broader."],
+      ["CRP","Low Value – Following an inflammatory marker to normal is not a discharge criterion for a soft tissue infection that has clinically resolved."],
+      ["ESR","Low Value – Not guiding any decision here."],
+      ["LACTATE","Low Value – He resolved his sepsis two days ago."],
+      ["VANC_LEVEL","Low Value – Monitoring the level of an antibiotic you should be stopping today. Once the organism is known to be methicillin-susceptible, the answer is to change the drug, not to measure it."],
+      ["MRI_LE_NONJOINT","Low Value – No osteomyelitis was ever suspected, and he has clinically resolved. $5,470 for reassurance."],
+      ["MRI_LE_NONJOINT_WWO","Low Value – As above, with contrast."],
+      ["BONE_BX","Low Value – Invasive, expensive, and aimed at a diagnosis nobody is making."],
+      ["PDF_4567076","Low Value – The organism is identified as methicillin-susceptible. A MRSA screen now can only confuse the picture."],
+      ["XR_FOOT","Low Value – Already obtained, and unchanged clinically."]
+    ]),
+    missedSeverity: "neutral",
+    missedReasons: new Map([
+      ["NO_TESTING","No further diagnostic testing is needed. The microbiology is final and he has clinically resolved; today's work is narrowing his antibiotics and planning his discharge."]
+    ]),
+    recommendedIds: ["NO_TESTING"],
+    decisions: [
+      { id:"narrow", question:"Antibiotic therapy now that susceptibilities are back", hint:"Deep tissue culture: MSSA.",
+        options:[
+          {id:"cfz", label:"Narrow to cefazolin", tier:"high", why:"For methicillin-susceptible Staphylococcus aureus, cefazolin is not merely narrower than vancomycin &mdash; it is more effective. Staying on vancomycin is not the cautious choice, it is the worse one. This is the single most important stewardship point in the module."},
+          {id:"naf", label:"Narrow to nafcillin", tier:"intermediate", why:"Entirely appropriate for MSSA and comparable in efficacy to cefazolin, though more frequent dosing and a less favourable side-effect profile make it the second choice for most patients."},
+          {id:"vanc", label:"Continue vancomycin alone", tier:"low", why:"Vancomycin is inferior to cefazolin for MSSA. Continuing it because it is broader mistakes breadth for safety, and it commits him to levels, renal monitoring and IV access he does not need."},
+          {id:"both", label:"Continue vancomycin plus piperacillin-tazobactam", tier:"low", why:"Two unnecessary drugs. The organism is identified and susceptible; this is cost and selection pressure with no benefit."}
+        ]},
+      { id:"route", question:"Route of therapy at discharge", hint:"",
+        options:[
+          {id:"po", label:"Transition to oral therapy with a highly bioavailable agent", tier:"high", why:"He has a susceptible organism, an adequately debrided soft tissue infection and a functioning gut. Oral therapy avoids a line, its infections, and the cost of home infusion."},
+          {id:"picc", label:"PICC line for prolonged IV therapy", tier:"low", why:"A default PICC in a patient who can take oral antibiotics adds line infections, thrombosis, home infusion costs and follow-up imaging, for no added efficacy."},
+          {id:"stop", label:"Stop antibiotics at discharge", tier:"low", why:"He has not completed a course for a severe soft tissue infection. Stopping now risks relapse."}
+        ]},
+      { id:"duration", question:"Duration, for a debrided soft-tissue infection without bone involvement", hint:"",
+        options:[
+          {id:"short", label:"A short course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and evidence supports short courses once source control is achieved. Longer therapy adds adverse effects and resistance without improving cure."},
+          {id:"twowk", label:"Two weeks", tier:"intermediate", why:"Not unreasonable in a diabetic patient with impaired perfusion, and some guidelines allow it, though it is longer than his response requires."},
+          {id:"sixwk", label:"Six weeks, as though this were osteomyelitis", tier:"low", why:"Six-week courses are for bone infection. He has none: the probe did not reach bone, the X-ray was clean and podiatry documented no concern."},
+          {id:"indef", label:"Indefinite suppression", tier:"low", why:"Suppressive therapy is for retained hardware or unresectable infection, neither of which applies."}
+        ]},
+      { id:"offload", question:"Offloading", hint:"",
+        options:[
+          {id:"device", label:"Offloading device or total contact cast", tier:"high", why:"Offloading has the strongest effect on healing and recurrence of any intervention in diabetic foot disease, and it costs a fraction of a single MRI. It is also the item most often missing from the discharge summary. High-value care here is not a test at all."},
+          {id:"shoe", label:"Return to a regular shoe", tier:"low", why:"Continued pressure on a healing plantar wound in an insensate foot is how ulcers recur and how patients lose limbs."}
+        ]},
+      { id:"followup", question:"Follow-up", hint:"Absent posterior tibial pulse. A1c 9.8% six months ago.",
+        options:[
+          {id:"all", label:"Podiatry, plus vascular for the absent pulse, plus diabetes follow-up", tier:"high", why:"All three drivers of recurrence get addressed: the wound, the perfusion that determines whether it heals, and the glycaemic control that caused it. His home regimen was already failing before he got sick."},
+          {id:"pod", label:"Podiatry alone", tier:"intermediate", why:"Necessary but incomplete. It leaves the vascular disease and the uncontrolled diabetes unaddressed."},
+          {id:"pcp", label:"Primary care in six weeks", tier:"low", why:"Too slow and too general for a healing diabetic foot wound with impaired perfusion."}
+        ]}
+    ],
+    pathwayHtml: `
+<strong>Narrowing, and getting him out</strong>
+<p class="small">
+  The microbiology is final and he has clinically resolved. Nothing further needs to be measured;
+  everything that matters today is a treatment decision or a discharge decision.
+</p>
+
+<strong>Cefazolin over vancomycin &mdash; the point worth remembering</strong>
+<p class="small">
+  For MSSA, cefazolin is <em>more effective</em> than vancomycin, not just narrower. Staying on vancomycin
+  because it covers more is the clearest example in this module of mistaking breadth for safety: it is the
+  broader drug, the more expensive pathway, and the worse treatment, all at once.
+</p>
+
+<strong>Discharge plan</strong>
+<ul class="small">
+  <li><strong>Oral therapy</strong> with a highly bioavailable agent &ndash; no line, no home infusion.</li>
+  <li><strong>A short course</strong>, counted from the debridement. This is soft tissue, not bone.</li>
+  <li><strong>Offloading</strong> &ndash; the single highest-yield intervention for healing and recurrence.</li>
+  <li><strong>Podiatry, vascular and diabetes follow-up</strong> &ndash; the wound, the perfusion and the cause.</li>
+</ul>
+
+<strong>The thing most likely to be left off</strong>
+<p class="small">
+  Offloading. It costs a fraction of one MRI, it has more effect on whether this man keeps his foot than any
+  antibiotic decision on this page, and it is routinely missing from discharge summaries. High-value care is
+  not only about which tests you order.
+</p>
+`
+  },
+  9: {
     title: "Post-test",
     diagnosis: "",
     attribution: "",
@@ -2710,6 +3178,8 @@ let CASE5_LAST_PAYLOAD = null;
 
 const orderFeedbackEl = document.getElementById("orderFeedback");
 const missedFeedbackEl = document.getElementById("missedFeedback");
+const decisionBlockEl = document.getElementById("decisionBlock");
+const decisionFeedbackEl = document.getElementById("decisionFeedback");
 const recommendedPathwayBoxEl = document.getElementById("recommendedPathwayBox");
 const studentBreakdownEl = document.getElementById("studentBreakdown");
 const recommendedBreakdownEl = document.getElementById("recommendedBreakdown");
@@ -2729,11 +3199,25 @@ const wellsScoreEl = document.getElementById("wellsScore");
 const wellsInterpEl = document.getElementById("wellsInterp");
 
 const selectedIds = new Set();
-const MAX_MATCHES = 140;
+// Must stay comfortably above the catalog size, or orders past the cap become
+// invisible to a learner who browses instead of searching. The catalog is 189
+// orders as of Sept 2026; at the old value of 140 everything from roughly "T"
+// onward (including Urinalysis and Urine culture) never rendered.
+const MAX_MATCHES = 400;
 
 
 // Tracks which cases have been submitted in the CURRENT session (for subtle UI checkmarks).
 const COMPLETED_CASES = new Set();
+
+// Label for the advance button, given where the learner is in the sequence.
+// 0 pre-test | 1-4 cases | 5 med rec | 6-8 case 6 stages | 9 post-test
+function nextButtonLabel(caseId){
+  if (caseId < 5) return "Next Case";
+  if (caseId === 5) return "Next Case";
+  if (caseId === 6 || caseId === 7) return "Next Stage";
+  if (caseId === 8) return "Next Section";
+  return "Finish Module";
+}
 
 function resetCaseCompletion(){
   COMPLETED_CASES.clear();
@@ -2816,7 +3300,7 @@ window.addEventListener("message", (evt)=>{
     // If the learner already submitted earlier in this session, keep the Finish button visible.
     if (CASE5_SUBMITTED && continueBtnEl){
       continueBtnEl.classList.remove("hidden");
-      continueBtnEl.textContent = (ACTIVE_CASE === 6 ? "Finish Module" : "Next Section");
+      continueBtnEl.textContent = nextButtonLabel(ACTIVE_CASE);
     }
     return;
   }
@@ -2953,6 +3437,104 @@ function gradeOrder(orderId){
 /* =========================
    Recommended orders
    ========================= */
+/* =========================
+   Management decisions (added 2026-09)
+   Cases may define `decisions`: an array of
+     { id, question, hint, options:[ {id, label, tier:"high"|"intermediate"|"low", why} ] }
+   They render as radio groups under the order picker, are required before
+   submission, and are graded alongside the diagnostic orders.
+   ========================= */
+const DECISION_ANSWERS = new Map();   // decisionId -> optionId, for the active case
+
+function escAttr(s){ return String(s).replace(/"/g, "&quot;"); }
+
+function renderDecisions(cfg){
+  if (!decisionBlockEl) return;
+  DECISION_ANSWERS.clear();
+  const ds = (cfg && Array.isArray(cfg.decisions)) ? cfg.decisions : [];
+  if (!ds.length){
+    decisionBlockEl.innerHTML = "";
+    decisionBlockEl.classList.add("hidden");
+    return;
+  }
+  let html = '<div class="decision-set"><h3 style="margin:6px 0 0;">Management decisions</h3>' +
+             '<div class="small muted" style="margin:0;">Choose one option for each. These are graded alongside your orders.</div>';
+  for (const d of ds){
+    html += '<div class="decision" id="dec_' + escapeHtml(d.id) + '">' +
+              '<div class="decision-q">' + escapeHtml(d.question) + '</div>' +
+              (d.hint ? '<div class="decision-hint">' + escapeHtml(d.hint) + '</div>' : '') +
+              '<div class="decision-opts">';
+    for (const o of d.options){
+      html += '<label><input type="radio" name="dec_' + escAttr(d.id) + '" value="' + escAttr(o.id) + '">' +
+              '<span>' + escapeHtml(o.label) + '</span></label>';
+    }
+    html += '</div></div>';
+  }
+  html += '</div>';
+  decisionBlockEl.innerHTML = html;
+  decisionBlockEl.classList.remove("hidden");
+}
+
+function decisionsAllAnswered(cfg){
+  const ds = (cfg && Array.isArray(cfg.decisions)) ? cfg.decisions : [];
+  let firstMissing = null;
+  for (const d of ds){
+    const box = document.getElementById("dec_" + d.id);
+    if (box) box.classList.remove("decision-unanswered");
+    if (!DECISION_ANSWERS.has(d.id)){
+      if (box) box.classList.add("decision-unanswered");
+      if (!firstMissing) firstMissing = box;
+    }
+  }
+  if (firstMissing){
+    firstMissing.scrollIntoView({behavior:"smooth", block:"center"});
+    return false;
+  }
+  return true;
+}
+
+function gradeDecisions(cfg){
+  const ds = (cfg && Array.isArray(cfg.decisions)) ? cfg.decisions : [];
+  const out = [];
+  for (const d of ds){
+    const chosenId = DECISION_ANSWERS.get(d.id) || "";
+    const chosen = d.options.find(o => o.id === chosenId) || null;
+    const best = d.options.find(o => o.tier === "high") || null;
+    out.push({
+      id: d.id,
+      question: d.question,
+      chosenId: chosenId,
+      chosenLabel: chosen ? chosen.label : "",
+      tier: chosen ? chosen.tier : "",
+      why: chosen ? (chosen.why || "") : "",
+      bestLabel: best ? best.label : ""
+    });
+  }
+  return out;
+}
+
+function renderDecisionFeedback(graded){
+  if (!decisionFeedbackEl) return;
+  if (!graded.length){ decisionFeedbackEl.innerHTML = ""; return; }
+  const cls = {high:"good", intermediate:"warn", low:"bad"};
+  const tag = {high:"✅ High-value", intermediate:"⚠️ Intermediate", low:"❌ Low-value"};
+  let html = '<div class="dfb"><h4>Management decisions</h4>';
+  for (const g of graded){
+    const c = cls[g.tier] || "bad";
+    html += '<div class="dfb-item">' +
+              '<div class="dfb-q">' + escapeHtml(g.question) + '</div>' +
+              '<div class="dfb-a">' + escapeHtml(g.chosenLabel) +
+                '<span class="pill ' + c + '">' + (tag[g.tier] || "") + '</span></div>' +
+              (g.why ? '<div class="dfb-why">' + escapeHtml(g.why) + '</div>' : '');
+    if (g.tier !== "high" && g.bestLabel){
+      html += '<div class="dfb-best">Highest-value choice: ' + escapeHtml(g.bestLabel) + '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  decisionFeedbackEl.innerHTML = html;
+}
+
 function renderMissedFeedback(cfg, recIds, selectedIds){
   if (!missedFeedbackEl) return;
   // Survey tabs and Case 5 have no diagnostic pathway; show nothing.
@@ -3129,6 +3711,7 @@ function setActiveCase(caseId){
   if (continueBtnEl) continueBtnEl.classList.add("hidden");
   orderFeedbackEl.innerHTML = "";
   if (missedFeedbackEl) missedFeedbackEl.innerHTML = "";
+  if (decisionFeedbackEl) decisionFeedbackEl.innerHTML = "";
   studentBreakdownEl.innerHTML = "";
   recommendedBreakdownEl.innerHTML = "";
   recommendedPathwayBoxEl.innerHTML = "";
@@ -3166,7 +3749,7 @@ function setActiveCase(caseId){
     return;
   }
 
-  if (caseId === 6){
+  if (caseId === 9){
     setDxUiVisible(false);
     setCase5Visible(false);
     setSurveyVisible("post");
@@ -3179,6 +3762,7 @@ function setActiveCase(caseId){
 
   setCase5Visible(false);
   setDxUiVisible(true);
+  renderDecisions(cfg);
   renderMatches();
   renderSelectedOrders();
 }
@@ -3187,6 +3771,17 @@ function setActiveCase(caseId){
    Events
    ========================= */
 searchEl.addEventListener("input", renderMatches);
+
+if (decisionBlockEl){
+  decisionBlockEl.addEventListener("change", (e)=>{
+    const t = e.target;
+    if (t && t.type === "radio" && t.name && t.name.indexOf("dec_") === 0){
+      DECISION_ANSWERS.set(t.name.slice(4), t.value);
+      const box = document.getElementById("dec_" + t.name.slice(4));
+      if (box) box.classList.remove("decision-unanswered");
+    }
+  });
+}
 
 matchListEl.addEventListener("change", (e)=>{
   if (e.target && e.target.type === "checkbox"){
@@ -3232,6 +3827,11 @@ orderFormEl.addEventListener("submit", (e)=>{
   }
 
   const cfg = CASES[ACTIVE_CASE];
+  if (!decisionsAllAnswered(cfg)){
+    alert("Please answer every management decision before submitting.");
+    return;
+  }
+  const gradedDecisions = gradeDecisions(cfg);
   finalDxEl.textContent = cfg.diagnosis;
   recommendedPathwayBoxEl.innerHTML = cfg.pathwayHtml || "";
   attributionEl.textContent = cfg.attribution || "";
@@ -3292,6 +3892,9 @@ orderFormEl.addEventListener("submit", (e)=>{
     else { valueCounts.low++; orderedLowValue.push(nm); }
   }
 
+  const decisionCounts = { high:0, intermediate:0, low:0 };
+  for (const g of gradedDecisions){ if (decisionCounts[g.tier] !== undefined) decisionCounts[g.tier]++; }
+
   logCaseSubmission(ACTIVE_CASE, selectedIds, studentTotal, {
     recommendedIds: recIdsForLog,
     recommendedCost: Number(recTotalForLog || 0),
@@ -3303,7 +3906,12 @@ orderFormEl.addEventListener("submit", (e)=>{
     orderedLowValue: orderedLowValue,
     missedRecommended: missedForLog,
     missedRecommendedText: toTextList(missedForLog, " | "),
-    missedRecommendedCount: missedForLog.length
+    missedRecommendedCount: missedForLog.length,
+    decisions: gradedDecisions.map(g => ({ id:g.id, chosen:g.chosenId, label:g.chosenLabel, tier:g.tier })),
+    decisionsText: toTextList(gradedDecisions.map(g => g.id + ": " + g.chosenLabel + " (" + g.tier + ")"), " | "),
+    decisionHighCount: decisionCounts.high,
+    decisionIntermediateCount: decisionCounts.intermediate,
+    decisionLowCount: decisionCounts.low
   });
   markCaseCompleted(ACTIVE_CASE);
 
@@ -3320,6 +3928,7 @@ orderFormEl.addEventListener("submit", (e)=>{
   // ---- Recommended tests NOT ordered (added 2026-09) ----
   // Omission was previously invisible: feedback only graded what the learner selected.
   renderMissedFeedback(cfg, recIds, selectedIds);
+  renderDecisionFeedback(gradedDecisions);
 
   // Pathway comparison
   if (ACTIVE_CASE === 1){
@@ -3391,13 +4000,13 @@ orderFormEl.addEventListener("submit", (e)=>{
   resultsEl.classList.remove("hidden");
   if (continueBtnEl) {
     continueBtnEl.classList.remove("hidden");
-    continueBtnEl.textContent = (ACTIVE_CASE < 5) ? "Next Case" : (ACTIVE_CASE === 5 ? "Next Section" : "Finish Module");
+    continueBtnEl.textContent = nextButtonLabel(ACTIVE_CASE);
   }
   // Show pathway comparison only for Case 1
   const pc = document.getElementById("pathwayComparisonSection");
   // Show the pathway comparison for every diagnostic case (1-4), not just Case 1.
   // Cases 0/5/6 are surveys and med rec, which have no diagnostic pathway.
-  if (pc) pc.style.display = ((ACTIVE_CASE >= 1 && ACTIVE_CASE <= 4) ? "block" : "none");
+  if (pc) pc.style.display = (((ACTIVE_CASE >= 1 && ACTIVE_CASE <= 4) || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 8)) ? "block" : "none");
   // Initialize any post-submit interactive elements (e.g., sepsis checklist)
   initSepsisChecklist();
 });
@@ -3409,6 +4018,9 @@ document.getElementById("tab3").addEventListener("click", ()=>setActiveCase(3));
 document.getElementById("tab4").addEventListener("click", ()=>setActiveCase(4));
 document.getElementById("tab5").addEventListener("click", ()=>setActiveCase(5));
 document.getElementById("tab6").addEventListener("click", ()=>setActiveCase(6));
+document.getElementById("tab7").addEventListener("click", ()=>setActiveCase(7));
+document.getElementById("tab8").addEventListener("click", ()=>setActiveCase(8));
+document.getElementById("tab9").addEventListener("click", ()=>setActiveCase(9));
 
 if (continueBtnEl){
   continueBtnEl.addEventListener("click", ()=>{
@@ -3426,7 +4038,7 @@ if (continueBtnEl){
       return;
     }
 
-    if (ACTIVE_CASE === 6){
+    if (ACTIVE_CASE === 9){
       if (!POSTTEST_RESPONSES) return;
       logModuleComplete();
       setCase5Visible(false);
@@ -3441,7 +4053,7 @@ if (continueBtnEl){
 
     if (resultsEl.classList.contains("hidden")) return;
 
-    if (ACTIVE_CASE < 5){
+    if (ACTIVE_CASE < 5 || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 8)){
       setActiveCase(ACTIVE_CASE + 1);
       window.scrollTo({top: 0, behavior: "smooth"});
     }
