@@ -6,206 +6,295 @@
 <meta name="robots" content="noindex, nofollow">
 <title>High-Value Care Case Simulator (5 Cases)</title>
 <style>
-  body { font-family: Arial, sans-serif; background:#f4f7f9; margin:0; padding:0 0 70px 0; color:#333; }
-  .container { max-width: 1100px; margin: 28px auto; background:#fff; padding: 28px; border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.10); }
-
-  h1,h2,h3 { color:#2e7d32; margin: 0 0 10px 0; }
-  p { line-height: 1.4; margin: 8px 0; }
-  ul { margin: 8px 0 8px 22px; }
-  .muted { color:#666; font-size: 0.95em; margin-bottom: 10px; }
-
-  .tabs { display:flex; gap:10px; margin: 10px 0 16px 0; flex-wrap:wrap; }
-  .tab { border:none; border-radius: 10px; padding: 10px 14px; cursor:pointer; background:#e8e8e8; color:#333; }
-  .tab.active { background:#2e7d32; color:#fff; }
-
-  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  @media (max-width: 820px){ .grid2{ grid-template-columns:1fr; } }
-
-  .summary { background:#eef6ff; padding:14px; border-radius:10px; margin-top:12px; }
-  .card { border:1px solid #e6e6e6; border-radius: 12px; padding: 14px; background:#fafafa; }
-  .small { font-size: 0.95em; }
-  .tiny { font-size: 0.85em; color:#666; margin-top: 10px; }
-
-  .hint { background:#fff7e6; border:1px solid #ffe0a3; padding:10px; border-radius:12px; margin: 10px 0; }
-
-  /* Big obvious search */
-  #search {
-    width:100%;
-    padding:16px 16px;
-    margin: 14px 0 10px 0;
-    border-radius: 12px;
-    border: 2px solid #2e7d32;
-    font-size: 18px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-    outline:none;
-  }
-  #search:focus { box-shadow: 0 6px 18px rgba(46,125,50,0.18); }
-
-  .test-list { max-height: 320px; overflow-y:auto; border:1px solid #ccc; padding: 10px; border-radius:12px; background:#fff; }
-  label { display:block; margin: 6px 0; }
-
-  button.primary { margin-top: 14px; padding: 12px 18px; background:#2e7d32; color:#fff; border:none; border-radius:10px; cursor:pointer; }
-  button.primary:hover { background:#256428; }
-
-  .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; margin-left: 8px; }
-  .good { color: green; }
-  .warn { color: #c47a00; }
-  .bad { color: #b00020; }
-  .pill.good { background: rgba(0,128,0,0.10); color: green; }
-  .pill.warn { background: rgba(196,122,0,0.12); color: #8a5200; }
-  .pill.bad { background: rgba(176,0,32,0.10); color: #b00020; }
-  /* Missed-order feedback (added 2026-09) */
-  .missed-box { margin-top: 14px; padding: 12px 14px; border-radius: 10px;
-                border-left: 4px solid #b00020; background: rgba(176,0,32,0.06); }
-  .missed-box.neutral { border-left-color: #c47a00; background: rgba(196,122,0,0.07); }
-  .missed-box.clear   { border-left-color: green;   background: rgba(0,128,0,0.07); }
-  .missed-title { font-weight: 700; margin-bottom: 2px; }
-  .missed-box ul { margin: 10px 0 0; padding-left: 18px; }
-  .missed-box li { margin-bottom: 10px; }
-
-  table { width:100%; border-collapse: collapse; margin-top: 10px; background:#fff; }
-  th,td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
-  th { background:#f0f0f0; }
-  .hidden { display:none; }
-
-  .wells-box { margin-top: 12px; background:#f6fff6; border:1px solid #cfe8cf; padding: 12px; border-radius: 12px; }
-  .wells-box h4 { margin: 0 0 8px 0; color:#256428; }
-
-/* =========================
-   Launch polish (UI)
-   ========================= */
+/* =========================================================================
+   High-Value Care module — interface styles
+   Direction: clinical slate. Neutral surfaces, one teal accent, and colour
+   reserved for meaning: green / amber / red only ever signal test value.
+   Rewritten 2026-09. Class names and IDs are unchanged from the previous
+   stylesheet; this is presentation only.
+   ========================================================================= */
 :root{
-  --hvc-primary:#2e7d32;
-  --hvc-primary-dark:#256428;
-  --hvc-bg:#f4f7f9;
-  --hvc-text:#1f2937;
-  --hvc-muted:#5f6b7a;
-  --hvc-border: rgba(0,0,0,0.08);
-  --hvc-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --bg:#eef1f4;
+  --surface:#ffffff;
+  --panel:#f4f7f9;
+  --chip:#e9edf1;
+  --ink:#1b242c;
+  --heading:#0d141a;
+  --muted:#5f6d78;
+  --border:#d8dfe5;
+  --hairline:#eaeef1;
+
+  --accent:#14607a;
+  --accent-dark:#0f4c60;
+  --accent-soft:#e2eef2;
+  --on-accent:#ffffff;
+
+  --ok:#0f7a3d;   --ok-soft:#e4f3ea;
+  --mid:#8a5a00;  --mid-soft:#faf0dc;
+  --no:#b3261e;   --no-soft:#fbeae9;
+
+  --radius:12px;
+  --radius-sm:9px;
+  --shadow-sm:0 1px 2px rgba(13,20,26,.05);
+  --shadow:0 1px 2px rgba(13,20,26,.05), 0 8px 24px rgba(13,20,26,.07);
+
+  --ui:-apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI",
+       Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono:ui-monospace, SFMono-Regular, "Cascadia Mono", "Segoe UI Mono",
+       Menlo, Consolas, monospace;
+
+  /* legacy aliases kept so any older rule or inline reference still resolves */
+  --hvc-primary:var(--accent);
+  --hvc-primary-dark:var(--accent-dark);
+  --hvc-bg:var(--bg);
+  --hvc-text:var(--ink);
+  --hvc-muted:var(--muted);
+  --hvc-border:var(--border);
+  --hvc-shadow:var(--shadow);
 }
 
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+
 body{
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background:
-    radial-gradient(1200px 600px at 10% 0%, rgba(46,125,50,0.12), rgba(0,0,0,0) 60%),
-    linear-gradient(180deg, #f7fafc 0%, #eef3f7 100%);
-  color: var(--hvc-text);
+  margin:0;
+  padding:0 0 74px 0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--ui);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
 }
 
 .container{
-  border: 1px solid var(--hvc-border);
-  box-shadow: var(--hvc-shadow);
+  max-width:1080px;
+  margin:26px auto;
+  background:var(--surface);
+  padding:30px 32px 34px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+@media (max-width:700px){
+  .container{margin:12px;padding:20px 18px 24px;border-radius:12px}
 }
 
-h1{
-  letter-spacing: -0.3px;
-}
+/* ---------- type ---------- */
+h1,h2,h3,h4{color:var(--heading);margin:0 0 10px;line-height:1.25;
+  letter-spacing:-.015em;text-wrap:balance}
+h1{font-size:1.75rem;font-weight:700}
+h2{font-size:1.4rem;font-weight:650}
+h3{font-size:1.05rem;font-weight:650;letter-spacing:-.005em}
+h4{font-size:.95rem;font-weight:650}
+p{margin:8px 0}
+ul{margin:8px 0 8px 20px}
+li{margin:3px 0}
+strong,b{font-weight:650}
+a{color:var(--accent);text-underline-offset:2px}
+a:hover{color:var(--accent-dark)}
 
-.muted{
-  color: var(--hvc-muted);
-}
+.muted{color:var(--muted);font-size:.95rem;margin-bottom:10px}
+.small{font-size:.92rem}
+.tiny{font-size:.82rem;color:var(--muted);margin-top:10px}
 
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 20px;
+  padding-bottom:14px;border-bottom:1px solid var(--border)}
 .tab{
-  transition: transform .05s ease, background .15s ease, box-shadow .15s ease;
+  font:inherit;font-size:.87rem;font-weight:500;
+  border:1px solid var(--border);background:var(--chip);color:var(--ink);
+  border-radius:999px;padding:7px 15px;cursor:pointer;
+  transition:background .14s ease, border-color .14s ease, color .14s ease;
 }
-.tab:hover{
-  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
-  transform: translateY(-1px);
-}
-.tab:active{
-  transform: translateY(0px);
-}
-
-button.primary{
-  box-shadow: 0 10px 18px rgba(46,125,50,0.18);
-}
-button.primary:hover{
-  box-shadow: 0 12px 22px rgba(46,125,50,0.22);
-}
-
-.tab:focus-visible,
-button.primary:focus-visible,
-input:focus-visible{
-  outline: 3px solid rgba(46,125,50,0.25);
-  outline-offset: 2px;
-}
-
-/* Make long checkbox lists easier to scan */
-.test-list label{
-  padding: 6px 8px;
-  border-radius: 10px;
-}
-.test-list label:hover{
-  background: rgba(46,125,50,0.06);
-}
-
-/* Subtle completion checkmarks on case tabs */
-.tabs .tab.completed{
-  position: relative;
-  padding-right: 32px;
-}
+.tab:hover{background:#e0e6ea}
+.tab.active{background:var(--accent);border-color:var(--accent);
+  color:var(--on-accent);font-weight:600}
+.tab.active:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+.tabs .tab.completed{padding-right:30px;position:relative;color:var(--muted)}
 .tabs .tab.completed::after{
-  content: "✓";
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  background: rgba(46,125,50,0.14);
-  color: var(--hvc-primary-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
+  content:"✓";position:absolute;right:11px;top:50%;transform:translateY(-50%);
+  font-size:.78rem;font-weight:700;color:var(--ok);
 }
-.tabs .tab.active.completed::after{
-  background: rgba(255,255,255,0.22);
-  color: #fff;
-}
+.tabs .tab.active.completed{color:var(--on-accent)}
+.tabs .tab.active.completed::after{color:var(--on-accent)}
 
+/* ---------- layout blocks ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}}
 
-/* Card polish */
 .card{
-  background: #ffffff;
-  border: 1px solid var(--hvc-border);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:17px 18px;
 }
 .summary{
-  border: 1px solid rgba(0,0,0,0.06);
-  background: rgba(238,246,255,0.80);
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:15px 17px;
+  margin-top:12px;
 }
+.summary h3{margin-top:0}
 .hint{
-  background: rgba(255,247,230,0.85);
-  border: 1px solid rgba(255,224,163,0.95);
+  background:var(--mid-soft);
+  border:1px solid #f0dfb8;
+  border-radius:var(--radius);
+  padding:11px 14px;
+  margin:12px 0;
+  font-size:.93rem;
 }
-table th{
-  background: rgba(0,0,0,0.04);
+
+/* ---------- order search & picker ---------- */
+#search{
+  width:100%;
+  padding:13px 15px;
+  margin:14px 0 12px;
+  border:1.5px solid var(--accent);
+  border-radius:10px;
+  font:inherit;font-size:1rem;
+  background:var(--surface);color:var(--ink);
+  outline:none;
+  transition:box-shadow .14s ease;
+}
+#search::placeholder{color:var(--muted)}
+#search:focus{box-shadow:0 0 0 3px var(--accent-soft)}
+
+.test-list{
+  max-height:330px;overflow-y:auto;
+  border:1px solid var(--border);border-radius:10px;
+  background:var(--surface);padding:6px;
+}
+label{display:block;margin:2px 0}
+.test-list label{
+  padding:7px 10px;border-radius:8px;font-size:.94rem;cursor:pointer;
+  display:flex;align-items:center;gap:9px;
+}
+.test-list label:hover{background:var(--accent-soft)}
+.test-list input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;flex:none;margin:0}
+
+/* ---------- buttons ---------- */
+button.primary{
+  font:inherit;font-size:.95rem;font-weight:600;
+  margin-top:15px;padding:11px 22px;
+  background:var(--accent);color:var(--on-accent);
+  border:none;border-radius:var(--radius-sm);cursor:pointer;
+  box-shadow:var(--shadow-sm);
+  transition:background .14s ease;
+}
+button.primary:hover{background:var(--accent-dark)}
+button.primary:active{transform:translateY(1px)}
+
+/* ---------- value pills & graded feedback ---------- */
+.pill{
+  display:inline-block;padding:2.5px 9px;border-radius:999px;
+  font-size:.7rem;font-weight:650;letter-spacing:.02em;margin-left:8px;
+  vertical-align:1px;white-space:nowrap;
+}
+.good{color:var(--ok)}
+.warn{color:var(--mid)}
+.bad{color:var(--no)}
+.pill.good{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--mid-soft);color:var(--mid)}
+.pill.bad{background:var(--no-soft);color:var(--no)}
+
+#orderFeedback ul{list-style:none;margin:4px 0 0;padding:0}
+#orderFeedback li{
+  padding:10px 0;border-bottom:1px solid var(--hairline);font-size:.95rem;
+  /* The .good/.warn/.bad class also lands on the <li>. Keep the order name in
+     text ink and let the pill carry the value signal, so colour on this screen
+     always means one thing. */
+  color:var(--heading);font-weight:600;
+}
+#orderFeedback li:last-child{border-bottom:none}
+#orderFeedback li .small.muted{margin-top:2px;margin-bottom:0;line-height:1.5;
+  color:var(--muted);font-weight:400}
+
+/* ---------- missed-order feedback ---------- */
+.missed-box{
+  margin-top:14px;padding:13px 16px;border-radius:10px;
+  background:var(--no-soft);border-left:3px solid var(--no);
+}
+.missed-box.neutral{background:var(--mid-soft);border-left-color:var(--mid)}
+.missed-box.clear{background:var(--ok-soft);border-left-color:var(--ok)}
+.missed-title{font-weight:700;margin-bottom:1px;color:var(--no);font-size:.95rem}
+.missed-box.neutral .missed-title{color:var(--mid)}
+.missed-box.clear .missed-title{color:var(--ok)}
+.missed-box > .small.muted{margin:0;line-height:1.5}
+.missed-box ul{margin:11px 0 0;padding-left:0;list-style:none}
+.missed-box li{margin-bottom:11px;font-size:.94rem;color:var(--heading);font-weight:600}
+.missed-box li:last-child{margin-bottom:0}
+.missed-box li .small.muted{font-weight:400;margin-top:2px;line-height:1.5}
+
+/* ---------- tables ---------- */
+table{width:100%;border-collapse:collapse;margin-top:12px;background:transparent;
+  font-size:.93rem}
+th,td{padding:9px 11px;border:none;border-bottom:1px solid var(--hairline);
+  vertical-align:top;text-align:left}
+th{
+  font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);font-weight:650;background:transparent;
+  border-bottom:1.5px solid var(--border);
+}
+tr:last-child td{border-bottom:none}
+#studentCost,#recommendedCost{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  font-weight:650;color:var(--heading)}
+#studentBreakdown table td:last-child,
+#recommendedBreakdown table td:last-child{font-family:var(--mono);
+  font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.likert-table th,.likert-table td{text-align:center}
+.likert-table td:first-child,.likert-table th:first-child{text-align:left}
+.likert-table input[type=radio]{accent-color:var(--accent)}
+
+/* ---------- Wells / SIRS learning tools ---------- */
+.wells-box{
+  margin-top:14px;background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--radius);padding:15px 17px;
+}
+.wells-box h4{margin:0 0 8px;color:var(--heading)}
+.wells-box input[type=checkbox],.sirsChk{accent-color:var(--accent)}
+
+/* ---------- forms ---------- */
+.field-group{margin-top:16px}
+.field-label{display:block;font-weight:600;margin-bottom:6px;font-size:.94rem}
+.field-help{font-size:.8rem;color:var(--muted);margin-top:4px}
+.required-star{color:var(--no)}
+.launch-error{color:var(--no);margin-top:10px;font-size:.88rem;font-weight:500}
+.survey-card{margin-top:14px}
+
+select,textarea,
+input[type=text],input[type=password],input[type=email],input[type=number]{
+  width:100%;padding:10px 12px;margin:6px 0;
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  font:inherit;font-size:.95rem;
+  background:var(--surface);color:var(--ink);
+  outline:none;
+  transition:border-color .14s ease, box-shadow .14s ease;
+}
+select:focus,textarea:focus,
+input[type=text]:focus,input[type=password]:focus,
+input[type=email]:focus,input[type=number]:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);
+}
+textarea{min-height:96px;resize:vertical}
+
+/* ---------- utility & chrome ---------- */
+.hidden{display:none}
+
+.global-footer{
+  position:fixed;left:0;right:0;bottom:0;
+  padding:10px 14px;font-size:.75rem;color:var(--muted);text-align:center;
+  background:rgba(238,241,244,.93);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(6px);
 }
 
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 
-
-  .field-group { margin-top:14px; }
-  .field-label { display:block; font-weight:600; margin-bottom:6px; }
-  .field-help { font-size:12px; color:#666; margin-top:4px; }
-  select, textarea {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border-radius:5px;
-    border:1px solid #ccc;
-    font: inherit;
-    background:#fff;
-  }
-  textarea { min-height: 120px; resize: vertical; }
-  .required-star { color:#b00020; }
-  .launch-error { color:#b00020; margin-top:10px; font-size:14px; }
-  .likert-table th, .likert-table td { text-align:center; }
-  .likert-table td:first-child, .likert-table th:first-child { text-align:left; }
-  .survey-card { margin-top:12px; }
-  .global-footer{position:fixed;left:0;right:0;bottom:0;padding:10px 14px;font-size:12px;color:#555;text-align:center;background:rgba(244,247,249,0.92);border-top:1px solid rgba(0,0,0,0.08);backdrop-filter: blur(4px);}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important}
+}
 </style>
 </head>
 
@@ -218,14 +307,14 @@ table th{
     You can freely search and order tests, then receive feedback on value and see costs after submission.
   </div>
 
-  <div class="card" style="margin-top:16px; background:#ffffff;">
+  <div class="card" style="margin-top:16px;">
     <h2 style="margin-top:0;">What is High Value Care?</h2>
     <p class="small">
       High value care is the delivery of the best possible health outcomes for patients at the lowest necessary cost. It does not entail ordering fewer tests, but rather, the most effective testing for the presentation while minimizing harms and waste.
     </p>
   </div>
 
-  <div class="card" style="margin-top:16px; background:#ffffff;">
+  <div class="card" style="margin-top:16px;">
     <h2 style="margin-top:0;">Before you start</h2>
     <ul class="small">
       <li><strong>No multiple-choice spoilers:</strong> you choose your own diagnostic pathway.</li>
@@ -366,8 +455,8 @@ table th{
   <div class="tabs" role="tablist">
     <button class="tab active" id="tab0" type="button">Pre-test</button>
     <button class="tab" id="tab1" type="button">Case 1: Chest pain</button>
-    <button class="tab" id="tab2" type="button">Case 2: Fevers</button>
-    <button class="tab" id="tab3" type="button">Case 3: Fevers part 2</button>
+    <button class="tab" id="tab2" type="button">Case 2: Sore throat</button>
+    <button class="tab" id="tab3" type="button">Case 3: Return visit</button>
     <button class="tab" id="tab4" type="button">Case 4: Back pain</button>
     <button class="tab" id="tab5" type="button">Case 5: Med reconciliation</button>
     <button class="tab" id="tab6" type="button">Post-test</button>
@@ -378,7 +467,7 @@ table th{
 
   <!-- Case 5 uses its own embedded UI to preserve module integrity -->
   <div id="case5MedRec" class="hidden" style="margin-top:12px;">
-    <iframe id="medRecFrame" title="Medication reconciliation case" style="width:100%; border:0; border-radius:12px; min-height:1200px; background:#f4f7f9;"></iframe>
+    <iframe id="medRecFrame" title="Medication reconciliation case" style="width:100%; border:0; border-radius:12px; min-height:1200px; background:transparent;"></iframe>
     <div class="tiny" id="case5Status" style="margin-top:10px;"></div>
   </div>
 
@@ -473,8 +562,8 @@ table th{
   <form id="orderForm">
     <div class="test-list" id="matchList"></div>
 
-    <div class="card" style="margin-top:12px; background:#ffffff;">
-      <h3 style="margin:0 0 8px 0; color:#2e7d32;">Selected orders</h3>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="margin:0 0 8px 0;">Selected orders</h3>
       <div class="small muted" style="margin-top:0;">This updates as you check/uncheck items above.</div>
       <div id="selectedOrdersBox" class="small" style="margin-top:10px;"></div>
     </div>
@@ -580,93 +669,135 @@ table th{
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background:#f4f7f9;
-  margin:0;
+/* Case 5 (medication reconciliation) — matched to the parent module's
+   clinical-slate direction. Presentation only; no class or ID changed. */
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --panel:#f4f7f9;
+  --ink:#1b242c; --heading:#0d141a; --muted:#5f6d78;
+  --border:#d8dfe5; --hairline:#eaeef1;
+  --accent:#14607a; --accent-dark:#0f4c60; --accent-soft:#e2eef2;
+  --ok:#0f7a3d; --ok-soft:#e4f3ea;
+  --mid:#8a5a00; --mid-soft:#faf0dc;
+  --no:#b3261e; --no-soft:#fbeae9;
+  --ui:-apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI",
+       Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono:ui-monospace, SFMono-Regular, "Cascadia Mono", "Segoe UI Mono",
+       Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box}
+body{
+  font-family:var(--ui);
+  /* Transparent: this document is embedded inside the parent module's card,
+     so painting its own ground produces a visible frame-within-a-frame. */
+  background:transparent;
+  margin:0;padding:0;
+  color:var(--ink);
+  font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.container{
+  max-width:none;margin:0;
+  background:transparent;
   padding:0;
-  color:#333;
+  border:none;
+  border-radius:0;
+  box-shadow:none;
 }
-.container {
-  max-width:1100px;
-  margin:30px auto;
-  background:#fff;
-  padding:30px;
-  border-radius:10px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+
+h1,h2,h3,h4{color:var(--heading);line-height:1.25;letter-spacing:-.015em;margin:0 0 10px}
+h1{font-size:1.6rem;font-weight:700}
+h2{font-size:1.3rem;font-weight:650}
+h3{font-size:1.02rem;font-weight:650}
+p{margin:8px 0}
+
+.card{
+  border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;margin:18px 0;background:var(--surface);
 }
-h1,h2,h3{color:#2e7d32;}
-.card{border:1px solid #ddd;border-radius:8px;padding:20px;margin:20px 0;}
-.callout{background:#e8f5e9;border-left:5px solid #2e7d32;padding:15px;border-radius:5px;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-@media(max-width:900px){.grid{grid-template-columns:1fr;}}
-
-.chips{display:flex;flex-wrap:wrap;gap:8px;}
-.chip{background:#f1f8e9;border:1px solid #c8e6c9;padding:6px 10px;border-radius:20px;font-size:13px;}
-
-table{width:100%;border-collapse:collapse;}
-th,td{border-bottom:1px solid #ddd;padding:10px;vertical-align:top;}
-th{background:#f1f8e9;}
-
-.medbox{background:#fafafa;border:1px solid #ddd;padding:10px;border-radius:6px;}
-.medcost{font-size:13px;color:#555;margin-top:6px;}
-.options{
-  display:grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap:10px;
-  margin-top:8px;
+.callout{
+  background:var(--accent-soft);border-left:3px solid var(--accent);
+  padding:14px 16px;border-radius:10px;
 }
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  background:var(--panel);border:1px solid var(--border);
+  padding:5px 11px;border-radius:999px;font-size:.8rem;color:var(--ink);
+}
+
+table{width:100%;border-collapse:collapse;font-size:.93rem}
+th,td{border:none;border-bottom:1px solid var(--hairline);padding:10px 11px;
+  vertical-align:top;text-align:left}
+th{
+  background:transparent;color:var(--muted);font-weight:650;
+  font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;
+  border-bottom:1.5px solid var(--border);
+}
+
+.medbox{background:var(--panel);border:1px solid var(--border);
+  padding:12px 13px;border-radius:10px}
+.medcost{font-size:.8rem;color:var(--muted);margin-top:6px;font-family:var(--mono)}
+
+.options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:9px}
 .option{
-  background:#f4f7f9;
-  border:1px solid #ccc;
-  padding:8px 10px;
-  border-radius:10px;
-  font-size:13px;
-  min-height:42px;
-  display:flex;
-  align-items:center;
+  background:var(--surface);border:1px solid var(--border);
+  padding:9px 11px;border-radius:9px;font-size:.82rem;
+  min-height:44px;display:flex;align-items:center;gap:7px;cursor:pointer;
+  transition:border-color .14s ease, background .14s ease;
 }
-.option.mutedBox{
-  background:#fff;
-  border:1px dashed #ddd;
-  color:#777;
-}
+.option:hover{border-color:var(--accent);background:var(--accent-soft)}
+.option.mutedBox{background:var(--panel);border:1px dashed var(--border);color:var(--muted)}
+.option input[type=radio],.option input[type=checkbox]{accent-color:var(--accent);margin:0}
 
-button{background:#2e7d32;color:#fff;border:none;padding:10px 14px;border-radius:5px;cursor:pointer;}
-button.secondary{background:#9e9e9e;}
-.totals{display:flex;gap:20px;background:#f1f8e9;padding:15px;border-radius:8px;margin-top:15px;}
-.money{font-family:monospace;}
-.hide{display:none;}
+button{
+  font:inherit;font-size:.95rem;font-weight:600;
+  background:var(--accent);color:#fff;border:none;
+  padding:11px 20px;border-radius:9px;cursor:pointer;
+  transition:background .14s ease;
+}
+button:hover{background:var(--accent-dark)}
+button.secondary{background:var(--panel);color:var(--ink);border:1px solid var(--border)}
+button.secondary:hover{background:var(--chip,#e4e9ee)}
+
+.totals{
+  display:flex;gap:26px;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--border);
+  padding:15px 17px;border-radius:12px;margin-top:16px;
+}
+.money{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  font-weight:600;color:var(--heading)}
+.hide{display:none}
+
 input[type="text"]{
-  width:100%;
-  padding:10px;
-  margin:10px 0;
-  border-radius:5px;
-  border:1px solid #ccc;
+  width:100%;padding:10px 12px;margin:8px 0;
+  border-radius:9px;border:1px solid var(--border);
+  font:inherit;font-size:.95rem;background:var(--surface);color:var(--ink);
+  outline:none;transition:border-color .14s ease, box-shadow .14s ease;
 }
-label{font-size:13px;}
-.small{font-size:13px;color:#666;}
-.status{margin-top:8px;font-size:13px;}
-.status.ok{color:#2e7d32;}
-.status.warn{color:#ef6c00;}
-.status.err{color:#c62828;}
+input[type="text"]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+label{font-size:.88rem}
+.small{font-size:.85rem;color:var(--muted)}
+.status{margin-top:8px;font-size:.85rem}
+.status.ok{color:var(--ok)}
+.status.warn{color:var(--mid)}
+.status.err{color:var(--no)}
 
-.hvcRow td{
-  border-bottom:1px solid #ddd;
-}
-.hvcRow.hvcGreen td{ background:#e8f5e9; }
-.hvcRow.hvcOrange td{ background:#fff3e0; }
-.hvcRow.hvcRed td{ background:#ffebee; }
+/* Per-medication value feedback — same semantics as the parent module */
+.hvcRow td{border-bottom:1px solid var(--hairline)}
+.hvcRow.hvcGreen  td{background:var(--ok-soft)}
+.hvcRow.hvcOrange td{background:var(--mid-soft)}
+.hvcRow.hvcRed    td{background:var(--no-soft)}
 
-.hvcBox{
-  padding:12px 10px;
-  border-radius:6px;
-}
-.hvcRow.hvcGreen .hvcBox{ border-left:5px solid #2e7d32; }
-.hvcRow.hvcOrange .hvcBox{ border-left:5px solid #ef6c00; }
-.hvcRow.hvcRed .hvcBox{ border-left:5px solid #c62828; }
-.hvcBox a{color:#2e7d32;}
+.hvcBox{padding:12px 13px;border-radius:8px}
+.hvcRow.hvcGreen  .hvcBox{border-left:3px solid var(--ok)}
+.hvcRow.hvcOrange .hvcBox{border-left:3px solid var(--mid)}
+.hvcRow.hvcRed    .hvcBox{border-left:3px solid var(--no)}
+.hvcBox a{color:var(--accent)}
 
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
 </style>
 </head>
 
@@ -2159,108 +2290,123 @@ lowValueReasons: new Map([
   },
 
 2: {
-  title: "Case 2 – Fevers",
-  diagnosis: "COVID-19",
+  title: "Case 2 – Sore throat",
+  diagnosis: "Viral pharyngitis (clinical diagnosis)",
   attribution: "",
   contentHtml: `
     <p>
-      A <strong>healthy 15-year-old woman</strong> with no significant past medical history presents to your outpatient clinic with
-      <strong>3 days of cough, fevers, and malaise</strong>. She reports myalgias and fatigue.
-      She also notes <strong>murky urine</strong> but denies <strong>dysuria</strong>, <strong>urgency</strong>, <strong>frequency</strong>,
-      or <strong>hematuria</strong>.
+      A <strong>healthy 15-year-old woman</strong> with no significant past medical history presents to your
+      outpatient clinic with <strong>3 days of sore throat, fever, and cough</strong>. She also reports
+      myalgias, fatigue, and a scratchy voice. Her mother asks whether she needs
+      <em>&ldquo;a strep test and antibiotics&rdquo;</em> before she can return to school.
+    </p>
+    <p>
+      She additionally notes <strong>murky urine</strong> but denies <strong>dysuria</strong>,
+      <strong>urgency</strong>, <strong>frequency</strong>, or <strong>hematuria</strong>.
     </p>
     <div class="grid2">
       <div class="summary">
         <h3 style="margin-top:0;">Vitals</h3>
         <ul>
-          <li><strong>Temp:</strong> 38.3°C (101°F)</li>
+          <li><strong>Temp:</strong> 38.3&deg;C (101&deg;F)</li>
           <li><strong>HR:</strong> 82 bpm</li>
           <li><strong>RR:</strong> 18 / min</li>
-          <li><strong>SpO₂:</strong> 98% on room air</li>
+          <li><strong>SpO&#8322;:</strong> 98% on room air</li>
           <li><strong>BP:</strong> 110/70</li>
         </ul>
       </div>
       <div class="summary">
         <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
-        <p class="small"><strong>General:</strong> Well-appearing adolescent, non-toxic, no acute distress.</p>
-        <p class="small"><strong>HEENT:</strong> Mild nasal congestion; oropharynx without exudates.</p>
-        <p class="small"><strong>Respiratory:</strong> Mild cough; lungs clear to auscultation bilaterally; no increased work of breathing.</p>
+        <p class="small"><strong>General:</strong> Well-appearing adolescent, non-toxic, no acute distress. Handling her secretions normally.</p>
+        <p class="small"><strong>HEENT:</strong> Mild nasal congestion. Oropharynx mildly erythematous, <strong>without tonsillar exudate or tonsillar swelling</strong>.</p>
+        <p class="small"><strong>Neck:</strong> <strong>No tender or enlarged anterior cervical lymph nodes.</strong> Supple, full range of motion.</p>
+        <p class="small"><strong>Respiratory:</strong> <strong>Frequent dry cough</strong> throughout the encounter; lungs clear to auscultation bilaterally; no increased work of breathing.</p>
         <p class="small"><strong>Abd/GU:</strong> Soft, non-tender; no suprapubic tenderness; no CVA tenderness.</p>
       </div>
     </div>
   `,
-  highValueIds: new Set(["COVID_PCR","FLU_PCR"]),
-highValueReasons: new Map([
-    ["COVID_PCR","High Value – Viral syndrome symptoms; result guides counseling, isolation, and return-to-school guidance."],
-    ["FLU_PCR","High Value – Confirms influenza; can influence counseling and (in select early cases) antiviral decisions."]
+  highValueIds: new Set(["NO_TESTING"]),
+  highValueReasons: new Map([
+    ["NO_TESTING","High Value – Her modified Centor (McIsaac) score is 1. At a score of 0–1, neither rapid antigen testing, throat culture, nor antibiotics are recommended. The presence of a cough argues against group A strep and for a viral cause. Symptomatic management with clear return precautions is the high-value plan."]
   ]),
-lowValueReasons: new Map([
-  ["UA","Low Value – In nonpregnant patients, there is no indication to treat asymptomatic bacteriuria; testing without urinary symptoms can lead to unnecessary antibiotics."],
-  ["URINE_CX","Low Value – Urine culture is not indicated without urinary symptoms; positives often reflect asymptomatic bacteriuria and can drive unnecessary antibiotics."],
-  ["PDF_4566588","Low Value – This patient is low risk by Centor/CENTAUR features, so testing for strep throat is not recommended."],
-  ["RPP","Low Value – Broad and costly; would not be indicated in this otherwise healthy, immunocompetent patient. Consider only if results would change management in high-risk or severe cases."],
-  ["PDF_4569813","Low Value – Broad and costly; would not be indicated in this otherwise healthy, immunocompetent patient. Consider only if results would change management in high-risk or severe cases."],
-  ["LACTATE","Low Value – This otherwise healthy patient likely has a viral infection. Her vitals are stable and there is no evidence of a severe infection that would require broader workup at this time."],
-  ["PDF_4564703","Low Value – Prior to obtaining invasive testing, it would be prudent to ask the patient about sexual history or menstrual history."],
-  ["PDF_4569705","Low Value – Prior to obtaining invasive testing, it would be prudent to ask the patient about sexual history or menstrual history."]
-]),
+  lowValueReasons: new Map([
+    ["PDF_4566588","Low Value – Her modified Centor (McIsaac) score is 1, and guidelines recommend against testing at 0–1. The pre-test probability of group A strep is low, and a positive result in this setting is more likely to reflect chronic carriage than acute infection — which leads to antibiotics that do not help her and carry real harms."],
+    ["PDF_4567060","Low Value – Throat culture has the same problem as rapid antigen testing at a score of 1, and adds a 24–48 hour delay. Culture is reserved for patients who warrant testing and have a negative rapid antigen test, which does not apply here."],
+    ["UA","Low Value – In nonpregnant patients there is no indication to screen for or treat asymptomatic bacteriuria. Testing urine without urinary symptoms leads to unnecessary antibiotics."],
+    ["URINE_CX","Low Value – Urine culture is not indicated without urinary symptoms; positives most often reflect asymptomatic bacteriuria and drive unnecessary antibiotics."],
+    ["RPP","Low Value – Broad and costly, and would not change outpatient management in an otherwise healthy, immunocompetent adolescent. Consider only where the result would change management in high-risk or severe illness."],
+    ["PDF_4569813","Low Value – Broad and costly, and would not change outpatient management in an otherwise healthy, immunocompetent adolescent."],
+    ["LACTATE","Low Value – She is well-appearing with stable vitals and no evidence of severe infection or hypoperfusion. Lactate has no role in this presentation."],
+    ["PDF_4564703","Low Value – Before obtaining this test, it would be prudent to ask the patient about her sexual and menstrual history."],
+    ["PDF_4569705","Low Value – Before obtaining this test, it would be prudent to ask the patient about her sexual and menstrual history."]
+  ]),
   intermediateIds: new Map([
-    ["NO_TESTING","Intermediate – If the patient appears stable, it would not be unreasonable to defer additional testing and opt for symptomatic management. However, identifying influenza or COVID may open treatment options and improve counseling."],
-    ["CBC","Intermediate (conditional) – may be reasonable if concern for bacterial infection or more severe illness."],
-    ["BMP","Intermediate (conditional) – consider with dehydration, poor PO intake, or systemic illness concern."],
-    ["CMP","Intermediate (conditional) – acceptable alternative to BMP if broader metabolic/hepatic assessment needed."],
-    ["CXR","Intermediate (conditional) – consider if clinical concern for pneumonia (focal findings, worsening symptoms, hypoxia)."],
-    ["BLOOD_CX","Intermediate – consider only if toxic-appearing, immunocompromised, or concern for sepsis/severe pneumonia."],
-    ["SPUTUM_CX","Intermediate – usually reserved for severe/hospitalized pneumonia or concern for resistant pathogens."]
+    ["COVID_PCR","Intermediate – Reasonable but not required. She is well-appearing and low-risk, so the result would not change her treatment, though it may inform isolation and return-to-school counseling."],
+    ["FLU_PCR","Intermediate – Reasonable but not required. At three days of symptoms she is past the window where antivirals clearly benefit a healthy adolescent, though a result may still guide counseling and household precautions."],
+    ["CBC","Intermediate (conditional) – may be reasonable if there is concern for bacterial infection or more severe illness."],
+    ["BMP","Intermediate (conditional) – consider with dehydration, poor oral intake, or concern for systemic illness."],
+    ["CMP","Intermediate (conditional) – acceptable alternative to BMP if a broader metabolic or hepatic assessment is needed."],
+    ["CXR","Intermediate (conditional) – consider if there is clinical concern for pneumonia (focal findings, worsening symptoms, hypoxia)."],
+    ["BLOOD_CX","Intermediate – consider only if the patient is toxic-appearing, immunocompromised, or there is concern for sepsis."],
+    ["SPUTUM_CX","Intermediate – usually reserved for severe or hospitalized pneumonia, or concern for a resistant pathogen."]
   ]),
   missedSeverity: "neutral",
   missedReasons: new Map([
-    ["COVID_PCR","A positive result can open treatment options and changes isolation and counseling. Deferring testing in a well-appearing, low-risk patient is defensible; what matters is that the decision is deliberate rather than automatic."],
-    ["FLU_PCR","Within the treatment window a positive influenza test can change management. As above, deferring is defensible here."]
+    ["NO_TESTING","For this presentation, ordering no diagnostic testing is the high-value choice. At a modified Centor score of 1, strep testing is not recommended, and no other test would change her management. Symptomatic care with clear return precautions is the plan."]
   ]),
-  recommendedIds: ["COVID_PCR","FLU_PCR"],
-    optionalRecommendedIds: ["CXR","CBC","BMP","CMP"],
+  recommendedIds: ["NO_TESTING"],
   pathwayHtml: `
-<strong>Why this high-value pathway fits</strong>
+<strong>Why no testing is the high-value pathway</strong>
 <p class="small">
-  This is a stable outpatient adolescent with a short, viral-sounding illness (cough, fever, myalgias).
-  High-value care prioritizes <em>targeted</em> testing that changes counseling/management and avoids workups with low pre-test probability.
+  This is a well-appearing adolescent with a short viral-sounding illness. The decision that matters here
+  is whether to test for group A streptococcal pharyngitis, and the modified Centor (McIsaac) score answers it.
 </p>
 
-<strong>Core recommended workup</strong>
-<ul>
-  <li><strong>COVID-19 PCR</strong> – confirms diagnosis and guides isolation/school guidance.</li>
-  <li><strong>Influenza A&amp;B PCR</strong> – helps confirm influenza; may influence counseling and (in select cases) early antiviral decisions.</li>
-</ul>
+<strong>Modified Centor (McIsaac) score for this patient</strong>
+<table class="small">
+  <tr><th>Criterion</th><th>This patient</th><th>Points</th></tr>
+  <tr><td>Age 3&ndash;14 (+1) &middot; 15&ndash;44 (0) &middot; 45 or older (&minus;1)</td><td>15 years old</td><td>0</td></tr>
+  <tr><td>Tonsillar exudate or swelling</td><td>Absent</td><td>0</td></tr>
+  <tr><td>Tender or swollen anterior cervical lymph nodes</td><td>Absent</td><td>0</td></tr>
+  <tr><td>Temperature above 38&deg;C</td><td>38.3&deg;C &mdash; present</td><td>+1</td></tr>
+  <tr><td>Cough absent</td><td>Cough present</td><td>0</td></tr>
+  <tr><td><strong>Total</strong></td><td></td><td><strong>1</strong></td></tr>
+</table>
 
-<strong>Optional (clinical judgment; consider if concern for pneumonia or dehydration)</strong>
+<strong>What the score means</strong>
 <ul class="small">
-  <li><strong>Chest X-ray (CXR)</strong> – consider with focal exam findings, worsening symptoms, hypoxia, or clinician concern for pneumonia.</li>
-  <li><strong>CBC</strong> – may be helpful if bacterial infection is a concern or symptoms are more severe.</li>
-  <li><strong>BMP</strong> (or CMP) – consider if dehydration/poor PO intake or systemic illness concern.</li>
+  <li><strong>0 to 1 &rarr; no testing and no antibiotics.</strong> &larr; this patient</li>
+  <li>2 to 3 &rarr; rapid antigen testing; treat only if positive (throat culture if the rapid test is negative in a child or adolescent).</li>
+  <li>4 to 5 &rarr; rapid antigen testing, or empiric antibiotics in selected cases.</li>
 </ul>
+<p class="small">
+  Modified Centor (McIsaac) criteria. The cough is doing a lot of work here: its presence both fails the
+  &ldquo;cough absent&rdquo; criterion and independently points toward a viral cause.
+</p>
 
 <strong>Common pitfalls (low-value care)</strong>
 <ul class="small">
-  <li><strong>UA/urine culture for “murky urine” without urinary symptoms</strong> → often asymptomatic bacteriuria; avoid unnecessary antibiotics.</li>
-  <li><strong>Broad respiratory pathogen panel (RPP) by default</strong> → higher cost and often doesn’t change outpatient management.</li>
-  <li><strong>Blood cultures in a well-appearing outpatient</strong> → low yield; reserve for severe illness/sepsis risk.</li>
+  <li><strong>Testing for strep anyway, because the throat hurts and the family expects it.</strong> At a score of 0&ndash;1 a positive result is more likely carriage than infection, so testing converts a self-limited illness into an antibiotic prescription.</li>
+  <li><strong>UA or urine culture for &ldquo;murky urine&rdquo; without urinary symptoms</strong> &rarr; usually asymptomatic bacteriuria; avoid unnecessary antibiotics.</li>
+  <li><strong>Broad respiratory pathogen panel by default</strong> &rarr; higher cost, and rarely changes outpatient management.</li>
+  <li><strong>Blood cultures in a well-appearing outpatient</strong> &rarr; low yield; reserve for severe illness or sepsis risk.</li>
 </ul>
 
 <strong>Clinical pearl: asymptomatic bacteriuria</strong>
 <p class="small">
-  In nonpregnant patients, do not screen or treat asymptomatic bacteriuria—no benefit and increased harms (adverse effects, resistance, C. difficile).
+  In nonpregnant patients, do not screen for or treat asymptomatic bacteriuria. There is no benefit and there are
+  real harms: adverse drug effects, resistance, and C. difficile.
 </p>
 `
 },
 
 3: {
-  title: "Case 3 – Fevers part 2",
+  title: "Case 3 – Return visit",
   diagnosis: "Sepsis from superimposed pneumonia after viral respiratory infection",
   attribution: "",
   contentHtml: `
 <p>
-  Your otherwise healthy <strong>15-year-old woman</strong> returns to the emergency department <strong>5 days</strong> after being seen in your clinic for the presumed viral URI.
+  Your otherwise healthy <strong>15-year-old woman</strong> returns to the emergency department <strong>5 days</strong> after being seen in your clinic for a clinically diagnosed viral pharyngitis.
   Her fevers initially improved, but she now has <strong>persistent fevers again</strong>, a <strong>worsening cough</strong>, and feels significantly more malaised.
   She notes that she has been feeling a lot more tired.
 </p>
@@ -2294,8 +2440,8 @@ lowValueReasons: new Map([
     ["SPUTUM_CX","High Value – If sputum can be obtained (or severe disease), culture can help tailor therapy."]
   ]),
   intermediateIds: new Map([
-    ["COVID_PCR","Intermediate – From the prior case, we know the patient has been diagnosed with COVID. Repeating the testing at this time would yield limited utility."],
-    ["FLU_PCR","From the prior case, we know the patient has been diagnosed with COVID. Repeating the testing at this time would yield limited utility."],
+    ["COVID_PCR","Intermediate – Her prior visit was a clinically diagnosed viral pharyngitis and no pathogen was identified, so testing is more defensible now than it was then. It still will not change the immediate management of her sepsis physiology, which is the priority."],
+    ["FLU_PCR","Intermediate – No pathogen was identified at her prior visit, so testing is reasonable. It will not change the immediate management of her sepsis physiology, which is the priority."],
     ["RPP","Intermediate – Broad/costly; consider if results will change management in severe/high-risk cases."],
     ["UA","Intermediate – Consider if symptoms/signs suggest urinary source; not routine without urinary symptoms."],
     ["URINE_CX","Intermediate – Consider only if urinary source suspected; avoid reflex culture without symptoms."]
@@ -2822,6 +2968,20 @@ function renderMissedFeedback(cfg, recIds, selectedIds){
     return;
   }
 
+  // Special case: when the recommended pathway IS "order nothing", the generic
+  // "also worth considering" wording reads backwards. Name it directly instead.
+  if (missed.length === 1 && missed[0] === "NO_TESTING"){
+    const why = (cfg && cfg.missedReasons && cfg.missedReasons.has("NO_TESTING"))
+      ? cfg.missedReasons.get("NO_TESTING")
+      : "No diagnostic testing was indicated for this presentation.";
+    missedFeedbackEl.innerHTML =
+      '<div class="missed-box neutral">' +
+        '<div class="missed-title">The high-value choice here was no testing</div>' +
+        '<div class="small muted">' + why + '</div>' +
+      '</div>';
+    return;
+  }
+
   const neutral = (cfg && cfg.missedSeverity === "neutral");
   const cls   = neutral ? "neutral" : "";
   const pill  = neutral ? "warn" : "bad";
@@ -3182,25 +3342,19 @@ orderFormEl.addEventListener("submit", (e)=>{
       pathRow1StudentEl.textContent += " — CXR reasonably omitted once CTPA obtained";
     }
   } else if (ACTIVE_CASE === 2){
-    const hasCovid = selectedIds.has("COVID_PCR");
-    const hasFlu = selectedIds.has("FLU_PCR");
-    const hasUrine = selectedIds.has("UA") || selectedIds.has("URINE_CX");
-    const extras = ["CBC","BMP","CMP","CXR"].filter(id => selectedIds.has(id)).length;
+    const hasNoTesting = selectedIds.has("NO_TESTING");
+    const hasStrep = selectedIds.has("PDF_4566588") || selectedIds.has("PDF_4567060");
+    const nTests = Array.from(selectedIds).filter(id => id !== "NO_TESTING").length;
 
-    pathRow1LabelEl.textContent = "Targeted viral testing";
-    pathRow1StudentEl.textContent = (hasCovid && hasFlu)
-      ? "Completed (COVID + influenza)"
-      : (hasCovid || hasFlu ? "Partial" : "Not obtained");
-    pathRow1RecEl.textContent = "COVID PCR + influenza PCR";
+    pathRow1LabelEl.textContent = "Diagnostic testing";
+    pathRow1StudentEl.textContent = (hasNoTesting && nTests === 0)
+      ? "No testing ordered"
+      : (String(nTests) + " test(s) ordered");
+    pathRow1RecEl.textContent = "No diagnostic testing necessary";
 
-    // Previously this row claimed CBC/BMP/CXR were recommended, which contradicted
-    // the grading map (they are conditional, and are excluded from recommended cost).
-    pathRow2LabelEl.textContent = "Additional labs / imaging";
-    pathRow2StudentEl.textContent = (extras || hasUrine)
-      ? (String(extras + (hasUrine ? 1 : 0)) + " additional test(s) ordered"
-         + (hasUrine ? " — including urine studies" : ""))
-      : "None ordered";
-    pathRow2RecEl.textContent = "Not routinely indicated in a well-appearing patient; consider only if severity increases";
+    pathRow2LabelEl.textContent = "Strep testing (modified Centor 1)";
+    pathRow2StudentEl.textContent = hasStrep ? "Strep testing ordered" : "No strep testing";
+    pathRow2RecEl.textContent = "Not indicated at a score of 0-1";
   } else if (ACTIVE_CASE === 3){
     const hasLactate = selectedIds.has("LACTATE");
     const hasBloodCx = selectedIds.has("BLOOD_CX");
