@@ -199,17 +199,45 @@ button.primary:active{transform:translateY(1px)}
 .pill.warn{background:var(--mid-soft);color:var(--mid)}
 .pill.bad{background:var(--no-soft);color:var(--no)}
 
-#orderFeedback ul{list-style:none;margin:4px 0 0;padding:0}
+#orderFeedback ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
 #orderFeedback li{
-  padding:10px 0;border-bottom:1px solid var(--hairline);font-size:.95rem;
-  /* The .good/.warn/.bad class also lands on the <li>. Keep the order name in
-     text ink and let the pill carry the value signal, so colour on this screen
-     always means one thing. */
+  padding:11px 14px;border-radius:9px;font-size:.95rem;
+  border:1px solid transparent;border-left-width:3px;
   color:var(--heading);font-weight:600;
 }
-#orderFeedback li:last-child{border-bottom:none}
-#orderFeedback li .small.muted{margin-top:2px;margin-bottom:0;line-height:1.5;
+#orderFeedback li.good{background:var(--ok-soft);border-left-color:var(--ok)}
+#orderFeedback li.warn{background:var(--mid-soft);border-left-color:var(--mid)}
+#orderFeedback li.bad{background:var(--no-soft);border-left-color:var(--no)}
+#orderFeedback li .small.muted{margin-top:3px;margin-bottom:0;line-height:1.5;
   color:var(--muted);font-weight:400}
+
+/* ---------- results flowsheet (chart-style, one column per timepoint) ---------- */
+.fs-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);margin:12px 0}
+table.fs{width:100%;border-collapse:collapse;font-size:.88rem;min-width:26rem;margin:0}
+table.fs th,table.fs td{padding:6px 12px;border:none;border-bottom:1px solid var(--hairline);
+  text-align:left;vertical-align:baseline}
+table.fs thead th{
+  font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  font-weight:650;background:var(--panel);border-bottom:1.5px solid var(--border);
+  white-space:nowrap;
+}
+table.fs thead th.fs-lab{width:42%}
+table.fs td.fs-lab{color:var(--ink);width:42%}
+table.fs td.fs-val{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  white-space:nowrap;color:var(--heading)}
+table.fs tr.fs-sect td{
+  background:var(--panel);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  font-weight:700;color:var(--muted);padding:7px 12px;border-bottom:1px solid var(--border);
+}
+table.fs tbody tr:last-child td{border-bottom:none}
+.fs-hi{color:var(--no);font-weight:700}
+.fs-hi::after{content:" \2191";font-weight:700}
+.fs-lo{color:var(--no);font-weight:700}
+.fs-lo::after{content:" \2193";font-weight:700}
+.fs-ok{color:var(--ok);font-weight:650}
+.fs-note{font-size:.78rem;color:var(--muted);padding:8px 12px;border-top:1px solid var(--hairline)}
+.fs-unit{color:var(--muted);font-weight:400;font-size:.86em}
 
 /* ---------- management decisions ---------- */
 .decision-set{margin-top:18px;display:flex;flex-direction:column;gap:14px}
@@ -231,8 +259,12 @@ button.primary:active{transform:translateY(1px)}
 .dfb{margin-top:16px}
 .dfb h4{margin:0 0 10px;font-size:.75rem;letter-spacing:.11em;text-transform:uppercase;
   color:var(--muted);font-weight:650}
-.dfb-item{padding:11px 0;border-bottom:1px solid var(--hairline)}
-.dfb-item:last-child{border-bottom:none}
+.dfb{display:block}
+.dfb-list{display:flex;flex-direction:column;gap:8px}
+.dfb-item{padding:11px 14px;border-radius:9px;border:1px solid transparent;border-left-width:3px}
+.dfb-item.good{background:var(--ok-soft);border-left-color:var(--ok)}
+.dfb-item.warn{background:var(--mid-soft);border-left-color:var(--mid)}
+.dfb-item.bad{background:var(--no-soft);border-left-color:var(--no)}
 .dfb-q{font-size:.83rem;color:var(--muted);margin-bottom:3px}
 .dfb-a{font-weight:600;color:var(--heading);font-size:.95rem}
 .dfb-why{font-size:.88rem;color:var(--muted);line-height:1.5;margin-top:3px}
@@ -2746,13 +2778,14 @@ lowValueReasons: new Map([
         </div>
       </div>
     `,
-    highValueIds: new Set(["LACTATE","BLOOD_CX","CBC","BMP","CMP","XR_FOOT","PDF_4569728"]),
+    highValueIds: new Set(["LACTATE","BLOOD_CX","CBC","BMP","CMP","CXR","XR_FOOT","PDF_4569728"]),
     highValueReasons: new Map([
       ["LACTATE","High Value – An hour-one sepsis bundle element. Lactate identifies occult hypoperfusion and sets the resuscitation target. If it is above 2, it must be repeated."],
       ["BLOOD_CX","High Value – Draw before antibiotics whenever that does not delay them. Note the contrast with uncomplicated cellulitis, where blood cultures are low-value: systemic signs change that."],
       ["CBC","High Value – Leukocytosis or leukopenia contributes to the sepsis assessment, and the platelet count feeds organ-dysfunction scoring."],
       ["BMP","High Value – Creatinine and bicarbonate are organ-dysfunction criteria, renal function drives antibiotic dosing, and his glucose is 358."],
       ["CMP","High Value – Acceptable alternative to BMP; adds hepatic assessment."],
+      ["CXR","High Value – Chest radiography is part of the standard source evaluation in sepsis. Even with an obvious foot source, a second or occult source has to be excluded, and he is tachypnoeic at 26."],
       ["XR_FOOT","High Value – First-line imaging of the foot: gas, foreign body, bony destruction. Cheap and fast, and it is what makes the decision not to image further a reasoned one rather than an omission."],
       ["PDF_4569728","High Value – Deep tissue culture obtained at debridement. This is the specimen that lets you narrow therapy in 48 hours, and it is the single most consequential microbiology decision in this case."]
     ]),
@@ -2766,9 +2799,9 @@ lowValueReasons: new Map([
     ]),
     lowValueReasons: new Map([
       ["SWAB_SUPERFICIAL","Low Value – A superficial swab grows skin flora and colonisers, and it sends you after the wrong organism. It costs exactly the same as the deep tissue culture obtained at debridement: same $210, opposite value. This is the clearest example in the module that cost and value are different axes."],
-      ["MRI_LE_NONJOINT","Low Value – The probe does not reach bone and there is no clinical concern for osteomyelitis. This is the most expensive wrong answer available in this case."],
-      ["MRI_LE_NONJOINT_WWO","Low Value – As above, with contrast added on top. Nothing here justifies advanced imaging tonight."],
-      ["BONE_BX","Low Value – The diagnostic gold standard for a diagnosis nobody is making. Invasive and expensive."],
+      ["MRI_LE_NONJOINT","Low Value – In a patient without a probe to bone, MRI of the foot can be considered after evaluation by a subspecialist. It is not part of the initial emergency department workup, and at $5,470 to $7,670 it is the most expensive order available in this case."],
+      ["MRI_LE_NONJOINT_WWO","Low Value – In a patient without a probe to bone, MRI of the foot can be considered after evaluation by a subspecialist. Adding contrast raises the cost further without changing that."],
+      ["BONE_BX","Low Value – As with MRI, bone biopsy can be considered after evaluation by a subspecialist if osteomyelitis remains a concern. It has no role in the initial workup, and it is both invasive and expensive at $7,830."],
       ["PDF_4569819","Low Value – Procalcitonin does not change the decision to treat a patient you are already treating. It has a role in guiding later de-escalation, not in this first hour."],
       ["PDF_4639512","Low Value – CT angiography is not the first-line vascular assessment. An ankle-brachial index or arterial duplex comes first, at a fraction of the cost."],
       ["PDF_4639514","Low Value – CT angiography is not the first-line vascular assessment. An ankle-brachial index or arterial duplex comes first, at a fraction of the cost."],
@@ -2780,10 +2813,11 @@ lowValueReasons: new Map([
       ["BLOOD_CX","Drawn before antibiotics, these are your best chance at an organism if the wound cultures disappoint. After antibiotics the yield falls sharply."],
       ["CBC","Part of the organ-dysfunction assessment in sepsis, and the baseline every later decision is measured against."],
       ["BMP","Creatinine and bicarbonate are organ-dysfunction criteria; renal function also determines how you dose his antibiotics."],
+      ["CXR","Part of the standard source evaluation in sepsis. An obvious foot source does not exclude a second one, and he is tachypnoeic."],
       ["XR_FOOT","$490 and fast. It excludes gas and bony destruction, and it is the imaging that justifies not ordering an MRI."],
       ["PDF_4569728","Deep tissue culture at debridement is what allows you to narrow antibiotics on day 2. Without it he stays on broad coverage for his whole admission."]
     ]),
-    recommendedIds: ["LACTATE","BLOOD_CX","CBC","BMP","XR_FOOT","PDF_4569728"],
+    recommendedIds: ["LACTATE","BLOOD_CX","CBC","BMP","CXR","XR_FOOT","PDF_4569728"],
     pathwayHtml: `
 <strong>What this presentation calls for</strong>
 <p class="small">
@@ -2797,15 +2831,16 @@ lowValueReasons: new Map([
   <li><strong>Lactate</strong> &ndash; identifies occult hypoperfusion and sets the resuscitation target.</li>
   <li><strong>Blood cultures</strong> &ndash; drawn before antibiotics, provided that does not delay them.</li>
   <li><strong>CBC and BMP</strong> &ndash; organ-dysfunction assessment, and renal function for antibiotic dosing.</li>
-  <li><strong>Foot X-ray ($490)</strong> &ndash; first-line imaging: gas, foreign body, bony destruction.</li>
+  <li><strong>Foot X-ray and chest X-ray</strong> &ndash; the foot for gas and bony destruction, the chest as part of the sepsis source evaluation.</li>
   <li><strong>Deep tissue culture at debridement</strong> &ndash; the specimen that lets you narrow therapy in 48 hours.</li>
 </ul>
 
-<strong>Imaging he does not need</strong>
-<p class="small">
-  <strong>MRI of the foot ($5,470&ndash;$7,670)</strong> is not indicated. The probe does not reach bone and there
-  is no clinical suspicion of osteomyelitis. This is the most expensive wrong answer available in the case.
-</p>
+<strong>Imaging</strong>
+<ul class="small">
+  <li><strong>Foot X-ray ($490)</strong> &ndash; first-line: gas, foreign body, bony destruction.</li>
+  <li><strong>Chest X-ray ($420)</strong> &ndash; part of the standard source evaluation in sepsis. An obvious source does not exclude a second one.</li>
+  <li><strong>MRI of the foot ($5,470&ndash;$7,670)</strong> &ndash; the probe does not reach bone, so MRI can be considered <em>after</em> evaluation by a subspecialist. It is not part of the initial emergency department workup, and it is the most expensive order available in this case. The same applies to bone biopsy.</li>
+</ul>
 
 <strong>The two cultures that cost the same</strong>
 <p class="small">
@@ -2827,31 +2862,52 @@ lowValueReasons: new Map([
         Your initial labs have returned. He remains <strong>hypotensive with a MAP of 62</strong>, tachycardic and
         febrile, and is drowsy but rousable. Nothing has been started yet beyond peripheral access.
       </p>
-      <div class="grid2">
-        <div class="summary">
-          <h3 style="margin-top:0;">Laboratory results</h3>
-          <ul class="small">
-            <li><strong>CBC:</strong> leukocytosis with a <strong>neutrophil predominance</strong>; haemoglobin and platelets normal</li>
-            <li><strong>Lactate:</strong> <strong>26 mg/dL (2.9 mmol/L)</strong> &mdash; elevated</li>
-            <li><strong>Creatinine:</strong> <strong>1.25 mg/dL</strong></li>
-            <li><strong>BUN:</strong> <strong>30 mg/dL</strong></li>
-            <li><strong>Electrolytes, bicarbonate, LFTs, coagulation studies:</strong> normal</li>
-            <li><strong>Blood and deep tissue cultures:</strong> drawn, pending</li>
-            <li><strong>Foot X-ray:</strong> soft tissue swelling; no gas, no foreign body, no bony destruction</li>
-          </ul>
-        </div>
-        <div class="summary">
-          <h3 style="margin-top:0;">Vitals, unchanged</h3>
-          <ul class="small">
-            <li><strong>Temp:</strong> 38.9&deg;C</li>
-            <li><strong>HR:</strong> 122 bpm</li>
-            <li><strong>RR:</strong> 26 / min</li>
-            <li><strong>BP:</strong> 86/50 (MAP 62)</li>
-            <li><strong>SpO&#8322;:</strong> 96% on room air</li>
-            <li><strong>Glucose:</strong> 358 mg/dL</li>
-          </ul>
-          <p class="small" style="margin-top:8px;">Weight 92 kg.</p>
-        </div>
+      <div class="fs-wrap">
+        <table class="fs">
+          <thead>
+            <tr><th class="fs-lab">Result</th><th>ED &middot; Day 0, 21:40</th></tr>
+          </thead>
+          <tbody>
+            <tr class="fs-sect"><td colspan="2">Vitals</td></tr>
+            <tr><td class="fs-lab">Temp <span class="fs-unit">&deg;C</span></td><td class="fs-val"><span class="fs-hi">38.9</span></td></tr>
+            <tr><td class="fs-lab">Heart rate <span class="fs-unit">bpm</span></td><td class="fs-val"><span class="fs-hi">122</span></td></tr>
+            <tr><td class="fs-lab">Respiratory rate <span class="fs-unit">/min</span></td><td class="fs-val"><span class="fs-hi">26</span></td></tr>
+            <tr><td class="fs-lab">Blood pressure <span class="fs-unit">mmHg</span></td><td class="fs-val"><span class="fs-lo">86/50</span></td></tr>
+            <tr><td class="fs-lab">MAP <span class="fs-unit">mmHg</span></td><td class="fs-val"><span class="fs-lo">62</span></td></tr>
+            <tr><td class="fs-lab">SpO&#8322; <span class="fs-unit">%</span></td><td class="fs-val">96</td></tr>
+            <tr><td class="fs-lab">Weight <span class="fs-unit">kg</span></td><td class="fs-val">92</td></tr>
+
+            <tr class="fs-sect"><td colspan="2">Complete blood count</td></tr>
+            <tr><td class="fs-lab">WBC <span class="fs-unit">K/&micro;L</span></td><td class="fs-val"><span class="fs-hi">18.4</span></td></tr>
+            <tr><td class="fs-lab">Neutrophils <span class="fs-unit">%</span></td><td class="fs-val"><span class="fs-hi">86</span></td></tr>
+            <tr><td class="fs-lab">Haemoglobin <span class="fs-unit">g/dL</span></td><td class="fs-val">13.8</td></tr>
+            <tr><td class="fs-lab">Platelets <span class="fs-unit">K/&micro;L</span></td><td class="fs-val">265</td></tr>
+
+            <tr class="fs-sect"><td colspan="2">Chemistry</td></tr>
+            <tr><td class="fs-lab">Sodium <span class="fs-unit">mmol/L</span></td><td class="fs-val">136</td></tr>
+            <tr><td class="fs-lab">Potassium <span class="fs-unit">mmol/L</span></td><td class="fs-val">4.2</td></tr>
+            <tr><td class="fs-lab">Chloride <span class="fs-unit">mmol/L</span></td><td class="fs-val">101</td></tr>
+            <tr><td class="fs-lab">Bicarbonate <span class="fs-unit">mmol/L</span></td><td class="fs-val">22</td></tr>
+            <tr><td class="fs-lab">BUN <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">30</span></td></tr>
+            <tr><td class="fs-lab">Creatinine <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">1.25</span></td></tr>
+            <tr><td class="fs-lab">Glucose <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">358</span></td></tr>
+            <tr><td class="fs-lab">Albumin <span class="fs-unit">g/dL</span></td><td class="fs-val">3.6</td></tr>
+            <tr><td class="fs-lab">AST / ALT <span class="fs-unit">U/L</span></td><td class="fs-val">24 / 28</td></tr>
+            <tr><td class="fs-lab">Total bilirubin <span class="fs-unit">mg/dL</span></td><td class="fs-val">0.8</td></tr>
+
+            <tr class="fs-sect"><td colspan="2">Perfusion &amp; coagulation</td></tr>
+            <tr><td class="fs-lab">Lactate <span class="fs-unit">mg/dL (mmol/L)</span></td><td class="fs-val"><span class="fs-hi">26 (2.9)</span></td></tr>
+            <tr><td class="fs-lab">INR</td><td class="fs-val">1.1</td></tr>
+            <tr><td class="fs-lab">PTT <span class="fs-unit">sec</span></td><td class="fs-val">30</td></tr>
+
+            <tr class="fs-sect"><td colspan="2">Microbiology &amp; imaging</td></tr>
+            <tr><td class="fs-lab">Blood cultures</td><td class="fs-val">Drawn &middot; pending</td></tr>
+            <tr><td class="fs-lab">Deep tissue culture</td><td class="fs-val">Drawn &middot; pending</td></tr>
+            <tr><td class="fs-lab">Foot X-ray</td><td class="fs-val">Soft tissue swelling; no gas, no bony destruction</td></tr>
+            <tr><td class="fs-lab">Chest X-ray</td><td class="fs-val">No infiltrate, no effusion</td></tr>
+          </tbody>
+        </table>
+        <div class="fs-note">Values flagged in red are outside the reference range.</div>
       </div>
     `,
     highValueIds: new Set([]),
@@ -2949,16 +3005,55 @@ lowValueReasons: new Map([
     attribution: "",
     contentHtml: `
       <p>
-        <strong>Twenty-four hours after admission.</strong> He is off pressors, afebrile for 12 hours, his lactate
-        has normalised and his white count is falling. The erythema has receded and is marked. He is mobilising to
-        the chair with therapy, not yet back to baseline. <strong>Renal function is normal.</strong>
+        <strong>Twenty-four hours after admission.</strong> He is off pressors, afebrile for 12 hours and his
+        white count and lactate have normalised. The erythema has receded and is marked. He is mobilising to
+        the chair with therapy, not yet back to baseline.
       </p>
+      <div class="fs-wrap">
+        <table class="fs">
+          <thead>
+            <tr><th class="fs-lab">Result</th><th>ED &middot; Day 0</th><th>Hospital Day 1</th></tr>
+          </thead>
+          <tbody>
+            <tr class="fs-sect"><td colspan="3">Vitals</td></tr>
+            <tr><td class="fs-lab">Temp <span class="fs-unit">&deg;C</span></td><td class="fs-val"><span class="fs-hi">38.9</span></td><td class="fs-val">36.9</td></tr>
+            <tr><td class="fs-lab">Heart rate <span class="fs-unit">bpm</span></td><td class="fs-val"><span class="fs-hi">122</span></td><td class="fs-val">84</td></tr>
+            <tr><td class="fs-lab">Respiratory rate <span class="fs-unit">/min</span></td><td class="fs-val"><span class="fs-hi">26</span></td><td class="fs-val">16</td></tr>
+            <tr><td class="fs-lab">Blood pressure <span class="fs-unit">mmHg</span></td><td class="fs-val"><span class="fs-lo">86/50</span></td><td class="fs-val">118/72</td></tr>
+            <tr><td class="fs-lab">MAP <span class="fs-unit">mmHg</span></td><td class="fs-val"><span class="fs-lo">62</span></td><td class="fs-val">87</td></tr>
+            <tr><td class="fs-lab">SpO&#8322; <span class="fs-unit">%</span></td><td class="fs-val">96</td><td class="fs-val">98</td></tr>
+
+            <tr class="fs-sect"><td colspan="3">Complete blood count</td></tr>
+            <tr><td class="fs-lab">WBC <span class="fs-unit">K/&micro;L</span></td><td class="fs-val"><span class="fs-hi">18.4</span></td><td class="fs-val">9.2</td></tr>
+            <tr><td class="fs-lab">Neutrophils <span class="fs-unit">%</span></td><td class="fs-val"><span class="fs-hi">86</span></td><td class="fs-val">68</td></tr>
+            <tr><td class="fs-lab">Haemoglobin <span class="fs-unit">g/dL</span></td><td class="fs-val">13.8</td><td class="fs-val">12.9</td></tr>
+            <tr><td class="fs-lab">Platelets <span class="fs-unit">K/&micro;L</span></td><td class="fs-val">265</td><td class="fs-val">248</td></tr>
+
+            <tr class="fs-sect"><td colspan="3">Chemistry</td></tr>
+            <tr><td class="fs-lab">Sodium <span class="fs-unit">mmol/L</span></td><td class="fs-val">136</td><td class="fs-val">139</td></tr>
+            <tr><td class="fs-lab">Potassium <span class="fs-unit">mmol/L</span></td><td class="fs-val">4.2</td><td class="fs-val">4.0</td></tr>
+            <tr><td class="fs-lab">Bicarbonate <span class="fs-unit">mmol/L</span></td><td class="fs-val">22</td><td class="fs-val">25</td></tr>
+            <tr><td class="fs-lab">BUN <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">30</span></td><td class="fs-val">16</td></tr>
+            <tr><td class="fs-lab">Creatinine <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">1.25</span></td><td class="fs-val">0.95</td></tr>
+            <tr><td class="fs-lab">Glucose <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">358</span></td><td class="fs-val"><span class="fs-hi">148</span></td></tr>
+
+            <tr class="fs-sect"><td colspan="3">Perfusion</td></tr>
+            <tr><td class="fs-lab">Lactate <span class="fs-unit">mg/dL (mmol/L)</span></td><td class="fs-val"><span class="fs-hi">26 (2.9)</span></td><td class="fs-val">12 (1.3)</td></tr>
+
+            <tr class="fs-sect"><td colspan="3">Microbiology</td></tr>
+            <tr><td class="fs-lab">Deep tissue Gram stain</td><td class="fs-val">&mdash;</td><td class="fs-val">Gram-positive cocci in <strong>clusters</strong></td></tr>
+            <tr><td class="fs-lab">Deep tissue culture</td><td class="fs-val">Pending</td><td class="fs-val">ID and susceptibilities pending</td></tr>
+            <tr><td class="fs-lab">Blood cultures</td><td class="fs-val">Pending</td><td class="fs-val">No growth at 24 h</td></tr>
+          </tbody>
+        </table>
+        <div class="fs-note">Values flagged in red are outside the reference range. Day 0 is shown alongside for comparison.</div>
+      </div>
       <div class="grid2">
         <div class="summary">
           <h3 style="margin-top:0;">Overnight events</h3>
           <p class="small"><strong>Podiatry, in the ED on day 0:</strong> debrided the wound and obtained deep tissue cultures. The debridement was <strong>minimal</strong>, with negligible bleeding risk, and no further procedure is planned. Documented <strong>no concern for osteomyelitis and no indication for MRI</strong>.</p>
-          <p class="small"><strong>Microbiology so far:</strong> deep tissue Gram stain shows <strong>gram-positive cocci in clusters</strong>. Blood cultures with no growth at 24 hours. <strong>Identification and susceptibilities are still pending.</strong></p>
           <p class="small"><strong>Diabetes:</strong> he mentions he has <strong>not had his glargine in 24 hours</strong> and is due. He is <strong>eating a normal diet with a normal appetite</strong>. Home regimen is glargine 25 units daily.</p>
+          <p class="small"><strong>Renal function is normal.</strong></p>
         </div>
         <div class="summary">
           <h3 style="margin-top:0;">Still running from admission</h3>
@@ -3666,10 +3761,10 @@ function renderDecisionFeedback(graded){
   if (!graded.length){ decisionFeedbackEl.innerHTML = ""; return; }
   const cls = {high:"good", intermediate:"warn", low:"bad"};
   const tag = {high:"✅ High-value", intermediate:"⚠️ Intermediate", low:"❌ Low-value"};
-  let html = '<div class="dfb"><h4>Management decisions</h4>';
+  let html = '<div class="dfb"><h4>Management decisions</h4><div class="dfb-list">';
   for (const g of graded){
     const c = cls[g.tier] || "bad";
-    html += '<div class="dfb-item">' +
+    html += '<div class="dfb-item ' + c + '">' +
               '<div class="dfb-q">' + escapeHtml(g.question) + '</div>' +
               '<div class="dfb-a">' + escapeHtml(g.chosenLabel) +
                 '<span class="pill ' + c + '">' + (tag[g.tier] || "") + '</span></div>' +
@@ -3679,7 +3774,7 @@ function renderDecisionFeedback(graded){
     }
     html += '</div>';
   }
-  html += '</div>';
+  html += '</div></div>';
   decisionFeedbackEl.innerHTML = html;
 }
 
