@@ -222,6 +222,11 @@ button.primary:active{transform:translateY(1px)}
 .decision-opts label:hover{background:var(--accent-soft)}
 .decision-opts input[type=radio]{accent-color:var(--accent);margin:3px 0 0;flex:none}
 .decision-unanswered{border-color:var(--no);box-shadow:0 0 0 3px var(--no-soft)}
+.decision-reveal{margin-top:12px;padding:11px 14px;border-radius:9px;
+  background:var(--accent-soft);border-left:3px solid var(--accent);font-size:.92rem}
+.decision-reveal .rv-title{font-weight:700;color:var(--heading);margin-bottom:2px;font-size:.85rem;
+  letter-spacing:.02em}
+.decision-reveal .rv-body{color:var(--ink)}
 
 .dfb{margin-top:16px}
 .dfb h4{margin:0 0 10px;font-size:.75rem;letter-spacing:.11em;text-transform:uppercase;
@@ -482,9 +487,10 @@ textarea{min-height:96px;resize:vertical}
     <button class="tab" id="tab4" type="button">Case 4: Back pain</button>
     <button class="tab" id="tab5" type="button">Case 5: Med reconciliation</button>
     <button class="tab" id="tab6" type="button">Case 6a: Diabetic foot</button>
-    <button class="tab" id="tab7" type="button">Case 6b: Day 1</button>
-    <button class="tab" id="tab8" type="button">Case 6c: Day 2</button>
-    <button class="tab" id="tab9" type="button">Post-test</button>
+    <button class="tab" id="tab7" type="button">Case 6b: Initial management</button>
+    <button class="tab" id="tab8" type="button">Case 6c: Day 1</button>
+    <button class="tab" id="tab9" type="button">Case 6d: Day 2</button>
+    <button class="tab" id="tab10" type="button">Post-test</button>
   </div>
 
   <h2 id="caseTitle"></h2>
@@ -2739,10 +2745,6 @@ lowValueReasons: new Map([
           <p class="small"><strong>Neuro:</strong> Absent 10-g monofilament sensation at 6 of 10 sites.</p>
         </div>
       </div>
-      <div class="hint">
-        He meets SIRS on temperature, heart rate and respiratory rate, and scores <strong>3 on qSOFA</strong>
-        (RR 26, systolic 86, altered mentation). This is sepsis with an identified source.
-      </div>
     `,
     highValueIds: new Set(["LACTATE","BLOOD_CX","CBC","BMP","CMP","XR_FOOT","PDF_4569728"]),
     highValueReasons: new Map([
@@ -2782,13 +2784,97 @@ lowValueReasons: new Map([
       ["PDF_4569728","Deep tissue culture at debridement is what allows you to narrow antibiotics on day 2. Without it he stays on broad coverage for his whole admission."]
     ]),
     recommendedIds: ["LACTATE","BLOOD_CX","CBC","BMP","XR_FOOT","PDF_4569728"],
+    pathwayHtml: `
+<strong>What this presentation calls for</strong>
+<p class="small">
+  This is the case in the module where a broad, expensive workup is unambiguously the high-value answer.
+  He is hypotensive, febrile, tachypnoeic and newly confused, with an obvious source. The costly mistake
+  here is hesitation, not over-ordering.
+</p>
+
+<strong>Core recommended workup</strong>
+<ul class="small">
+  <li><strong>Lactate</strong> &ndash; identifies occult hypoperfusion and sets the resuscitation target.</li>
+  <li><strong>Blood cultures</strong> &ndash; drawn before antibiotics, provided that does not delay them.</li>
+  <li><strong>CBC and BMP</strong> &ndash; organ-dysfunction assessment, and renal function for antibiotic dosing.</li>
+  <li><strong>Foot X-ray ($490)</strong> &ndash; first-line imaging: gas, foreign body, bony destruction.</li>
+  <li><strong>Deep tissue culture at debridement</strong> &ndash; the specimen that lets you narrow therapy in 48 hours.</li>
+</ul>
+
+<strong>Imaging he does not need</strong>
+<p class="small">
+  <strong>MRI of the foot ($5,470&ndash;$7,670)</strong> is not indicated. The probe does not reach bone and there
+  is no clinical suspicion of osteomyelitis. This is the most expensive wrong answer available in the case.
+</p>
+
+<strong>The two cultures that cost the same</strong>
+<p class="small">
+  A superficial ulcer swab and a deep tissue culture obtained at debridement bill identically, at $210.
+  One grows skin flora and misleads your therapy; the other is what lets you narrow antibiotics in 48 hours.
+  Identical price, opposite value.
+</p>
+
+<p class="small muted">Your labs return in the next stage, where you will decide how to treat him.</p>
+`
+  },
+  7: {
+    title: "Case 6b – Initial management",
+    diagnosis: "Sepsis from a diabetic foot infection",
+    attribution: "",
+    ordersDisabled: true,
+    contentHtml: `
+      <p>
+        Your initial labs have returned. He remains <strong>hypotensive with a MAP of 62</strong>, tachycardic and
+        febrile, and is drowsy but rousable. Nothing has been started yet beyond peripheral access.
+      </p>
+      <div class="grid2">
+        <div class="summary">
+          <h3 style="margin-top:0;">Laboratory results</h3>
+          <ul class="small">
+            <li><strong>CBC:</strong> leukocytosis with a <strong>neutrophil predominance</strong>; haemoglobin and platelets normal</li>
+            <li><strong>Lactate:</strong> <strong>26 mg/dL (2.9 mmol/L)</strong> &mdash; elevated</li>
+            <li><strong>Creatinine:</strong> <strong>1.25 mg/dL</strong></li>
+            <li><strong>BUN:</strong> <strong>30 mg/dL</strong></li>
+            <li><strong>Electrolytes, bicarbonate, LFTs, coagulation studies:</strong> normal</li>
+            <li><strong>Blood and deep tissue cultures:</strong> drawn, pending</li>
+            <li><strong>Foot X-ray:</strong> soft tissue swelling; no gas, no foreign body, no bony destruction</li>
+          </ul>
+        </div>
+        <div class="summary">
+          <h3 style="margin-top:0;">Vitals, unchanged</h3>
+          <ul class="small">
+            <li><strong>Temp:</strong> 38.9&deg;C</li>
+            <li><strong>HR:</strong> 122 bpm</li>
+            <li><strong>RR:</strong> 26 / min</li>
+            <li><strong>BP:</strong> 86/50 (MAP 62)</li>
+            <li><strong>SpO&#8322;:</strong> 96% on room air</li>
+            <li><strong>Glucose:</strong> 358 mg/dL</li>
+          </ul>
+          <p class="small" style="margin-top:8px;">Weight 92 kg.</p>
+        </div>
+      </div>
+    `,
+    highValueIds: new Set([]),
+    highValueReasons: new Map([]),
+    intermediateIds: new Map([]),
+    lowValueReasons: new Map([]),
+    recommendedIds: [],
     decisions: [
       { id:"fluids", question:"Fluid resuscitation", hint:"He is hypotensive with a MAP of 62.",
+        revealTitle:"Three hours later — repeat lactate",
         options:[
-          {id:"f30", label:"30 mL/kg crystalloid, started now", tier:"high", why:"This is the hour-one bundle target for sepsis with hypotension. He has no heart failure or dialysis dependence that would argue for a more cautious approach."},
-          {id:"f500", label:"500 mL bolus, then reassess", tier:"intermediate", why:"Not unreasonable as a first step, but it under-resuscitates a hypotensive septic patient and delays reaching the target."},
-          {id:"fmaint", label:"Maintenance fluids only", tier:"low", why:"Maintenance fluid does not resuscitate. He is hypotensive with evidence of hypoperfusion."},
-          {id:"fnone", label:"Hold fluids &mdash; he is not hypotensive enough to need them", tier:"low", why:"A MAP of 62 is below the 65 threshold. This is exactly the patient the bundle is written for."}
+          {id:"f30", label:"30 mL/kg crystalloid, started now", tier:"high",
+           why:"This is the hour-one bundle target for sepsis with hypotension. He has no heart failure or dialysis dependence that would argue for a more cautious approach.",
+           reveal:"He received roughly 2.8 litres. <strong>Repeat lactate 14 mg/dL (1.6 mmol/L) &mdash; normal.</strong> MAP is now 74, heart rate 98, and he is more alert. Clearing the lactate is the point of measuring it: the repeat is what tells you the resuscitation worked."},
+          {id:"f500", label:"500 mL bolus, then reassess", tier:"intermediate",
+           why:"Not unreasonable as a first step, but it under-resuscitates a hypotensive septic patient and delays reaching the target.",
+           reveal:"<strong>Repeat lactate 22 mg/dL (2.4 mmol/L) &mdash; improved but still elevated.</strong> MAP 66, heart rate 112. Partially resuscitated. He needs the rest of the volume, and the repeat lactate is what showed you that."},
+          {id:"fmaint", label:"Maintenance fluids only", tier:"low",
+           why:"Maintenance fluid does not resuscitate. He is hypotensive with evidence of hypoperfusion.",
+           reveal:"<strong>Repeat lactate 31 mg/dL (3.4 mmol/L) &mdash; rising.</strong> MAP 60, heart rate 126. He is not being resuscitated, and the lactate is telling you so."},
+          {id:"fnone", label:"Hold fluids — he is not hypotensive enough to need them", tier:"low",
+           why:"A MAP of 62 is below the 65 threshold. This is exactly the patient the bundle is written for.",
+           reveal:"<strong>Repeat lactate 33 mg/dL (3.7 mmol/L) &mdash; rising.</strong> MAP 58, heart rate 130, and he is more somnolent. Untreated septic hypoperfusion does not improve on its own."}
         ]},
       { id:"abxtime", question:"Antibiotic timing", hint:"",
         options:[
@@ -2797,7 +2883,7 @@ lowValueReasons: new Map([
           {id:"aimg", label:"After the foot X-ray results", tier:"low", why:"Imaging never precedes antibiotics in septic shock. The X-ray will not change what you give."},
           {id:"await", label:"Hold until cultures result, to avoid unnecessary broad coverage", tier:"low", why:"Stewardship means narrowing early, not starting late. Withholding antibiotics from a septic patient for 48 hours is dangerous."}
         ]},
-      { id:"abxchoice", question:"Empiric antibiotic choice", hint:"Moderate-to-severe diabetic foot infection with systemic signs.",
+      { id:"abxchoice", question:"Empiric antibiotic choice", hint:"",
         options:[
           {id:"vpt", label:"Vancomycin plus piperacillin-tazobactam", tier:"high", why:"Covers MRSA, streptococci, gram-negatives and anaerobes, which is the appropriate empiric breadth for a severe diabetic foot infection with sepsis."},
           {id:"vanc", label:"Vancomycin alone", tier:"intermediate", why:"Covers the gram-positives but leaves gram-negative and anaerobic organisms uncovered in a wound that frequently harbours them."},
@@ -2825,41 +2911,40 @@ lowValueReasons: new Map([
         ]}
     ],
     pathwayHtml: `
-<strong>Sepsis with a foot source &mdash; the hour-one bundle</strong>
-<p class="small">
-  This is the case in the module where a broad, expensive workup is unambiguously the high-value answer.
-  The costly mistake here is hesitation, not over-ordering.
-</p>
-<table class="small">
-  <tr><th>Bundle element</th><th>In this patient</th></tr>
-  <tr><td>Measure lactate; repeat if above 2</td><td>Required &mdash; and the repeat is the element most often forgotten</td></tr>
-  <tr><td>Blood cultures before antibiotics</td><td>Required, provided it does not delay them</td></tr>
-  <tr><td>Broad-spectrum antibiotics within the hour</td><td>Vancomycin + piperacillin-tazobactam</td></tr>
-  <tr><td>30 mL/kg crystalloid for hypotension or lactate &ge; 4</td><td>Required &mdash; MAP 62</td></tr>
-  <tr><td>Vasopressors if MAP stays below 65 after fluids</td><td>Norepinephrine, with escalation of care</td></tr>
-  <tr><td><strong>Source control</strong></td><td><strong>Urgent debridement with deep tissue culture</strong></td></tr>
-</table>
-<p class="small">
-  Source control is the element that is not a drug or a fluid, and the one most often omitted.
-  In this patient no antibiotic regimen fixes an undrained foot.
-</p>
-
-<strong>Imaging</strong>
+<strong>What the labs add</strong>
 <ul class="small">
-  <li><strong>Foot X-ray ($490)</strong> &ndash; first-line: gas, foreign body, bony destruction.</li>
-  <li><strong>MRI foot ($5,470&ndash;$7,670)</strong> &ndash; not indicated. The probe does not reach bone and there is no clinical suspicion of osteomyelitis.</li>
+  <li><strong>Neutrophil-predominant leukocytosis</strong> &ndash; consistent with bacterial infection, and part of the organ-dysfunction picture.</li>
+  <li><strong>Lactate 26 mg/dL (2.9 mmol/L)</strong> &ndash; above the threshold of 2, so it <strong>must be repeated</strong>. It is below 4, so it is not by itself the trigger for 30 mL/kg &mdash; his hypotension is.</li>
+  <li><strong>Creatinine 1.25 with a BUN of 30</strong> &ndash; a BUN-to-creatinine ratio of 24 points to a pre-renal, volume-responsive picture. This is an argument <em>for</em> fluid resuscitation, not a reason to withhold it.</li>
 </ul>
 
-<strong>The two cultures that cost the same</strong>
+<strong>The hour-one bundle</strong>
+<table class="small">
+  <tr><th>Element</th><th>In this patient</th></tr>
+  <tr><td>Measure lactate; repeat if above 2</td><td>2.9 mmol/L &mdash; the repeat is required, and is the element most often forgotten</td></tr>
+  <tr><td>Blood cultures before antibiotics</td><td>Drawn</td></tr>
+  <tr><td>Broad-spectrum antibiotics within the hour</td><td>Vancomycin + piperacillin-tazobactam</td></tr>
+  <tr><td>30 mL/kg crystalloid for hypotension or lactate 4 or above</td><td>Required &mdash; MAP 62. At 92 kg that is roughly 2.8 litres</td></tr>
+  <tr><td>Vasopressors if the MAP stays below 65 after fluids</td><td>Norepinephrine, with escalation of care</td></tr>
+  <tr><td><strong>Source control</strong></td><td><strong>Urgent debridement with deep tissue culture</strong></td></tr>
+</table>
+
+<strong>Source control is the element most often left out</strong>
 <p class="small">
-  A superficial ulcer swab and a deep tissue culture obtained at debridement bill identically, at $210.
-  One grows skin flora and misleads your therapy; the other is what lets you narrow antibiotics in 48 hours.
-  Identical price, opposite value.
+  It is the only bundle element that is not a drug or a fluid, and in this patient no antibiotic regimen
+  fixes an undrained foot. It also produces the specimen that lets you narrow therapy in 48 hours.
+</p>
+
+<strong>A note on the creatinine</strong>
+<p class="small">
+  A rising creatinine sometimes prompts clinicians to hold back on fluids. In septic hypoperfusion with a
+  BUN-to-creatinine ratio this high, the kidney injury is a reason to resuscitate, not a reason to be cautious.
 </p>
 `
   },
-  7: {
-    title: "Case 6b – Hospital day 1",
+  8: {
+    title: "Case 6c – Hospital day 1",
+    ordersDisabled: true,
     diagnosis: "Improving on empiric therapy; organism not yet identified",
     attribution: "",
     contentHtml: `
@@ -2885,11 +2970,6 @@ lowValueReasons: new Map([
             <li>No VTE prophylaxis ordered</li>
           </ul>
         </div>
-      </div>
-      <div class="hint">
-        The question today is what comes <strong>off</strong>, what stays <strong>on</strong>, and what should have
-        been <strong>started</strong>. Gram stain clusters point to staphylococcus &mdash; which means MRSA is still
-        on the table until susceptibilities return.
       </div>
     `,
     highValueIds: new Set(["NO_TESTING"]),
@@ -2943,13 +3023,13 @@ lowValueReasons: new Map([
           {id:"basalcorr", label:"Restart home glargine 25 units daily plus correction-scale insulin", tier:"high", why:"Basal insulin should be continued in a patient with type 2 diabetes who takes it at home and is eating, with correction insulin layered on top. Note that this option costs more than sliding scale alone in insulin, glucose checks and nursing time, and is still the right answer."},
           {id:"basalonly", label:"Restart home glargine 25 units daily alone", tier:"intermediate", why:"The important half is right: his basal insulin goes back. Adding correction insulin would let you respond to hyperglycaemia rather than watch it."},
           {id:"ssionly", label:"Correction-scale (sliding scale) insulin only", tier:"low", why:"Sliding scale alone is recommended against by both the Endocrine Society and the ADA. It is purely reactive, treating hyperglycaemia only after it has happened, and it leaves a patient who needs basal insulin without any."},
-          {id:"half", label:"Half the glargine dose while inpatient", tier:"low", why:"This comes from a reasonable instinct &mdash; inpatients often eat poorly &mdash; that does not apply here. He is eating a normal diet, so halving his basal produces avoidable hyperglycaemia."},
+          {id:"half", label:"Half the glargine dose while inpatient", tier:"low", why:"This comes from a reasonable instinct — inpatients often eat poorly — that does not apply here. He is eating a normal diet, so halving his basal produces avoidable hyperglycaemia."},
           {id:"increase", label:"Increase glargine to 40 units because acutely ill patients need more insulin", tier:"low", why:"Acute illness does raise insulin requirements, but he is 24 hours past his sepsis, off pressors and eating. A 60% empiric increase without titration data invites hypoglycaemia, which in hospital means falls and a longer stay."}
         ]},
       { id:"vte", question:"VTE prophylaxis, the day after a minimal debridement in the ED", hint:"Renal function is normal. No further procedure planned.",
         options:[
           {id:"lovenox", label:"Prophylactic-dose enoxaparin", tier:"high", why:"He is hospitalised with an acute infection and reduced mobility, and nothing about a minimal debridement performed the previous day contraindicates pharmacologic prophylaxis. Renal function is normal, so enoxaparin dosing is straightforward."},
-          {id:"scds", label:"Sequential compression devices only", tier:"low", why:"Mechanical prophylaxis alone is for patients who cannot receive anticoagulation. He has no contraindication, so this is under-treatment using a less effective measure. Adding compression devices alongside enoxaparin would be perfectly reasonable &mdash; it is the word 'only' that makes this wrong."},
+          {id:"scds", label:"Sequential compression devices only", tier:"low", why:"Mechanical prophylaxis alone is for patients who cannot receive anticoagulation. He has no contraindication, so this is under-treatment using a less effective measure. Adding compression devices alongside enoxaparin would be perfectly reasonable — it is the word 'only' that makes this wrong."},
           {id:"none", label:"No VTE prophylaxis", tier:"low", why:"Hospitalised, acutely infected, and mobilising only to the chair. This is precisely the risk profile prophylaxis exists for."},
           {id:"drip", label:"Continuous heparin infusion", tier:"low", why:"This is therapeutic anticoagulation for a patient with no thrombosis and no other indication. It carries real bleeding risk a day after a procedure, and it drags in monitoring labs, nursing time and often a higher level of care. Note that it is both the most expensive option here and the most harmful."}
         ]}
@@ -2991,8 +3071,9 @@ lowValueReasons: new Map([
 </p>
 `
   },
-  8: {
-    title: "Case 6c – Hospital day 2",
+  9: {
+    title: "Case 6d – Hospital day 2",
+    ordersDisabled: true,
     diagnosis: "Methicillin-susceptible Staphylococcus aureus diabetic foot infection",
     attribution: "",
     contentHtml: `
@@ -3052,7 +3133,7 @@ lowValueReasons: new Map([
     decisions: [
       { id:"narrow", question:"Antibiotic therapy now that susceptibilities are back", hint:"Deep tissue culture: MSSA.",
         options:[
-          {id:"cfz", label:"Narrow to cefazolin", tier:"high", why:"For methicillin-susceptible Staphylococcus aureus, cefazolin is not merely narrower than vancomycin &mdash; it is more effective. Staying on vancomycin is not the cautious choice, it is the worse one. This is the single most important stewardship point in the module."},
+          {id:"cfz", label:"Narrow to cefazolin", tier:"high", why:"For methicillin-susceptible Staphylococcus aureus, cefazolin is not merely narrower than vancomycin — it is more effective. Staying on vancomycin is not the cautious choice, it is the worse one. This is the single most important stewardship point in the module."},
           {id:"naf", label:"Narrow to nafcillin", tier:"intermediate", why:"Entirely appropriate for MSSA and comparable in efficacy to cefazolin, though more frequent dosing and a less favourable side-effect profile make it the second choice for most patients."},
           {id:"vanc", label:"Continue vancomycin alone", tier:"low", why:"Vancomycin is inferior to cefazolin for MSSA. Continuing it because it is broader mistakes breadth for safety, and it commits him to levels, renal monitoring and IV access he does not need."},
           {id:"both", label:"Continue vancomycin plus piperacillin-tazobactam", tier:"low", why:"Two unnecessary drugs. The organism is identified and susceptible; this is cost and selection pressure with no benefit."}
@@ -3112,7 +3193,7 @@ lowValueReasons: new Map([
 </p>
 `
   },
-  9: {
+  10: {
     title: "Post-test",
     diagnosis: "",
     attribution: "",
@@ -3210,12 +3291,12 @@ const MAX_MATCHES = 400;
 const COMPLETED_CASES = new Set();
 
 // Label for the advance button, given where the learner is in the sequence.
-// 0 pre-test | 1-4 cases | 5 med rec | 6-8 case 6 stages | 9 post-test
+// 0 pre-test | 1-4 cases | 5 med rec | 6-9 case 6 stages (6a-6d) | 10 post-test
 function nextButtonLabel(caseId){
   if (caseId < 5) return "Next Case";
   if (caseId === 5) return "Next Case";
-  if (caseId === 6 || caseId === 7) return "Next Stage";
-  if (caseId === 8) return "Next Section";
+  if (caseId >= 6 && caseId <= 8) return "Next Stage";
+  if (caseId === 9) return "Next Section";
   return "Finish Module";
 }
 
@@ -3258,6 +3339,19 @@ function setDxUiVisible(visible){
   setDisp(dxHintEl, show);
   setDisp(searchEl, show);
   setDisp(orderFormEl, show);
+}
+
+// Some stages present management decisions only, with no order entry.
+// The form still submits; the ordering half of it is hidden.
+function setOrderEntryVisible(visible){
+  const show = !!visible;
+  const setDisp = (el, v)=>{ if (!el) return; el.style.display = v ? "" : "none"; };
+  setDisp(dxHeaderEl, show);
+  setDisp(dxHintEl, show);
+  setDisp(searchEl, show);
+  setDisp(matchListEl, show);
+  const selBox = matchListEl ? matchListEl.parentElement.querySelector(".card") : null;
+  setDisp(selBox, show);
 }
 
 function setCase5Visible(visible){
@@ -3348,12 +3442,65 @@ function orderMatchesQuery(order, rawQuery){
   return fuzzyTokenMatch(q0, name + " " + syn);
 }
 
+// How well an order matches the query, lower is better. Two problems this fixes:
+//  1. Results were sorted alphabetically only, so a fuzzy match could outrank an
+//     exact one — typing "lactate" put "CT pulmonary angiography (CTPA)" first.
+//  2. Substring matching anywhere in the text is far too loose for short queries:
+//     "UA" matched "quantitative" (q-UA-ntitative), putting D-dimer above Urinalysis.
+// The original query always outranks its expansions, and short queries must land
+// on a word boundary.
+function wordHit(text, q){
+  if (!text || !q) return false;
+  try{
+    const esc = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp("(^|[^a-z0-9])" + esc + "([^a-z0-9]|$)").test(text);
+  }catch(e){
+    return text.indexOf(q) >= 0;
+  }
+}
+
+function rankAgainst(name, syn, q){
+  if (!q) return 99;
+  if (name === q) return 0;
+  if (name.indexOf(q) === 0) return 1;
+  // short queries must match a whole word; longer ones may match anywhere
+  if (q.length <= 3 ? wordHit(name, q) : name.indexOf(q) >= 0) return 2;
+  if (q.length <= 3 ? wordHit(syn, q) : syn.indexOf(q) >= 0) return 3;
+  return 99;
+}
+
+function matchRank(order, rawQuery){
+  const qs = expandQuery(rawQuery);
+  const q0 = qs[0];
+  if (!q0) return 90;
+  const name = normalize(order.name);
+  const syn = (order.synonyms || []).map(normalize).join(" ");
+
+  // the query the learner actually typed
+  const direct = rankAgainst(name, syn, q0);
+  if (direct < 99) return direct;
+
+  // then its expansions, always ranked below any direct hit
+  let best = 99;
+  for (let i = 1; i < qs.length; i++){
+    const r = rankAgainst(name, syn, qs[i]);
+    if (r < best) best = r;
+  }
+  if (best < 99) return 10 + best;
+
+  return 50;   // fuzzy match only
+}
+
 function renderMatches(){
   const q = searchEl.value || "";
   let matches = orderCatalog
     .slice()
     .filter(o => orderMatchesQuery(o, q))
-    .sort((a,b) => a.name.localeCompare(b.name));
+    .sort((a,b) => {
+      const ra = matchRank(a, q), rb = matchRank(b, q);
+      if (ra !== rb) return ra - rb;
+      return a.name.localeCompare(b.name);
+    });
 
   const idxNo = matches.findIndex(o => o.id === "NO_TESTING");
   if (idxNo > 0) {
@@ -3468,7 +3615,8 @@ function renderDecisions(cfg){
       html += '<label><input type="radio" name="dec_' + escAttr(d.id) + '" value="' + escAttr(o.id) + '">' +
               '<span>' + escapeHtml(o.label) + '</span></label>';
     }
-    html += '</div></div>';
+    html += '</div><div class="decision-reveal hidden" id="rv_' + escapeHtml(d.id) + '">' +
+              '<div class="rv-title"></div><div class="rv-body"></div></div></div>';
   }
   html += '</div>';
   decisionBlockEl.innerHTML = html;
@@ -3504,10 +3652,10 @@ function gradeDecisions(cfg){
       id: d.id,
       question: d.question,
       chosenId: chosenId,
-      chosenLabel: chosen ? chosen.label : "",
+      chosenLabel: chosen ? chosen.label:"",
       tier: chosen ? chosen.tier : "",
       why: chosen ? (chosen.why || "") : "",
-      bestLabel: best ? best.label : ""
+      bestLabel: best ? best.label:""
     });
   }
   return out;
@@ -3749,7 +3897,7 @@ function setActiveCase(caseId){
     return;
   }
 
-  if (caseId === 9){
+  if (caseId === 10){
     setDxUiVisible(false);
     setCase5Visible(false);
     setSurveyVisible("post");
@@ -3762,9 +3910,18 @@ function setActiveCase(caseId){
 
   setCase5Visible(false);
   setDxUiVisible(true);
+  const ordersOff = !!(cfg && cfg.ordersDisabled);
+  setOrderEntryVisible(!ordersOff);
   renderDecisions(cfg);
-  renderMatches();
-  renderSelectedOrders();
+  if (!ordersOff){
+    renderMatches();
+    renderSelectedOrders();
+  } else {
+    matchListEl.innerHTML = "";
+    if (selectedOrdersBoxEl) selectedOrdersBoxEl.innerHTML = "";
+  }
+  const submitBtn = orderFormEl ? orderFormEl.querySelector("button[type=submit]") : null;
+  if (submitBtn) submitBtn.textContent = ordersOff ? "Submit Decisions" : "Submit Orders";
 }
 
 /* =========================
@@ -3776,9 +3933,27 @@ if (decisionBlockEl){
   decisionBlockEl.addEventListener("change", (e)=>{
     const t = e.target;
     if (t && t.type === "radio" && t.name && t.name.indexOf("dec_") === 0){
-      DECISION_ANSWERS.set(t.name.slice(4), t.value);
-      const box = document.getElementById("dec_" + t.name.slice(4));
+      const did = t.name.slice(4);
+      DECISION_ANSWERS.set(did, t.value);
+      const box = document.getElementById("dec_" + did);
       if (box) box.classList.remove("decision-unanswered");
+
+      // Some choices return new clinical information immediately — for example a
+      // repeat lactate after the fluid decision. The result follows the choice.
+      const cfg = CASES[ACTIVE_CASE];
+      const dec = cfg && Array.isArray(cfg.decisions) ? cfg.decisions.find(x => x.id === did) : null;
+      const opt = dec ? dec.options.find(o => o.id === t.value) : null;
+      const slot = document.getElementById("rv_" + did);
+      if (slot){
+        if (opt && opt.reveal){
+          slot.querySelector(".rv-title").textContent = dec.revealTitle || "Result";
+          slot.querySelector(".rv-body").innerHTML = opt.reveal;
+          slot.classList.remove("hidden");
+        } else {
+          slot.classList.add("hidden");
+          slot.querySelector(".rv-body").innerHTML = "";
+        }
+      }
     }
   });
 }
@@ -3821,7 +3996,8 @@ wellsContainerEl.addEventListener("change", (e)=>{
 orderFormEl.addEventListener("submit", (e)=>{
   e.preventDefault();
   if (ACTIVE_CASE === 5) return;
-  if (selectedIds.size === 0){
+  const cfgPre = CASES[ACTIVE_CASE];
+  if (!(cfgPre && cfgPre.ordersDisabled) && selectedIds.size === 0){
     alert("Please select at least one option.");
     return;
   }
@@ -3930,6 +4106,16 @@ orderFormEl.addEventListener("submit", (e)=>{
   renderMissedFeedback(cfg, recIds, selectedIds);
   renderDecisionFeedback(gradedDecisions);
 
+  // A decisions-only stage has no orders, no costs and no pathway to compare.
+  if (cfg && cfg.ordersDisabled){
+    orderFeedbackEl.innerHTML = "";
+    if (missedFeedbackEl) missedFeedbackEl.innerHTML = "";
+    studentBreakdownEl.innerHTML = "";
+    recommendedBreakdownEl.innerHTML = "";
+    studentCostEl.textContent = "";
+    recommendedCostEl.textContent = "";
+  }
+
   // Pathway comparison
   if (ACTIVE_CASE === 1){
     const hasEKG = selectedIds.has("EKG");
@@ -4006,7 +4192,10 @@ orderFormEl.addEventListener("submit", (e)=>{
   const pc = document.getElementById("pathwayComparisonSection");
   // Show the pathway comparison for every diagnostic case (1-4), not just Case 1.
   // Cases 0/5/6 are surveys and med rec, which have no diagnostic pathway.
-  if (pc) pc.style.display = (((ACTIVE_CASE >= 1 && ACTIVE_CASE <= 4) || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 8)) ? "block" : "none");
+  const cfgNow = CASES[ACTIVE_CASE];
+  const showPathway = ((ACTIVE_CASE >= 1 && ACTIVE_CASE <= 4) || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 9))
+                      && !(cfgNow && cfgNow.ordersDisabled);
+  if (pc) pc.style.display = showPathway ? "block" : "none";
   // Initialize any post-submit interactive elements (e.g., sepsis checklist)
   initSepsisChecklist();
 });
@@ -4021,6 +4210,7 @@ document.getElementById("tab6").addEventListener("click", ()=>setActiveCase(6));
 document.getElementById("tab7").addEventListener("click", ()=>setActiveCase(7));
 document.getElementById("tab8").addEventListener("click", ()=>setActiveCase(8));
 document.getElementById("tab9").addEventListener("click", ()=>setActiveCase(9));
+document.getElementById("tab10").addEventListener("click", ()=>setActiveCase(10));
 
 if (continueBtnEl){
   continueBtnEl.addEventListener("click", ()=>{
@@ -4038,7 +4228,7 @@ if (continueBtnEl){
       return;
     }
 
-    if (ACTIVE_CASE === 9){
+    if (ACTIVE_CASE === 10){
       if (!POSTTEST_RESPONSES) return;
       logModuleComplete();
       setCase5Visible(false);
@@ -4053,7 +4243,7 @@ if (continueBtnEl){
 
     if (resultsEl.classList.contains("hidden")) return;
 
-    if (ACTIVE_CASE < 5 || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 8)){
+    if (ACTIVE_CASE < 5 || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 9)){
       setActiveCase(ACTIVE_CASE + 1);
       window.scrollTo({top: 0, behavior: "smooth"});
     }
