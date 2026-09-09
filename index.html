@@ -1280,79 +1280,60 @@ document.getElementById("reset").onclick=()=>location.reload();
 const orderCatalog = [
   { id:"NO_TESTING", name:"No diagnostic testing necessary", cost:0.00, synonyms:["no testing", "none", "no diagnostic testing"] },
   { id:"PDF_4562150", name:"Amylase", cost:150.00, synonyms:[] },
-  { id:"BLOOD_CX", name:"Blood culture (set)", cost:430.00, synonyms:["blood culture", "blood cx", "bld cx"] },
-  { id:"BMP", name:"BMP", cost:210.00, synonyms:["basic metabolic panel"] },
+  { id:"BLOOD_CX", name:"Blood culture (set)", cost:430.00, synonyms:["blood culture", "blood cx", "bld cx", "gram stain", "aerobic culture", "anaerobic culture"] },
+  { id:"BMP", name:"Basic metabolic panel (BMP)", cost:210.00, synonyms:["basic metabolic panel", "bmp"] },
   { id:"PDF_4567070", name:"Body fluid culture", cost:210.00, synonyms:["body fluid culture"] },
   { id:"PDF_4569740", name:"Body fluid cell count", cost:150.00, synonyms:["body fluid panel cell count"] },
-  { id:"CBC", name:"CBC", cost:140.00, synonyms:["cbc w diff", "cbc with differential", "cbc w/ diff"] },
+  { id:"CBC", name:"Complete blood count (CBC)", cost:140.00, synonyms:["cbc w diff", "cbc with differential", "cbc w/ diff", "cbc"] },
   { id:"CXR", name:"Chest X-ray (CXR)", cost:420.00, synonyms:["cxr", "xr chest", "chest xray", "chest x-ray", "portable cxr", "pa lateral"] },
   { id:"PDF_4569815", name:"Chlamydophila pneumoniae PCR", cost:120.00, synonyms:["chlamydophila pneumoniae pcr"] },
-  { id:"CMP", name:"CMP", cost:340.00, synonyms:["comprehensive metabolic panel"] },
+  { id:"CMP", name:"Comprehensive metabolic panel (CMP)", cost:340.00, synonyms:["comprehensive metabolic panel", "cmp"] },
   { id:"COVID_PCR", name:"COVID-19 PCR (SARS-CoV-2)", cost:210.00, synonyms:["covid", "sars cov 2", "sars-cov-2", "covid pcr"] },
-  { id:"PDF_4569724", name:"CSF culture", cost:210.00, synonyms:["csf culture"] },
-  { id:"PDF_4569744", name:"CSF panel — culture", cost:210.00, synonyms:["csf panel culture cpt3"] },
-  { id:"PDF_4569745", name:"CSF panel — Giemsa stain", cost:100.00, synonyms:["csf panel giemsa stain cpt4"] },
-  { id:"PDF_4569746", name:"CSF panel — glucose", cost:130.00, synonyms:["csf panel glucose cpt5"] },
-  { id:"PDF_4569743", name:"CSF panel — protein", cost:130.00, synonyms:["csf panel protein cpt2"] },
-  { id:"PDF_4634196", name:"CT abdomen/pelvis without contrast", cost:3570.00, synonyms:[] },
-  { id:"PDF_4634195", name:"CT abdomen/pelvis with contrast", cost:4510.00, synonyms:[] },
-  { id:"PDF_4634197", name:"CT abdomen/pelvis with/without contrast", cost:5460.00, synonyms:[] },
-  { id:"PDF_4634160", name:"CT abdomen with contrast", cost:3680.00, synonyms:[] },
+  { id:"PDF_4569724", name:"CSF culture", cost:210.00, synonyms:["csf culture", "csf panel culture", "spinal fluid culture"] },
+  { id:"PDF_4569745", name:"CSF Giemsa stain", cost:100.00, synonyms:["csf panel giemsa stain cpt4", "csf panel — giemsa stain"] },
+  { id:"PDF_4569746", name:"CSF glucose", cost:130.00, synonyms:["csf panel glucose cpt5", "csf panel — glucose", "spinal fluid panel", "csf panel"] },
+  { id:"PDF_4569743", name:"CSF protein", cost:130.00, synonyms:["csf panel protein cpt2", "csf panel — protein"] },
+  { id:"PDF_4634196", name:"CT abdomen and pelvis without contrast", cost:3570.00, synonyms:["ct abdomen/pelvis without contrast"] },
+  { id:"PDF_4634197", name:"CT abdomen and pelvis with and without contrast", cost:5460.00, synonyms:["ct abdomen/pelvis with/without contrast"] },
   { id:"PDF_4634150", name:"CT abdomen without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4634170", name:"CT abdomen with/without contrast", cost:3990.00, synonyms:[] },
-  { id:"PDF_4630440", name:"CT bone length study", cost:490.00, synonyms:[] },
+  { id:"PDF_4634170", name:"CT abdomen with and without contrast", cost:3990.00, synonyms:["ct abdomen with/without contrast"] },
+  { id:"PDF_4630440", name:"Bone length study (scanogram)", cost:490.00, synonyms:["ct bone length study"] },
   { id:"PDF_4632191", name:"CT bony pelvis for fracture", cost:2940.00, synonyms:[] },
-  { id:"PDF_4631260", name:"CT chest with contrast", cost:3680.00, synonyms:[] },
-  { id:"PDF_4631270", name:"CT chest with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4631270", name:"CT chest with and without contrast", cost:3990.00, synonyms:["ct chest with/without contrast"] },
   { id:"PDF_4631250", name:"CT chest without contrast", cost:2940.00, synonyms:[] },
   { id:"PDF_4630297", name:"Low-dose CT chest without contrast", cost:480.00, synonyms:["low dose ct chest without"] },
-  { id:"PDF_4633701", name:"CT left lower extremity with contrast", cost:3680.00, synonyms:[] },
-  { id:"PDF_4633705", name:"CT left lower extremity without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4633706", name:"CT left lower extremity with/without contrast", cost:3990.00, synonyms:[] },
-  { id:"PDF_4633206", name:"CT left upper extremity with contrast", cost:3680.00, synonyms:[] },
-  { id:"PDF_4633200", name:"CT left upper extremity without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4633207", name:"CT left upper extremity with/without contrast", cost:3990.00, synonyms:[] },
-  { id:"CT_L_SPINE", name:"CT lumbar spine (no contrast)", cost:2940.00, synonyms:["ct l spine", "ct back", "lumbar ct", "ct spine lumbar"] },
-  { id:"PDF_4630491", name:"CT neck with contrast", cost:3680.00, synonyms:[] },
-  { id:"PDF_4630492", name:"CT neck with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"CT_L_SPINE", name:"CT lumbar spine without contrast", cost:2940.00, synonyms:["ct l spine", "ct back", "lumbar ct", "ct spine lumbar", "ct lumbar spine (no contrast)"] },
+  { id:"PDF_4630492", name:"CT neck with and without contrast", cost:3990.00, synonyms:["ct neck with/without contrast"] },
   { id:"PDF_4630490", name:"CT neck without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4632193", name:"CT pelvis with contrast", cost:3680.00, synonyms:[] },
   { id:"PDF_4632192", name:"CT pelvis without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4634194", name:"CT pelvis with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4634194", name:"CT pelvis with and without contrast", cost:3990.00, synonyms:["ct pelvis with/without contrast"] },
   { id:"PDF_4634198", name:"CT renal stone protocol", cost:3570.00, synonyms:[] },
-  { id:"PDF_4633704", name:"CT right lower extremity with contrast", cost:3680.00, synonyms:[] },
-  { id:"PDF_4633702", name:"CT right lower extremity without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4633708", name:"CT right lower extremity with/without contrast", cost:3990.00, synonyms:[] },
-  { id:"PDF_4633202", name:"CT right upper extremity with contrast", cost:3680.00, synonyms:[] },
-  { id:"PDF_4633201", name:"CT right upper extremity without contrast", cost:2940.00, synonyms:[] },
-  { id:"PDF_4633205", name:"CT right upper extremity with/without contrast", cost:3990.00, synonyms:[] },
+  { id:"PDF_4633702", name:"CT lower extremity without contrast", cost:2940.00, synonyms:["ct right lower extremity without contrast", "ct left lower extremity", "ct right lower extremity"] },
+  { id:"PDF_4633708", name:"CT lower extremity with and without contrast", cost:3990.00, synonyms:["ct right lower extremity with/without contrast"] },
+  { id:"PDF_4633201", name:"CT upper extremity without contrast", cost:2940.00, synonyms:["ct right upper extremity without contrast", "ct left upper extremity", "ct right upper extremity"] },
+  { id:"PDF_4633205", name:"CT upper extremity with and without contrast", cost:3990.00, synonyms:["ct right upper extremity with/without contrast"] },
   { id:"PDF_4632127", name:"CT cervical spine without contrast", cost:2940.00, synonyms:["ct spine cervical without contrast"] },
-  { id:"PDF_4632132", name:"CT lumbar spine with contrast", cost:3680.00, synonyms:["ct spine lumbar with contrast"] },
   { id:"PDF_4639508", name:"CT lumbar spine with and without contrast", cost:3990.00, synonyms:["ct spine lumbar with/without contrast"] },
-  { id:"PDF_4632129", name:"CT thoracic spine with contrast", cost:3680.00, synonyms:["ct spine thoracic with contrast"] },
   { id:"PDF_4632128", name:"CT thoracic spine without contrast", cost:2940.00, synonyms:["ct spine thoracic without contrast"] },
   { id:"PDF_4364178", name:"CT urogram", cost:5460.00, synonyms:[] },
   { id:"PDF_4639513", name:"CTA abdomen", cost:6830.00, synonyms:[] },
   { id:"PDF_4639520", name:"CTA abdomen/pelvis", cost:6830.00, synonyms:[] },
   { id:"PDF_4639510", name:"CTA aorto-bifemoral", cost:2890.00, synonyms:["cta aorto bifemoral"] },
   { id:"CTPA", name:"CT pulmonary angiography (CTPA)", cost:4990.00, synonyms:["cta", "ctpa", "pe protocol", "ct angio pulmonary", "pulmonary embolism", "cta chest – pe protocol (ctpa)"] },
-  { id:"PDF_4639512", name:"CTA lower extremity left", cost:4990.00, synonyms:[] },
-  { id:"PDF_4639514", name:"CTA lower extremity right", cost:4990.00, synonyms:[] },
+  { id:"PDF_4639514", name:"CTA lower extremity", cost:4990.00, synonyms:["cta lower extremity right", "cta lower extremity left"] },
   { id:"PDF_4639509", name:"CTA pelvis", cost:4990.00, synonyms:[] },
   { id:"PDF_4639519", name:"CTA thoracic aorta", cost:4990.00, synonyms:[] },
   { id:"PDF_4639511", name:"CTA upper extremity", cost:4990.00, synonyms:[] },
-  { id:"PDF_4569725", name:"Aerobic culture", cost:210.00, synonyms:["culture aerobic"] },
-  { id:"PDF_4567075", name:"Anaerobic culture", cost:280.00, synonyms:["culture anaerobic"] },
   { id:"PDF_4562251", name:"Direct bilirubin", cost:85.00, synonyms:["direct bilirubin"] },
   { id:"PDF_4563718", name:"Direct HDL", cost:55.00, synonyms:["direct hdl"] },
   { id:"ECHO", name:"Echocardiogram (Echo/TTE)", cost:3460.00, synonyms:["echo", "tte", "transthoracic echo"] },
   { id:"EKG", name:"EKG", cost:500.00, synonyms:["ecg", "electrocardiogram"] },
   { id:"PDF_4569726", name:"Eye culture", cost:210.00, synonyms:["eye culture"] },
-  { id:"PDF_4569811", name:"GI pathogen panel (BioFire, 22 targets)", cost:410.00, synonyms:["gastrointestinal panel biofire film (22)"] },
+  { id:"PDF_4569811", name:"GI pathogen panel PCR", cost:410.00, synonyms:["gastrointestinal panel biofire film (22)", "gi pathogen panel (biofire, 22 targets)"] },
   { id:"PDF_4566588", name:"Group A Strep PCR", cost:130.00, synonyms:["group a strep by pcr"] },
   { id:"PDF_4569806", name:"Hemoglobin A1c", cost:65.00, synonyms:[] },
   { id:"PDF_4560058", name:"Hepatic function panel", cost:250.00, synonyms:["hepatic function panel"] },
-  { id:"PDF_4520097", name:"Herpes simplex / varicella rapid culture", cost:95.00, synonyms:["herpes simplex/varicella rapid culture"] },
+  { id:"PDF_4520097", name:"Varicella / herpes simplex antigen, direct fluorescent", cost:95.00, synonyms:["herpes simplex/varicella rapid culture", "herpes simplex / varicella rapid culture"] },
   { id:"FLU_PCR", name:"Influenza A/B PCR", cost:460.00, synonyms:["flu pcr", "influenza pcr", "influenza a/b", "influenza a&b rna real-time pcr"] },
   { id:"PDF_4569727", name:"Joint fluid culture", cost:210.00, synonyms:["joint fld culture"] },
   { id:"PDF_4569051", name:"Joint fluid panel", cost:150.00, synonyms:["joint fluid panel"] },
@@ -1371,12 +1352,10 @@ const orderCatalog = [
   { id:"PDF_4560008", name:"PSA panel", cost:130.00, synonyms:["psa panel"] },
   { id:"PTT", name:"PTT", cost:140.00, synonyms:["aptt", "activated partial thromboplastin time"] },
   { id:"DDIMER_QUANT", name:"D-dimer (quantitative)", cost:240.00, synonyms:["d-dimer", "ddimer", "quant d dimer", "quant d-dimer"] },
-  { id:"RPP", name:"Respiratory Pathogen Panel (PCR)", cost:1320.00, synonyms:["rpp", "resp virus panel", "respiratory virus panel"] },
-  { id:"PDF_4569813", name:"Respiratory virus panel PCR (19 targets)", cost:1320.00, synonyms:["respiratory virus pcr x19"] },
+  { id:"RPP", name:"Respiratory Pathogen Panel (PCR)", cost:1320.00, synonyms:["rpp", "resp virus panel", "respiratory virus panel", "respiratory virus pcr", "rvp", "x19"] },
   { id:"PDF_4566756", name:"RSV PCR", cost:150.00, synonyms:["rsv by pcr"] },
   { id:"PDF_4564703", name:"hCG, serum (qualitative)", cost:210.00, synonyms:["serum hcg urine qualitative"] },
   { id:"PDF_4564702", name:"hCG, serum (quantitative)", cost:260.00, synonyms:["serum quantitative hcg"] },
-  { id:"PDF_4560099", name:"Spinal fluid panel", cost:150.00, synonyms:["spinal fluid panel"] },
   { id:"SPUTUM_CX", name:"Sputum culture", cost:210.00, synonyms:["sputum cx", "respiratory culture"] },
   { id:"PDF_4567045", name:"Stool culture", cost:110.00, synonyms:["stool culture"] },
   { id:"PDF_4567060", name:"Throat culture", cost:210.00, synonyms:["throat culture"] },
@@ -1384,12 +1363,10 @@ const orderCatalog = [
   { id:"PDF_4564443", name:"TSH", cost:150.00, synonyms:["tsh"] },
   { id:"PDF_4636700", name:"Ultrasound abdomen complete", cost:1490.00, synonyms:[] },
   { id:"PDF_4636664", name:"Ultrasound abdomen, paracentesis guidance (limited)", cost:810.00, synonyms:["ultrasound abdomen paracentesis ltd"] },
-  { id:"PDF_4636705", name:"Ultrasound abdomen single organ", cost:810.00, synonyms:[] },
+  { id:"PDF_4636705", name:"Ultrasound abdomen, limited (single organ)", cost:810.00, synonyms:["ultrasound abdomen single organ", "ultrasound liver", "ultrasound pancreas", "ultrasound spleen", "ultrasound kidney single organ"] },
   { id:"PDF_4633968", name:"Ultrasound ankle brachial index", cost:1560.00, synonyms:[] },
-  { id:"PDF_4633985", name:"Ultrasound breast complete left", cost:1050.00, synonyms:[] },
-  { id:"PDF_4633984", name:"Ultrasound breast complete right", cost:1050.00, synonyms:[] },
-  { id:"PDF_4633987", name:"Ultrasound breast limited left", cost:740.00, synonyms:[] },
-  { id:"PDF_4633986", name:"Ultrasound breast limited right", cost:740.00, synonyms:[] },
+  { id:"PDF_4633984", name:"Ultrasound breast, unilateral (complete)", cost:1050.00, synonyms:["ultrasound breast complete right", "ultrasound breast complete left"] },
+  { id:"PDF_4633986", name:"Ultrasound breast, unilateral (limited)", cost:740.00, synonyms:["ultrasound breast limited right", "ultrasound breast limited left"] },
   { id:"PDF_4633880", name:"Ultrasound carotids", cost:2230.00, synonyms:[] },
   { id:"PDF_4636605", name:"Ultrasound chest", cost:920.00, synonyms:[] },
   { id:"PDF_4636878", name:"Ultrasound extremity, non-vascular, complete", cost:1160.00, synonyms:["ultrasound extremity non vascular complete"] },
@@ -1400,18 +1377,12 @@ const orderCatalog = [
   { id:"PDF_4636942", name:"Ultrasound guidance for needle placement", cost:1180.00, synonyms:[] },
   { id:"PDF_4636886", name:"Ultrasound infant hips", cost:620.00, synonyms:[] },
   { id:"PDF_4636887", name:"Ultrasound infant hips with manipulation", cost:1100.00, synonyms:["ultrasound infant hips w dr manipulation"] },
-  { id:"PDF_4636856", name:"Ultrasound IUD, complete", cost:1140.00, synonyms:["ultrasound iud complete"] },
+  { id:"PDF_4636856", name:"Ultrasound IUD, complete", cost:1140.00, synonyms:["ultrasound iud complete", "ultrasound transvaginal"] },
   { id:"PDF_4636770", name:"Ultrasound kidney", cost:1030.00, synonyms:[] },
-  { id:"PDF_4637004", name:"Ultrasound liver", cost:810.00, synonyms:[] },
-  { id:"PDF_4633972", name:"Ultrasound lower extremity artery bilateral", cost:2100.00, synonyms:[] },
-  { id:"PDF_4633978", name:"Ultrasound lower extremity artery limited left", cost:1400.00, synonyms:[] },
-  { id:"PDF_4633977", name:"Ultrasound lower extremity artery limited right", cost:1400.00, synonyms:[] },
-  { id:"PDF_4636883", name:"Ultrasound lower extremity artery left", cost:1400.00, synonyms:[] },
-  { id:"PDF_4636880", name:"Ultrasound lower extremity artery right", cost:1400.00, synonyms:[] },
-  { id:"PDF_4633971", name:"Ultrasound lower extremity venous bilateral", cost:2380.00, synonyms:[] },
-  { id:"PDF_4633965", name:"Ultrasound lower extremity venous left", cost:1580.00, synonyms:[] },
+  { id:"PDF_4633972", name:"Ultrasound lower extremity arterial duplex, bilateral", cost:2100.00, synonyms:["ultrasound lower extremity artery bilateral"] },
+  { id:"PDF_4636880", name:"Ultrasound lower extremity arterial duplex, unilateral", cost:1400.00, synonyms:["ultrasound lower extremity artery right", "ultrasound lower extremity artery left", "abi duplex"] },
+  { id:"PDF_4633971", name:"Ultrasound lower extremity venous duplex, bilateral", cost:2380.00, synonyms:["ultrasound lower extremity venous bilateral", "ultrasound lower extremity venous left"] },
   { id:"PDF_4630013", name:"Ultrasound obstetric, transvaginal", cost:530.00, synonyms:["ultrasound ob trans vaginal"] },
-  { id:"PDF_4637005", name:"Ultrasound pancreas", cost:810.00, synonyms:[] },
   { id:"PDF_4633551", name:"Ultrasound pelvic limited", cost:680.00, synonyms:[] },
   { id:"PDF_4637006", name:"Ultrasound pelvic, non-obstetric, complete", cost:1440.00, synonyms:["ultrasound pelvic non ob complete"] },
   { id:"PDF_4630012", name:"Ultrasound pregnant uterus, under 14 weeks", cost:540.00, synonyms:["ultrasound preg uterus <14 weeks"] },
@@ -1420,24 +1391,18 @@ const orderCatalog = [
   { id:"PDF_4639521", name:"Ultrasound renal artery and vein", cost:1950.00, synonyms:["ultrasound renal artery/ venous"] },
   { id:"PDF_4636810", name:"Ultrasound repeat fetal age", cost:760.00, synonyms:[] },
   { id:"PDF_4637008", name:"Ultrasound retroperitoneum, complete", cost:1290.00, synonyms:["ultrasound retroperit complete"] },
-  { id:"PDF_4630007", name:"Ultrasound soft tissue abdomen", cost:370.00, synonyms:[] },
-  { id:"PDF_4630004", name:"Ultrasound soft tissue chest", cost:370.00, synonyms:[] },
-  { id:"PDF_4630006", name:"Ultrasound soft tissue head neck", cost:1060.00, synonyms:[] },
-  { id:"PDF_4631102", name:"Ultrasound soft tissue neck", cost:1060.00, synonyms:[] },
-  { id:"PDF_4630005", name:"Ultrasound soft tissue pelvis", cost:370.00, synonyms:[] },
-  { id:"PDF_4637009", name:"Ultrasound spleen", cost:810.00, synonyms:[] },
-  { id:"PDF_4636870", name:"Ultrasound testicle", cost:1470.00, synonyms:[] },
+  { id:"PDF_4630007", name:"Ultrasound soft tissue", cost:370.00, synonyms:["ultrasound soft tissue abdomen", "ultrasound soft tissue chest", "ultrasound soft tissue pelvis"] },
+  { id:"PDF_4630006", name:"Ultrasound soft tissue, head and neck", cost:1060.00, synonyms:["ultrasound soft tissue head neck", "ultrasound soft tissue neck", "ultrasound thyroid soft tissue"] },
+  { id:"PDF_4636870", name:"Ultrasound scrotum and testicles", cost:1470.00, synonyms:["ultrasound testicle"] },
   { id:"PDF_4636536", name:"Ultrasound thyroid", cost:1060.00, synonyms:[] },
-  { id:"PDF_4636830", name:"Ultrasound transvaginal", cost:1140.00, synonyms:[] },
   { id:"UA", name:"Urinalysis (UA)", cost:95.00, synonyms:["ua", "urine test", "dipstick"] },
   { id:"URINE_CX", name:"Urine culture", cost:170.00, synonyms:["urine cx", "ucx"] },
   { id:"PDF_4569705", name:"hCG, urine (quantitative)", cost:260.00, synonyms:["urine hcg manual quantitative"] },
   { id:"PDF_4720655", name:"Venous blood gas (VBG)", cost:270.00, synonyms:["venous ph blood gas"] },
-  { id:"PDF_4569728", name:"Wound culture", cost:210.00, synonyms:["wound culture"] },
+  { id:"PDF_4569728", name:"Wound culture", cost:210.00, synonyms:["wound culture", "aerobic culture", "anaerobic culture", "gram stain", "tissue culture"] },
   { id:"MRI_L_SPINE", name:"MRI lumbar spine without contrast", cost:5570.00, synonyms:["mri lumbar", "mri l spine", "mri back", "lumbar mri"] },
   { id:"MRI_L_SPINE_WWO", name:"MRI lumbar spine with and without contrast", cost:9200.00, synonyms:["mri lumbar contrast"] },
   { id:"MRI_T_SPINE", name:"MRI thoracic spine without contrast", cost:5570.00, synonyms:["mri thoracic spine"] },
-  { id:"MRI_C_SPINE_W", name:"MRI cervical spine with contrast", cost:6830.00, synonyms:["mri cervical spine", "mri neck spine"] },
   { id:"MRI_LE_NONJOINT", name:"MRI foot / lower extremity (non-joint) without contrast", cost:5470.00, synonyms:["mri foot", "mri lower extremity", "mri leg"] },
   { id:"MRI_LE_NONJOINT_WWO", name:"MRI foot / lower extremity (non-joint) with and without contrast", cost:7670.00, synonyms:["mri foot contrast", "mri osteomyelitis"] },
   { id:"MRI_LE_JOINT", name:"MRI lower extremity joint without contrast", cost:5700.00, synonyms:["mri knee", "mri ankle", "mri hip"] },
@@ -1462,7 +1427,6 @@ const orderCatalog = [
   { id:"ALBUMIN", name:"Albumin (serum)", cost:60.00, synonyms:["albumin"] },
   { id:"VANC_LEVEL", name:"Vancomycin level", cost:270.00, synonyms:["vanc trough", "vancomycin trough", "vanc level"] },
   { id:"GLUCOSE", name:"Glucose, blood (quantitative)", cost:120.00, synonyms:["glucose", "bg", "blood sugar"] },
-  { id:"GRAM_STAIN", name:"Gram stain", cost:100.00, synonyms:["gram stain"] },
   { id:"WBC_COUNT", name:"White blood cell count", cost:45.00, synonyms:["wbc", "white count"] },
   { id:"SWAB_SUPERFICIAL", name:"Wound swab, superficial", cost:210.00, synonyms:["superficial swab", "wound swab", "surface swab"] },
   { id:"BONE_BX", name:"Bone biopsy, open deep (with culture)", cost:7830.00, synonyms:["bone biopsy", "bone culture"] },
@@ -2317,7 +2281,6 @@ highValueReasons: new Map([
   ["PT_INR","Intermediate – Helpful before anticoagulation but not diagnostic for PE."]
 ]),
 lowValueReasons: new Map([
-  ["PDF_4631260","Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required."],
   ["PDF_4631250","Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required."],
   ["PDF_4631270","Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required."],
   ["PDF_4630297","Low Value – While CT imaging of the chest is required for this patient, this modality of testing would not be able to diagnose a pulmonary embolism. A CT scan with contrast in the arterial system would be required."],
@@ -2433,7 +2396,6 @@ lowValueReasons: new Map([
     ["UA","Low Value – In nonpregnant patients there is no indication to screen for or treat asymptomatic bacteriuria. Testing urine without urinary symptoms leads to unnecessary antibiotics."],
     ["URINE_CX","Low Value – Urine culture is not indicated without urinary symptoms; positives most often reflect asymptomatic bacteriuria and drive unnecessary antibiotics."],
     ["RPP","Low Value – Broad and costly, and would not change outpatient management in an otherwise healthy, immunocompetent adolescent. Consider only where the result would change management in high-risk or severe illness."],
-    ["PDF_4569813","Low Value – Broad and costly, and would not change outpatient management in an otherwise healthy, immunocompetent adolescent."],
     ["LACTATE","Low Value – She is well-appearing with stable vitals and no evidence of severe infection or hypoperfusion. Lactate has no role in this presentation."],
     ["PDF_4564703","Low Value – Before obtaining this test, it would be prudent to ask the patient about her sexual and menstrual history."],
     ["PDF_4569705","Low Value – Before obtaining this test, it would be prudent to ask the patient about her sexual and menstrual history."]
@@ -2546,7 +2508,6 @@ lowValueReasons: new Map([
   ,
       ["PDF_4567076","Intermediate (conditional) – MRSA screening culture may be appropriate depending on local resistance patterns, prior MRSA, severe disease, or if it will change empiric therapy."]]),
   lowValueReasons: new Map([
-  ["PDF_4631260","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
   ["PDF_4631250","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
   ["PDF_4631270","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
   ["CTPA","Low Value – CTA chest is unnecessary for this presentation; prioritize pneumonia/sepsis evaluation with CXR and cultures."],
@@ -2679,7 +2640,6 @@ lowValueReasons: new Map([
     ["XR_PELVIS","Low Value – No trauma, no focal hip findings, and a normal neurologic exam. This would not change management."],
       ["CT_L_SPINE","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
       ["XR_L_SPINE","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
-      ["PDF_4632132","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."],
       ["PDF_4639508","Low Value – In otherwise healthy patients with a short duration of pain and no red flag symptoms, the most likely cause of back pain is a benign musculoskeletal strain. No additional testing or imaging is warranted in this situation."]
     ]),
     missedSeverity: "neutral",
@@ -2780,50 +2740,49 @@ lowValueReasons: new Map([
     `,
     highValueIds: new Set(["LACTATE","BLOOD_CX","CBC","BMP","CMP","CXR","XR_FOOT","PDF_4569728"]),
     highValueReasons: new Map([
-      ["LACTATE","High Value – An hour-one sepsis bundle element. Lactate identifies occult hypoperfusion and sets the resuscitation target. If it is above 2, it must be repeated."],
-      ["BLOOD_CX","High Value – Draw before antibiotics whenever that does not delay them. Note the contrast with uncomplicated cellulitis, where blood cultures are low-value: systemic signs change that."],
-      ["CBC","High Value – Leukocytosis or leukopenia contributes to the sepsis assessment, and the platelet count feeds organ-dysfunction scoring."],
-      ["BMP","High Value – Creatinine and bicarbonate are organ-dysfunction criteria, renal function drives antibiotic dosing, and his glucose is 358."],
-      ["CMP","High Value – Acceptable alternative to BMP; adds hepatic assessment."],
-      ["CXR","High Value – Chest radiography is part of the standard source evaluation in sepsis. Even with an obvious foot source, a second or occult source has to be excluded, and he is tachypnoeic at 26."],
-      ["XR_FOOT","High Value – First-line imaging of the foot: gas, foreign body, bony destruction. Cheap and fast, and it is what makes the decision not to image further a reasoned one rather than an omission."],
-      ["PDF_4569728","High Value – Deep tissue culture obtained at debridement. This is the specimen that lets you narrow therapy in 48 hours, and it is the single most consequential microbiology decision in this case."]
+      ["LACTATE","High Value – Tells you whether he is hypoperfusing when his blood pressure alone might not. Anything above 2 has to be rechecked."],
+      ["BLOOD_CX","High Value – Draw them before antibiotics if you can do it without delay. Worth contrasting with simple cellulitis, where blood cultures are a waste; the systemic signs are what change that here."],
+      ["CBC","High Value – The white count and platelets both feed into how sick you decide he is."],
+      ["BMP","High Value – Creatinine and bicarbonate tell you about organ dysfunction, and you need the renal function before you dose vancomycin. His glucose is 358."],
+      ["CMP","High Value – Fine instead of a BMP if you also want liver function."],
+      ["CXR","High Value – Standard part of looking for the source in sepsis. An obvious foot does not rule out a second site, and he is breathing 26."],
+      ["XR_FOOT","High Value – Looks for gas, a foreign body and bony changes for $490. It is also what lets you say you thought about deeper imaging and decided against it."],
+      ["PDF_4569728","High Value – Taken from the wound bed at debridement. Everything you do with antibiotics on day two depends on getting this specimen today."]
     ]),
     intermediateIds: new Map([
-      ["PDF_4569806","Intermediate – An A1c will not change anything today, but it will change the discharge plan. Reasonable to send with the initial labs."],
-      ["PDF_4633968","Intermediate – Perfusion determines whether this wound can heal, and his posterior tibial pulse is absent. This belongs in the admission, not in the first hour."],
-      ["ESR","Intermediate – A reasonable baseline, but with no bone involvement suspected it is not driving a decision here."],
-      ["CRP","Intermediate – As above: a baseline you may want to follow, not a test that changes management tonight."],
-      ["PDF_4567076","Intermediate – A negative MRSA screen has a high negative predictive value and may let you stop vancomycin a day earlier. Cheap, and it can genuinely change something."],
-      ["DVT_US","Intermediate – A unilateral hot, swollen leg is a fair thought, but there is a complete alternative explanation in front of you. Reasonable only if the leg findings extend beyond what the infection explains."]
+      ["PDF_4569806","Intermediate – Will not change anything tonight. It will change what you send him home on, so it is reasonable to add it now."],
+      ["PDF_4633968","Intermediate – His posterior tibial pulse is absent, and perfusion decides whether this wound can heal. Get it during the admission rather than tonight."],
+      ["ESR","Intermediate – Reasonable as a baseline. With no bone involvement suspected, it is not going to change what you do."],
+      ["CRP","Intermediate – Same as the ESR: worth having to follow, not worth waiting on."],
+      ["PDF_4567076","Intermediate – $45, and a negative nasal screen makes MRSA unlikely enough that you may get him off vancomycin a day sooner."],
+      ["DVT_US","Intermediate – A hot swollen leg is a fair thought, but the infection explains everything you are looking at. Worth it only if the calf findings go beyond the cellulitis."]
     ]),
     lowValueReasons: new Map([
-      ["SWAB_SUPERFICIAL","Low Value – A superficial swab grows skin flora and colonisers, and it sends you after the wrong organism. It costs exactly the same as the deep tissue culture obtained at debridement: same $210, opposite value. This is the clearest example in the module that cost and value are different axes."],
+      ["SWAB_SUPERFICIAL","Low Value – Swabbing the surface grows whatever is colonising the ulcer, which is rarely what is infecting the tissue underneath. It bills at the same $210 as the deep culture and will send you after the wrong organism."],
       ["MRI_LE_NONJOINT","Low Value – In a patient without a probe to bone, MRI of the foot can be considered after evaluation by a subspecialist. It is not part of the initial emergency department workup, and at $5,470 to $7,670 it is the most expensive order available in this case."],
       ["MRI_LE_NONJOINT_WWO","Low Value – In a patient without a probe to bone, MRI of the foot can be considered after evaluation by a subspecialist. Adding contrast raises the cost further without changing that."],
       ["BONE_BX","Low Value – As with MRI, bone biopsy can be considered after evaluation by a subspecialist if osteomyelitis remains a concern. It has no role in the initial workup, and it is both invasive and expensive at $7,830."],
-      ["PDF_4569819","Low Value – Procalcitonin does not change the decision to treat a patient you are already treating. It has a role in guiding later de-escalation, not in this first hour."],
-      ["PDF_4639512","Low Value – CT angiography is not the first-line vascular assessment. An ankle-brachial index or arterial duplex comes first, at a fraction of the cost."],
-      ["PDF_4639514","Low Value – CT angiography is not the first-line vascular assessment. An ankle-brachial index or arterial duplex comes first, at a fraction of the cost."],
-      ["NO_TESTING","Low Value – He is septic with an identified source. Deferring evaluation here is the most dangerous answer on the list."]
+      ["PDF_4569819","Low Value – You are treating him regardless of the number. Procalcitonin earns its place later, when you are deciding how long to continue, not now."],
+      ["PDF_4639514","Low Value – Start with an ankle-brachial index or a duplex. CT angiography is $2,000 and is not where a vascular workup begins."],
+      ["NO_TESTING","Low Value – He is septic and you can see the source. There is nothing to defer."]
     ]),
     missedSeverity: "error",
     missedReasons: new Map([
-      ["LACTATE","An hour-one bundle element, and the measurement that tells you whether he is in septic shock. Without it you are resuscitating blind."],
-      ["BLOOD_CX","Drawn before antibiotics, these are your best chance at an organism if the wound cultures disappoint. After antibiotics the yield falls sharply."],
-      ["CBC","Part of the organ-dysfunction assessment in sepsis, and the baseline every later decision is measured against."],
-      ["BMP","Creatinine and bicarbonate are organ-dysfunction criteria; renal function also determines how you dose his antibiotics."],
-      ["CXR","Part of the standard source evaluation in sepsis. An obvious foot source does not exclude a second one, and he is tachypnoeic."],
-      ["XR_FOOT","$490 and fast. It excludes gas and bony destruction, and it is the imaging that justifies not ordering an MRI."],
-      ["PDF_4569728","Deep tissue culture at debridement is what allows you to narrow antibiotics on day 2. Without it he stays on broad coverage for his whole admission."]
+      ["LACTATE","This is what tells you whether he is hypoperfusing. Without it you are resuscitating on blood pressure alone."],
+      ["BLOOD_CX","Your best shot at an organism if the wound cultures are unhelpful, and the yield drops off quickly once antibiotics are in."],
+      ["CBC","The white count and platelets are part of how sick you decide he is, and everything on day two gets compared back to this."],
+      ["BMP","You need the creatinine before you dose vancomycin, and the bicarbonate is part of the organ-dysfunction picture."],
+      ["CXR","Part of looking for the source in sepsis. The foot is obvious, but he is breathing 26 and you have not looked at his chest."],
+      ["XR_FOOT","$490 and quick. Looks for gas and bony change, and it is what justifies not going straight to an MRI."],
+      ["PDF_4569728","Without a deep specimen he stays on vancomycin and piperacillin-tazobactam for the whole admission, because you never find out what you are treating."]
     ]),
     recommendedIds: ["LACTATE","BLOOD_CX","CBC","BMP","CXR","XR_FOOT","PDF_4569728"],
     pathwayHtml: `
 <strong>What this presentation calls for</strong>
 <p class="small">
-  This is the case in the module where a broad, expensive workup is unambiguously the high-value answer.
-  He is hypotensive, febrile, tachypnoeic and newly confused, with an obvious source. The costly mistake
-  here is hesitation, not over-ordering.
+  Most of the cases in this module reward restraint. This one does not. He is hypotensive, febrile,
+  breathing 26 and newly confused, with an obvious source in his foot. The expensive mistake here is
+  taking too long, not ordering too much.
 </p>
 
 <strong>Core recommended workup</strong>
@@ -2842,14 +2801,14 @@ lowValueReasons: new Map([
   <li><strong>MRI of the foot ($5,470&ndash;$7,670)</strong> &ndash; the probe does not reach bone, so MRI can be considered <em>after</em> evaluation by a subspecialist. It is not part of the initial emergency department workup, and it is the most expensive order available in this case. The same applies to bone biopsy.</li>
 </ul>
 
-<strong>The two cultures that cost the same</strong>
+<strong>Two cultures, same price</strong>
 <p class="small">
-  A superficial ulcer swab and a deep tissue culture obtained at debridement bill identically, at $210.
-  One grows skin flora and misleads your therapy; the other is what lets you narrow antibiotics in 48 hours.
-  Identical price, opposite value.
+  A surface swab and a deep tissue culture taken at debridement both bill at $210. The swab grows whatever
+  is living on the ulcer and will point you at the wrong organism; the deep specimen is what lets you narrow
+  his antibiotics on day two. Cost tells you nothing about which one to order.
 </p>
 
-<p class="small muted">Your labs return in the next stage, where you will decide how to treat him.</p>
+<p class="small muted">His labs come back in the next stage, where you decide how to treat him.</p>
 `
   },
   7: {
@@ -2920,58 +2879,58 @@ lowValueReasons: new Map([
         revealTitle:"Three hours later — repeat lactate",
         options:[
           {id:"f30", label:"30 mL/kg crystalloid, started now", tier:"high",
-           why:"This is the hour-one bundle target for sepsis with hypotension. He has no heart failure or dialysis dependence that would argue for a more cautious approach.",
-           reveal:"He received roughly 2.8 litres. <strong>Repeat lactate 14 mg/dL (1.6 mmol/L) &mdash; normal.</strong> MAP is now 74, heart rate 98, and he is more alert. Clearing the lactate is the point of measuring it: the repeat is what tells you the resuscitation worked."},
+           why:"30 mL/kg is the target for septic hypotension. At 92 kg that is about 2.8 litres. Nothing here argues for holding back: no heart failure, no dialysis.",
+           reveal:"After 2.8 litres: <strong>repeat lactate 14 mg/dL (1.6 mmol/L), normal.</strong> MAP 74, heart rate 98, and he is more alert. You only know the fluids worked because you rechecked."},
           {id:"f500", label:"500 mL bolus, then reassess", tier:"intermediate",
-           why:"Not unreasonable as a first step, but it under-resuscitates a hypotensive septic patient and delays reaching the target.",
-           reveal:"<strong>Repeat lactate 22 mg/dL (2.4 mmol/L) &mdash; improved but still elevated.</strong> MAP 66, heart rate 112. Partially resuscitated. He needs the rest of the volume, and the repeat lactate is what showed you that."},
+           why:"A reasonable first step, but 500 mL will not adequately resuscitate a septic patient with a MAP of 62. He will need the remainder of the volume shortly.",
+           reveal:"<strong>Repeat lactate 22 mg/dL (2.4 mmol/L), better but still up.</strong> MAP 66, heart rate 112. He is part way there and needs the remaining volume."},
           {id:"fmaint", label:"Maintenance fluids only", tier:"low",
-           why:"Maintenance fluid does not resuscitate. He is hypotensive with evidence of hypoperfusion.",
-           reveal:"<strong>Repeat lactate 31 mg/dL (3.4 mmol/L) &mdash; rising.</strong> MAP 60, heart rate 126. He is not being resuscitated, and the lactate is telling you so."},
+           why:"Maintenance fluid replaces ongoing losses; it does not resuscitate. He is hypotensive with a MAP of 62 and an elevated lactate.",
+           reveal:"<strong>Repeat lactate 31 mg/dL (3.4 mmol/L), rising.</strong> MAP 60, heart rate 126. He is falling behind."},
           {id:"fnone", label:"Hold fluids — he is not hypotensive enough to need them", tier:"low",
-           why:"A MAP of 62 is below the 65 threshold. This is exactly the patient the bundle is written for.",
-           reveal:"<strong>Repeat lactate 33 mg/dL (3.7 mmol/L) &mdash; rising.</strong> MAP 58, heart rate 130, and he is more somnolent. Untreated septic hypoperfusion does not improve on its own."}
+           why:"A MAP of 62 meets the threshold for hypotension, and he also has an elevated lactate and new confusion. This is the patient the resuscitation targets were written for.",
+           reveal:"<strong>Repeat lactate 33 mg/dL (3.7 mmol/L), rising.</strong> MAP 58, heart rate 130, and he is harder to rouse. He is heading toward shock."}
         ]},
       { id:"abxtime", question:"Antibiotic timing", hint:"",
         options:[
-          {id:"a1h", label:"Broad-spectrum antibiotics within one hour, after drawing blood cultures", tier:"high", why:"Every hour of delay in septic shock is associated with worse outcomes. Cultures first, but only if that does not delay the antibiotics."},
-          {id:"a3h", label:"Within three hours", tier:"intermediate", why:"Acceptable for sepsis without shock, but he is hypotensive. Aim for the hour."},
-          {id:"aimg", label:"After the foot X-ray results", tier:"low", why:"Imaging never precedes antibiotics in septic shock. The X-ray will not change what you give."},
-          {id:"await", label:"Hold until cultures result, to avoid unnecessary broad coverage", tier:"low", why:"Stewardship means narrowing early, not starting late. Withholding antibiotics from a septic patient for 48 hours is dangerous."}
+          {id:"a1h", label:"Broad-spectrum antibiotics within one hour, after drawing blood cultures", tier:"high", why:"Mortality increases with each hour of delay in septic shock. Blood cultures should be drawn first where possible, but they should never delay the antibiotics."},
+          {id:"a3h", label:"Within three hours", tier:"intermediate", why:"Three hours is the window for sepsis without shock. He is hypotensive, so the target should be one hour."},
+          {id:"aimg", label:"After the foot X-ray results", tier:"low", why:"The foot X-ray will not change which antibiotics you select. Waiting for it only delays therapy."},
+          {id:"await", label:"Hold until cultures result, to avoid unnecessary broad coverage", tier:"low", why:"Cultures take approximately 48 hours. Antimicrobial stewardship means narrowing therapy once the organism is known, not withholding treatment while waiting for it."}
         ]},
       { id:"abxchoice", question:"Empiric antibiotic choice", hint:"",
         options:[
-          {id:"vpt", label:"Vancomycin plus piperacillin-tazobactam", tier:"high", why:"Covers MRSA, streptococci, gram-negatives and anaerobes, which is the appropriate empiric breadth for a severe diabetic foot infection with sepsis."},
-          {id:"vanc", label:"Vancomycin alone", tier:"intermediate", why:"Covers the gram-positives but leaves gram-negative and anaerobic organisms uncovered in a wound that frequently harbours them."},
-          {id:"keflex", label:"Oral cephalexin", tier:"low", why:"Oral therapy for a hypotensive septic patient, with no MRSA or gram-negative coverage."},
-          {id:"cfz", label:"Cefazolin alone", tier:"low", why:"No MRSA and no gram-negative coverage. Reasonable later if cultures allow, not as empiric therapy in sepsis."}
+          {id:"vpt", label:"Vancomycin plus piperacillin-tazobactam", tier:"high", why:"Covers MRSA, streptococci, gram-negatives and anaerobes. That is the right breadth for a severe diabetic foot infection with systemic signs."},
+          {id:"vanc", label:"Vancomycin alone", tier:"intermediate", why:"Covers the gram-positive organisms. Diabetic foot infections are frequently polymicrobial, and this leaves gram-negative and anaerobic organisms uncovered."},
+          {id:"keflex", label:"Oral cephalexin", tier:"low", why:"Oral therapy in a hypotensive patient with unreliable gut perfusion, and without MRSA or gram-negative coverage."},
+          {id:"cfz", label:"Cefazolin alone", tier:"low", why:"Too narrow for empiric therapy in this setting. It may well prove to be the correct drug in 48 hours, once the organism is identified."}
         ]},
       { id:"source", question:"Source control", hint:"",
         options:[
-          {id:"urgent", label:"Urgent surgery or podiatry consult for debridement and deep tissue culture", tier:"high", why:"Source control is the sepsis element most often left out, and it is the only one that is not a drug or a fluid. No antibiotic fixes an undrained foot. It also produces the specimen that lets you narrow therapy later."},
-          {id:"48h", label:"Consult if he is not improving in 48 hours", tier:"intermediate", why:"Delays both the source control and the deep culture. In a septic patient with purulent drainage, this is too slow."},
-          {id:"none", label:"No consult; antibiotics alone", tier:"low", why:"Undrained purulence in a septic patient will not resolve on antibiotics, and you lose the culture that would let you narrow."}
+          {id:"urgent", label:"Urgent surgery or podiatry consult for debridement and deep tissue culture", tier:"high", why:"Antibiotics alone will not sterilize undrained purulence. Surgical or podiatric debridement is the definitive treatment here, and the deep specimen obtained during that procedure is what allows therapy to be narrowed in 48 hours. Source control is also the element of sepsis management most often omitted."},
+          {id:"48h", label:"Consult if he is not improving in 48 hours", tier:"intermediate", why:"Waiting 48 hours to drain a septic patient's purulent wound is too slow, and it delays the culture that will guide therapy."},
+          {id:"none", label:"No consult; antibiotics alone", tier:"low", why:"He is unlikely to clear this infection on antibiotics alone, and without a deep specimen the organism remains unknown for the rest of the admission."}
         ]},
       { id:"pressors", question:"If the MAP stays below 65 after the fluid bolus", hint:"",
         options:[
-          {id:"ne", label:"Start norepinephrine and escalate the level of care", tier:"high", why:"Persistent hypotension after adequate fluid resuscitation defines septic shock and is the indication for vasopressors. Norepinephrine is first-line."},
-          {id:"morefluid", label:"Give a further fluid bolus and reassess", tier:"intermediate", why:"Reasonable once, but repeated boluses in a patient who is not responding delay the pressor he needs and risk fluid overload."},
-          {id:"observe", label:"Continue fluids alone and observe on the ward", tier:"low", why:"Observing established septic shock on a general ward without vasopressor support is unsafe."}
+          {id:"ne", label:"Start norepinephrine and escalate the level of care", tier:"high", why:"Hypotension persisting after adequate fluid resuscitation defines septic shock. Norepinephrine is first-line, and he will require a setting that can administer and titrate it."},
+          {id:"morefluid", label:"Give a further fluid bolus and reassess", tier:"intermediate", why:"A further bolus is defensible once. Repeated boluses in a patient who is not responding delay the vasopressor he needs and risk fluid overload."},
+          {id:"observe", label:"Continue fluids alone and observe on the ward", tier:"low", why:"Established septic shock requires an environment that can initiate and titrate vasopressors. A general ward without that capability is not a safe place to observe him."}
         ]},
       { id:"dispo", question:"Disposition", hint:"",
         options:[
-          {id:"mon", label:"Monitored bed with sepsis protocol; ICU if vasopressors are required", tier:"high", why:"Matches his acuity: close monitoring now, with escalation available if he does not respond to fluids."},
-          {id:"ward", label:"General medical ward", tier:"intermediate", why:"He may end up there once stabilised, but a hypotensive septic patient needs closer monitoring for the first several hours."},
-          {id:"obs", label:"Observation unit with a 48-hour recheck", tier:"low", why:"An observation pathway is not designed for septic shock."},
-          {id:"home", label:"Discharge on oral antibiotics with clinic follow-up", tier:"low", why:"He is hypotensive, confused and febrile with an undrained infection."}
+          {id:"mon", label:"Monitored bed with sepsis protocol; ICU if vasopressors are required", tier:"high", why:"He requires frequent monitoring and a location that can escalate care quickly if he does not respond to fluids."},
+          {id:"ward", label:"General medical ward", tier:"intermediate", why:"Likely appropriate once he has stabilized. For the first several hours he needs closer monitoring than a general ward provides."},
+          {id:"obs", label:"Observation unit with a 48-hour recheck", tier:"low", why:"Observation pathways are designed for short, low-acuity stays. They are not built to manage septic shock."},
+          {id:"home", label:"Discharge on oral antibiotics with clinic follow-up", tier:"low", why:"He is hypotensive, confused and febrile with an undrained foot infection. He is not a candidate for outpatient management."}
         ]}
     ],
     pathwayHtml: `
-<strong>What the labs add</strong>
+<strong>What the labs tell you</strong>
 <ul class="small">
-  <li><strong>Neutrophil-predominant leukocytosis</strong> &ndash; consistent with bacterial infection, and part of the organ-dysfunction picture.</li>
-  <li><strong>Lactate 26 mg/dL (2.9 mmol/L)</strong> &ndash; above the threshold of 2, so it <strong>must be repeated</strong>. It is below 4, so it is not by itself the trigger for 30 mL/kg &mdash; his hypotension is.</li>
-  <li><strong>Creatinine 1.25 with a BUN of 30</strong> &ndash; a BUN-to-creatinine ratio of 24 points to a pre-renal, volume-responsive picture. This is an argument <em>for</em> fluid resuscitation, not a reason to withhold it.</li>
+  <li><strong>Neutrophil-predominant leukocytosis</strong> &ndash; fits bacterial infection, and counts toward how sick you call him.</li>
+  <li><strong>Lactate 2.9 mmol/L</strong> &ndash; over 2, so it has to be rechecked. Under 4, so it is not what triggers the 30 mL/kg; his blood pressure is.</li>
+  <li><strong>Creatinine 1.25, BUN 30</strong> &ndash; a ratio of 24. That is a dry kidney, not an intrinsically injured one.</li>
 </ul>
 
 <strong>The hour-one bundle</strong>
@@ -2985,16 +2944,17 @@ lowValueReasons: new Map([
   <tr><td><strong>Source control</strong></td><td><strong>Urgent debridement with deep tissue culture</strong></td></tr>
 </table>
 
-<strong>Source control is the element most often left out</strong>
+<strong>Do not skip source control</strong>
 <p class="small">
-  It is the only bundle element that is not a drug or a fluid, and in this patient no antibiotic regimen
-  fixes an undrained foot. It also produces the specimen that lets you narrow therapy in 48 hours.
+  It is the one step on that list that is not something you order from a pharmacy, which may be why it gets
+  forgotten. Antibiotics will not sterilise pus that has nowhere to go, and the debridement is also how you
+  get the specimen that lets you narrow therapy on day two.
 </p>
 
-<strong>A note on the creatinine</strong>
+<strong>About the creatinine</strong>
 <p class="small">
-  A rising creatinine sometimes prompts clinicians to hold back on fluids. In septic hypoperfusion with a
-  BUN-to-creatinine ratio this high, the kidney injury is a reason to resuscitate, not a reason to be cautious.
+  A creatinine that has crept up often makes people cautious with fluids. With a BUN-to-creatinine ratio of 24
+  in a hypotensive patient, the kidney is telling you he is dry. Give the fluids.
 </p>
 `
   },
@@ -3005,7 +2965,7 @@ lowValueReasons: new Map([
     attribution: "",
     contentHtml: `
       <p>
-        <strong>Twenty-four hours after admission.</strong> He is off pressors, afebrile for 12 hours and his
+        <strong>Twenty-four hours after admission.</strong> He responded to fluids without requiring vasopressors, has been afebrile for 12 hours, and his
         white count and lactate have normalised. The erythema has receded and is marked. He is mobilising to
         the chair with therapy, not yet back to baseline.
       </p>
@@ -3069,13 +3029,13 @@ lowValueReasons: new Map([
     `,
     highValueIds: new Set(["NO_TESTING"]),
     highValueReasons: new Map([
-      ["NO_TESTING","High Value – He is improving on therapy and no new diagnostic test would change today's management. The work of this stage is stopping things, not adding them."]
+      ["NO_TESTING","High Value – He is getting better and no test you order today changes that. Today is about what you stop."]
     ]),
     intermediateIds: new Map([
       ["PDF_4567076","Intermediate – With clusters on the Gram stain, a negative MRSA nasal screen has a high negative predictive value and could let you stop vancomycin a day earlier. Cheap, and it can genuinely change something."]
     ]),
     lowValueReasons: new Map([
-      ["LACTATE","Low Value – Normalised, off pressors, no longer septic. Repeating it answers a question you already have the answer to."],
+      ["LACTATE","Low Value – It has normalised and he is no longer septic. Rechecking it answers a question you have already answered."],
       ["CBC","Low Value – He is improving. Daily phlebotomy on a stable patient causes iatrogenic anaemia and generates incidental findings that lead to more testing."],
       ["BMP","Low Value – Renal function is normal and stable. Daily chemistry on an improving patient is reflex, not reasoning."],
       ["CMP","Low Value – As above, and broader still."],
@@ -3090,52 +3050,58 @@ lowValueReasons: new Map([
     ]),
     missedSeverity: "neutral",
     missedReasons: new Map([
-      ["NO_TESTING","For this stage, ordering no new diagnostic testing is the high-value choice. He is improving, and the decisions that matter today are all about stopping and starting treatments rather than adding tests."]
+      ["NO_TESTING","Nothing further needs testing today. He is improving, and the decisions that matter are about what you stop and what you start."]
     ]),
     recommendedIds: ["NO_TESTING"],
     decisions: [
       { id:"tele", question:"Telemetry", hint:"",
         options:[
-          {id:"stop", label:"Discontinue telemetry", tier:"high", why:"He has no arrhythmia, no cardiac indication and is haemodynamically stable. Continuous monitoring without an indication restricts mobility, generates false alarms and can hold up a bed."},
-          {id:"24h", label:"Continue 24 more hours, then reassess", tier:"intermediate", why:"Defensible on the day he came off pressors, but by 24 hours of stability the indication has passed."},
-          {id:"cont", label:"Continue for the rest of the admission", tier:"low", why:"Default telemetry is one of the most common low-value inpatient practices. There is no cardiac indication here."}
+          {id:"stop", label:"Discontinue telemetry", tier:"high", why:"He has no arrhythmia and no cardiac indication, and he has been hemodynamically stable for 24 hours. Continuing telemetry beyond that point limits his mobility, generates alarms that do not change management, and can be the only reason he still occupies a monitored bed."},
+          {id:"24h", label:"Continue 24 more hours, then reassess", tier:"low", why:"Cardiac monitoring was very reasonable while he was hypotensive and septic. He is now stable, so there is no longer an indication to continue it, and deferring the decision another day simply prolongs an order that is no longer doing anything."},
+          {id:"cont", label:"Continue for the rest of the admission", tier:"low", why:"Telemetry that is never reassessed is among the most common low-value inpatient orders. He has no cardiac indication for it now."}
         ]},
       { id:"labs", question:"Laboratory monitoring", hint:"",
         options:[
-          {id:"stoplabs", label:"Stop the daily labs; recheck if the clinical course changes", tier:"high", why:"He is improving on examination. Daily bloodwork in a stable patient causes iatrogenic anaemia, disturbs sleep, and turns up incidental abnormalities that generate further testing."},
-          {id:"qod", label:"Every-other-day CBC only", tier:"intermediate", why:"Better than daily, and reasonable if you want one more data point before stopping."},
-          {id:"daily", label:"Continue daily CBC, BMP and CRP", tier:"low", why:"Three daily tests on a patient whose examination already tells you he is improving."}
+          {id:"stoplabs", label:"Stop the daily labs; recheck if the clinical course changes", tier:"high", why:"His clinical examination is improving and his labs have normalized. Daily phlebotomy in a stable patient contributes to iatrogenic anemia, interrupts sleep, and produces borderline results that prompt further testing without changing management."},
+          {id:"qod", label:"Every-other-day CBC only", tier:"intermediate", why:"Reasonable if you would like one more data point before stopping altogether."},
+          {id:"daily", label:"Continue daily CBC, BMP and CRP", tier:"low", why:"Three tests daily in a patient whose examination already demonstrates that he is improving."}
         ]},
       { id:"abx6b", question:"Antibiotics, with clusters on the Gram stain and susceptibilities pending", hint:"",
         options:[
-          {id:"continue", label:"Continue vancomycin; narrow once susceptibilities return", tier:"high", why:"Clusters mean staphylococcus, and MRSA cannot be excluded until susceptibilities return tomorrow. This is the honest version of de-escalation: sometimes the data you have tells you to wait."},
-          {id:"stoppt", label:"Continue vancomycin and stop the anti-pseudomonal coverage", tier:"intermediate", why:"A defensible partial narrowing given a gram-positive organism on the stain, though diabetic foot cultures are often polymicrobial and the final result is a day away."},
-          {id:"stopvanc", label:"Stop vancomycin now", tier:"low", why:"Gram-positive cocci in clusters is exactly the pattern that could be MRSA. Stopping vancomycin before susceptibilities is a guess."},
-          {id:"stopall", label:"Stop all antibiotics because he is afebrile", tier:"low", why:"He is 24 hours into treatment for a severe infection. Being afebrile is the treatment working, not evidence that it is unnecessary."}
+          {id:"stopall", label:"Stop all antibiotics because he is afebrile", tier:"low", why:"He is afebrile because the antibiotics are working. Defervescence at 24 hours reflects treatment response, not resolution of the infection, and he has not completed a course for a severe soft tissue infection."},
+          {id:"continue", label:"Continue vancomycin and piperacillin-tazobactam, narrow once susceptibilities return", tier:"high", why:"Gram-positive cocci in clusters indicates staphylococcus, but a Gram stain cannot distinguish MRSA from MSSA, and diabetic foot infections are frequently polymicrobial. Susceptibilities return tomorrow. Narrowing is the goal and should happen as soon as the data support it, but not before."},
+          {id:"stopvanc", label:"Stop vancomycin now", tier:"low", why:"Clusters is precisely the pattern that may represent MRSA. Discontinuing vancomycin before susceptibilities return is a decision made without data, in a patient who presented with septic shock 24 hours ago."},
+          {id:"antifungal", label:"Add antifungal coverage with fluconazole", tier:"low", why:"There is nothing here to suggest a fungal infection. The Gram stain shows bacteria, he is immunocompetent apart from his diabetes, and he is already improving on antibacterial therapy. Empiric fluconazole adds cost, meaningful drug interactions through CYP inhibition, QT prolongation, and selection pressure for resistant Candida, with no expected benefit."}
         ]},
       { id:"insulin", question:"Insulin, in a patient eating normally who has missed 24 hours of basal", hint:"Home regimen: glargine 25 units daily. Eating a normal diet.",
         options:[
-          {id:"basalcorr", label:"Restart home glargine 25 units daily plus correction-scale insulin", tier:"high", why:"Basal insulin should be continued in a patient with type 2 diabetes who takes it at home and is eating, with correction insulin layered on top. Note that this option costs more than sliding scale alone in insulin, glucose checks and nursing time, and is still the right answer."},
-          {id:"basalonly", label:"Restart home glargine 25 units daily alone", tier:"intermediate", why:"The important half is right: his basal insulin goes back. Adding correction insulin would let you respond to hyperglycaemia rather than watch it."},
-          {id:"ssionly", label:"Correction-scale (sliding scale) insulin only", tier:"low", why:"Sliding scale alone is recommended against by both the Endocrine Society and the ADA. It is purely reactive, treating hyperglycaemia only after it has happened, and it leaves a patient who needs basal insulin without any."},
-          {id:"half", label:"Half the glargine dose while inpatient", tier:"low", why:"This comes from a reasonable instinct — inpatients often eat poorly — that does not apply here. He is eating a normal diet, so halving his basal produces avoidable hyperglycaemia."},
-          {id:"increase", label:"Increase glargine to 40 units because acutely ill patients need more insulin", tier:"low", why:"Acute illness does raise insulin requirements, but he is 24 hours past his sepsis, off pressors and eating. A 60% empiric increase without titration data invites hypoglycaemia, which in hospital means falls and a longer stay."}
+          {id:"basalcorr", label:"Restart home glargine 25 units daily plus correction-scale insulin", tier:"high", why:"He takes basal insulin at home and he is eating, so his basal goes back, with a correction scale on top of it for what the basal does not cover. Worth noticing that this costs more than sliding scale alone, in insulin, fingersticks and nursing time, and is still the better care."},
+          {id:"basalonly", label:"Restart home glargine 25 units daily alone", tier:"intermediate", why:"The important part is right: his basal insulin goes back. Without a correction scale, however, you have no way to address hyperglycemia that the basal dose does not cover."},
+          {id:"ssionly", label:"Correction-scale (sliding scale) insulin only", tier:"low", why:"Both the Endocrine Society and the ADA recommend against sliding scale insulin as sole therapy. It is purely reactive, addressing hyperglycemia only after it occurs, and it leaves a patient who takes 25 units of glargine at home without any basal insulin."},
+          {id:"half", label:"Half the glargine dose while inpatient", tier:"low", why:"The reasoning behind this is sound in many inpatients, who often have poor oral intake. It does not apply here: he is eating a normal diet with a normal appetite, so halving his basal dose produces avoidable hyperglycemia."},
+          {id:"increase", label:"Increase glargine to 40 units because acutely ill patients need more insulin", tier:"low", why:"Home glargine is not increased on admission. His inpatient insulin requirements are not yet known, and raising his basal dose empirically puts him at risk of hypoglycemia. The correct approach is to restart his home regimen and add sliding scale insulin, then use what he requires over the next day or two to decide whether the basal dose needs adjusting."}
         ]},
       { id:"vte", question:"VTE prophylaxis, the day after a minimal debridement in the ED", hint:"Renal function is normal. No further procedure planned.",
         options:[
-          {id:"lovenox", label:"Prophylactic-dose enoxaparin", tier:"high", why:"He is hospitalised with an acute infection and reduced mobility, and nothing about a minimal debridement performed the previous day contraindicates pharmacologic prophylaxis. Renal function is normal, so enoxaparin dosing is straightforward."},
-          {id:"scds", label:"Sequential compression devices only", tier:"low", why:"Mechanical prophylaxis alone is for patients who cannot receive anticoagulation. He has no contraindication, so this is under-treatment using a less effective measure. Adding compression devices alongside enoxaparin would be perfectly reasonable — it is the word 'only' that makes this wrong."},
-          {id:"none", label:"No VTE prophylaxis", tier:"low", why:"Hospitalised, acutely infected, and mobilising only to the chair. This is precisely the risk profile prophylaxis exists for."},
-          {id:"drip", label:"Continuous heparin infusion", tier:"low", why:"This is therapeutic anticoagulation for a patient with no thrombosis and no other indication. It carries real bleeding risk a day after a procedure, and it drags in monitoring labs, nursing time and often a higher level of care. Note that it is both the most expensive option here and the most harmful."}
+          {id:"lovenox", label:"Prophylactic-dose enoxaparin", tier:"high", why:"He has an acute infection, reduced mobility and diabetes, which places him clearly within the group for whom prophylaxis is indicated. A minimal debridement performed the previous day is not a contraindication to anticoagulation, and his renal function is normal, so enoxaparin dosing is straightforward."},
+          {id:"scds", label:"Sequential compression devices only", tier:"low", why:"Mechanical prophylaxis alone is appropriate for patients who cannot receive anticoagulation. He has no contraindication. Adding compression devices alongside enoxaparin would be entirely reasonable; substituting them for it is under-treatment."},
+          {id:"none", label:"No VTE prophylaxis", tier:"low", why:"He is hospitalized with an acute infection and mobilizing only to the chair. This is precisely the risk profile for which prophylaxis exists."},
+          {id:"drip", label:"Continuous heparin infusion", tier:"low", why:"A continuous heparin infusion is therapeutic anticoagulation, and he has neither a thrombosis nor any other indication for it. It introduces bleeding risk a day after a procedure and requires serial monitoring, additional nursing time and often a monitored bed. It is both the most expensive option here and the one most likely to cause harm."}
         ]}
     ],
     pathwayHtml: `
-<strong>Two kinds of de-escalation, on two different clocks</strong>
+<strong>De-escalating monitoring</strong>
 <p class="small">
-  This is the distinction most learners are never taught explicitly. <strong>Monitoring can be de-escalated
-  as soon as the patient is stable. Antibiotics cannot be de-escalated until the microbiology allows it.</strong>
-  Today he is stable, so the telemetry, the daily phlebotomy and the maintenance fluids should all stop.
-  The organism is not identified, so the antibiotics stay.
+  Continuous monitoring can be discontinued since the patient has significantly stabilized. He has not
+  experienced any arrhythmias and does not have evidence of heart failure. Having someone on cardiac
+  monitoring in the setting of severe sepsis with a MAP below 65 is very reasonable, but he has vastly
+  improved since that time. Similarly, now that his labs have normalized, there is limited indication to
+  continuously trend them.
+</p>
+<p class="small">
+  Antibiotics follow a different timeline. Monitoring can be de-escalated as soon as the patient is stable,
+  but antimicrobial therapy can only be narrowed once the microbiology allows it, and his susceptibilities
+  are still pending.
 </p>
 
 <strong>What should come off today</strong>
@@ -3151,18 +3117,17 @@ lowValueReasons: new Map([
   <li><strong>Prophylactic enoxaparin</strong> &ndash; hospitalised, infected, mobilising to the chair only.</li>
 </ul>
 
-<strong>What has to wait</strong>
+<strong>What waits</strong>
 <p class="small">
-  Gram-positive cocci <strong>in clusters</strong> is staphylococcus, which means MRSA is still possible.
-  Vancomycin continues until susceptibilities return tomorrow. A learner who stops it today is guessing,
-  and a learner who broadens is treating a patient who is already improving.
+  Cocci <strong>in clusters</strong> is staph, and no Gram stain distinguishes MRSA from MSSA. Vancomycin
+  stays until the susceptibilities are back tomorrow. Stopping it today is a guess; broadening further is
+  treating a man who is already getting better.
 </p>
 
-<strong>Worth noticing about cost</strong>
+<strong>One thing to notice</strong>
 <p class="small">
-  Both of today's correct treatment decisions &mdash; full basal insulin with correction, and enoxaparin &mdash;
-  cost <em>more</em> than the wrong answers sitting beside them. High-value care is not the cheap option;
-  it is the one that produces the best outcome for the necessary cost.
+  Both of the right treatment answers today &mdash; his full basal insulin with a correction scale, and the
+  enoxaparin &mdash; cost more than the wrong answers next to them. Cheaper is not the same as better value.
 </p>
 `
   },
@@ -3200,7 +3165,7 @@ lowValueReasons: new Map([
     `,
     highValueIds: new Set(["NO_TESTING"]),
     highValueReasons: new Map([
-      ["NO_TESTING","High Value – The microbiology is final, he is improving, and no further diagnostic test would change the plan. Everything that matters today is a treatment or a discharge decision."]
+      ["NO_TESTING","High Value – The culture is final and he has clinically resolved. What is left is narrowing his antibiotics and getting him out."]
     ]),
     intermediateIds: new Map([
       ["PDF_4569806","Intermediate – If an A1c was not sent on admission, it is worth having before discharge: his home regimen was already failing at 9.8%, and the discharge plan should reflect that."]
@@ -3222,54 +3187,54 @@ lowValueReasons: new Map([
     ]),
     missedSeverity: "neutral",
     missedReasons: new Map([
-      ["NO_TESTING","No further diagnostic testing is needed. The microbiology is final and he has clinically resolved; today's work is narrowing his antibiotics and planning his discharge."]
+      ["NO_TESTING","Nothing more needs testing. The culture is back and he has resolved; today is about narrowing therapy and planning discharge."]
     ]),
     recommendedIds: ["NO_TESTING"],
     decisions: [
       { id:"narrow", question:"Antibiotic therapy now that susceptibilities are back", hint:"Deep tissue culture: MSSA.",
         options:[
-          {id:"cfz", label:"Narrow to cefazolin", tier:"high", why:"For methicillin-susceptible Staphylococcus aureus, cefazolin is not merely narrower than vancomycin — it is more effective. Staying on vancomycin is not the cautious choice, it is the worse one. This is the single most important stewardship point in the module."},
-          {id:"naf", label:"Narrow to nafcillin", tier:"intermediate", why:"Entirely appropriate for MSSA and comparable in efficacy to cefazolin, though more frequent dosing and a less favourable side-effect profile make it the second choice for most patients."},
-          {id:"vanc", label:"Continue vancomycin alone", tier:"low", why:"Vancomycin is inferior to cefazolin for MSSA. Continuing it because it is broader mistakes breadth for safety, and it commits him to levels, renal monitoring and IV access he does not need."},
-          {id:"both", label:"Continue vancomycin plus piperacillin-tazobactam", tier:"low", why:"Two unnecessary drugs. The organism is identified and susceptible; this is cost and selection pressure with no benefit."}
+          {id:"cfz", label:"Narrow to cefazolin", tier:"high", why:"Cefazolin is more effective than vancomycin against methicillin-susceptible S. aureus. This is worth emphasizing, because narrowing here is not a trade of safety for stewardship: the narrower drug is also the better treatment."},
+          {id:"naf", label:"Narrow to nafcillin", tier:"intermediate", why:"An entirely appropriate choice for MSSA, with efficacy comparable to cefazolin. Cefazolin is generally preferred for its dosing interval and side-effect profile."},
+          {id:"vanc", label:"Continue vancomycin alone", tier:"low", why:"Vancomycin performs less well than cefazolin against MSSA. Continuing it also commits him to trough monitoring, renal surveillance and intravenous access he no longer requires."},
+          {id:"both", label:"Continue vancomycin plus piperacillin-tazobactam", tier:"low", why:"The organism is identified and susceptible. Neither agent is contributing anything at this point beyond cost and selection pressure."}
         ]},
       { id:"route", question:"Route of therapy at discharge", hint:"",
         options:[
-          {id:"po", label:"Transition to oral therapy with a highly bioavailable agent", tier:"high", why:"He has a susceptible organism, an adequately debrided soft tissue infection and a functioning gut. Oral therapy avoids a line, its infections, and the cost of home infusion."},
-          {id:"picc", label:"PICC line for prolonged IV therapy", tier:"low", why:"A default PICC in a patient who can take oral antibiotics adds line infections, thrombosis, home infusion costs and follow-up imaging, for no added efficacy."},
-          {id:"stop", label:"Stop antibiotics at discharge", tier:"low", why:"He has not completed a course for a severe soft tissue infection. Stopping now risks relapse."}
+          {id:"po", label:"Transition to oral therapy with a highly bioavailable agent", tier:"high", why:"He has a susceptible organism, an adequately debrided soft tissue infection and normal gastrointestinal function. Oral therapy allows discharge without central access, the associated infection risk, or the cost of home infusion."},
+          {id:"picc", label:"PICC line for prolonged IV therapy", tier:"low", why:"Placing a PICC in a patient who could take the same agent orally introduces the risk of line infection and upper extremity thrombosis, along with the cost of home infusion, without improving cure rates."},
+          {id:"stop", label:"Stop antibiotics at discharge", tier:"low", why:"He has received two days of therapy for an infection that presented with septic shock. Stopping now carries a substantial risk of relapse."}
         ]},
       { id:"duration", question:"Duration, for a debrided soft-tissue infection without bone involvement", hint:"",
         options:[
-          {id:"short", label:"A short course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and evidence supports short courses once source control is achieved. Longer therapy adds adverse effects and resistance without improving cure."},
-          {id:"twowk", label:"Two weeks", tier:"intermediate", why:"Not unreasonable in a diabetic patient with impaired perfusion, and some guidelines allow it, though it is longer than his response requires."},
-          {id:"sixwk", label:"Six weeks, as though this were osteomyelitis", tier:"low", why:"Six-week courses are for bone infection. He has none: the probe did not reach bone, the X-ray was clean and podiatry documented no concern."},
-          {id:"indef", label:"Indefinite suppression", tier:"low", why:"Suppressive therapy is for retained hardware or unresectable infection, neither of which applies."}
+          {id:"short", label:"A short course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and short courses perform as well as longer ones once source control has been achieved. Additional weeks of therapy add adverse effects and resistance without improving cure."},
+          {id:"twowk", label:"Two weeks", tier:"intermediate", why:"Defensible given his impaired perfusion, and within the range guidelines permit, although longer than his clinical response requires."},
+          {id:"sixwk", label:"Six weeks, as though this were osteomyelitis", tier:"low", why:"Six weeks is the duration for osteomyelitis. The probe did not reach bone, the X-ray showed no bony destruction, and podiatry documented no concern for bone involvement."},
+          {id:"indef", label:"Indefinite suppression", tier:"low", why:"Suppressive therapy is reserved for retained hardware or infection that cannot be cleared. Neither applies to a debrided soft tissue ulcer."}
         ]},
       { id:"offload", question:"Offloading", hint:"",
         options:[
-          {id:"device", label:"Offloading device or total contact cast", tier:"high", why:"Offloading has the strongest effect on healing and recurrence of any intervention in diabetic foot disease, and it costs a fraction of a single MRI. It is also the item most often missing from the discharge summary. High-value care here is not a test at all."},
-          {id:"shoe", label:"Return to a regular shoe", tier:"low", why:"Continued pressure on a healing plantar wound in an insensate foot is how ulcers recur and how patients lose limbs."}
+          {id:"device", label:"Offloading device or total contact cast", tier:"high", why:"Offloading has the greatest effect of any single intervention on whether this wound heals and whether it recurs. It costs a fraction of a single MRI, and it is among the items most often omitted from the discharge plan."},
+          {id:"shoe", label:"Return to a regular shoe", tier:"low", why:"He has absent protective sensation and cannot feel the pressure he places through the wound. Continued weight-bearing is the principal driver of ulcer recurrence and of subsequent amputation."}
         ]},
       { id:"followup", question:"Follow-up", hint:"Absent posterior tibial pulse. A1c 9.8% six months ago.",
         options:[
-          {id:"all", label:"Podiatry, plus vascular for the absent pulse, plus diabetes follow-up", tier:"high", why:"All three drivers of recurrence get addressed: the wound, the perfusion that determines whether it heals, and the glycaemic control that caused it. His home regimen was already failing before he got sick."},
-          {id:"pod", label:"Podiatry alone", tier:"intermediate", why:"Necessary but incomplete. It leaves the vascular disease and the uncontrolled diabetes unaddressed."},
-          {id:"pcp", label:"Primary care in six weeks", tier:"low", why:"Too slow and too general for a healing diabetic foot wound with impaired perfusion."}
+          {id:"all", label:"Podiatry, plus vascular for the absent pulse, plus diabetes follow-up", tier:"high", why:"Each driver of recurrence is addressed: podiatry for the wound, vascular for the absent posterior tibial pulse, and diabetes follow-up for an A1c of 9.8. His glycemic control was already inadequate before this admission."},
+          {id:"pod", label:"Podiatry alone", tier:"intermediate", why:"Necessary, but incomplete. It leaves the absent pulse and the uncontrolled diabetes unaddressed."},
+          {id:"pcp", label:"Primary care in six weeks", tier:"low", why:"Six weeks is too long an interval for a healing diabetic foot wound with impaired perfusion, and primary care is not the appropriate specialty to follow it."}
         ]}
     ],
     pathwayHtml: `
-<strong>Narrowing, and getting him out</strong>
+<strong>Narrowing, and getting him home</strong>
 <p class="small">
-  The microbiology is final and he has clinically resolved. Nothing further needs to be measured;
-  everything that matters today is a treatment decision or a discharge decision.
+  The culture is final and he has resolved clinically. There is nothing left to measure. Today is antibiotics
+  and discharge planning.
 </p>
 
-<strong>Cefazolin over vancomycin &mdash; the point worth remembering</strong>
+<strong>Cefazolin beats vancomycin here</strong>
 <p class="small">
-  For MSSA, cefazolin is <em>more effective</em> than vancomycin, not just narrower. Staying on vancomycin
-  because it covers more is the clearest example in this module of mistaking breadth for safety: it is the
-  broader drug, the more expensive pathway, and the worse treatment, all at once.
+  Not just narrower &mdash; better. Cefazolin outperforms vancomycin against MSSA. Staying on vancomycin
+  because it covers more organisms means choosing the broader drug, the more expensive pathway and the less
+  effective treatment at the same time.
 </p>
 
 <strong>Discharge plan</strong>
@@ -3280,11 +3245,10 @@ lowValueReasons: new Map([
   <li><strong>Podiatry, vascular and diabetes follow-up</strong> &ndash; the wound, the perfusion and the cause.</li>
 </ul>
 
-<strong>The thing most likely to be left off</strong>
+<strong>The line most often missing</strong>
 <p class="small">
-  Offloading. It costs a fraction of one MRI, it has more effect on whether this man keeps his foot than any
-  antibiotic decision on this page, and it is routinely missing from discharge summaries. High-value care is
-  not only about which tests you order.
+  Offloading. It costs a fraction of one MRI and does more for whether this man keeps his foot than any
+  antibiotic decision on this page, and it still gets left out of discharge summaries all the time.
 </p>
 `
   },
