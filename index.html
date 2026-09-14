@@ -2931,7 +2931,6 @@ lowValueReasons: new Map([
       { id:"dispo", question:"Disposition", hint:"",
         options:[
           {id:"mon", label:"Monitored bed with sepsis protocol; ICU if vasopressors are required", tier:"high", why:"He requires frequent monitoring and a location that can escalate care quickly if he does not respond to fluids."},
-          {id:"ward", label:"General medical ward", tier:"intermediate", why:"Likely appropriate once he has stabilized. For the first several hours he needs closer monitoring than a general ward provides."},
           {id:"obs", label:"Observation unit with a 48-hour recheck", tier:"low", why:"Observation pathways are designed for short, low-acuity stays. They are not built to manage septic shock."},
           {id:"home", label:"Discharge on oral antibiotics with clinic follow-up", tier:"low", why:"He is hypotensive, confused and febrile with an undrained foot infection. He is not a candidate for outpatient management."}
         ]}
@@ -3205,7 +3204,7 @@ lowValueReasons: new Map([
       { id:"narrow", question:"Antibiotic therapy now that susceptibilities are back", hint:"Deep tissue culture: MSSA.",
         options:[
           {id:"cfz", label:"Narrow to cefazolin", tier:"high", why:"Cefazolin is more effective than vancomycin against methicillin-susceptible S. aureus. This is worth emphasizing, because narrowing here is not a trade of safety for stewardship: the narrower drug is also the better treatment."},
-          {id:"naf", label:"Narrow to nafcillin", tier:"intermediate", why:"An entirely appropriate choice for MSSA, with efficacy comparable to cefazolin. Cefazolin is generally preferred for its dosing interval and side-effect profile."},
+          {id:"lzd", label:"Change to linezolid", tier:"low", why:"Linezolid is an MRSA agent, and this organism is methicillin-susceptible. Beta-lactams outperform it for MSSA, and it carries real costs: myelosuppression with prolonged use, peripheral and optic neuropathy, serotonergic interactions, and a price well above cefazolin. Its oral bioavailability is attractive, but that is not a reason to reach for it when a better oral option exists."},
           {id:"vanc", label:"Continue vancomycin alone", tier:"low", why:"Vancomycin performs less well than cefazolin against MSSA. Continuing it also commits him to trough monitoring, renal surveillance and intravenous access he no longer requires."},
           {id:"both", label:"Continue vancomycin plus piperacillin-tazobactam", tier:"low", why:"The organism is identified and susceptible. Neither agent is contributing anything at this point beyond cost and selection pressure."}
         ]},
@@ -3217,8 +3216,8 @@ lowValueReasons: new Map([
         ]},
       { id:"duration", question:"Duration, for a debrided soft-tissue infection without bone involvement", hint:"",
         options:[
-          {id:"short", label:"A short course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and short courses perform as well as longer ones once source control has been achieved. Additional weeks of therapy add adverse effects and resistance without improving cure."},
-          {id:"twowk", label:"Two weeks", tier:"intermediate", why:"Defensible given his impaired perfusion, and within the range guidelines permit, although longer than his clinical response requires."},
+          {id:"short", label:"A 5 day course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and once source control has been achieved short courses perform as well as longer ones. The clock starts at the debridement, not at admission. Additional weeks of therapy add adverse effects and resistance without improving cure."},
+          {id:"twowk", label:"2–3 weeks from initial presentation", tier:"intermediate", why:"Defensible given his impaired perfusion, and within the range guidelines permit, although longer than his clinical response requires. Note also that it counts from presentation rather than from source control, which is not how duration is usually anchored for a debrided soft tissue infection."},
           {id:"sixwk", label:"Six weeks, as though this were osteomyelitis", tier:"low", why:"Six weeks is the duration for osteomyelitis. The probe did not reach bone, the X-ray showed no bony destruction, and podiatry documented no concern for bone involvement."},
           {id:"indef", label:"Indefinite suppression", tier:"low", why:"Suppressive therapy is reserved for retained hardware or infection that cannot be cleared. Neither applies to a debrided soft tissue ulcer."}
         ]},
@@ -3226,12 +3225,6 @@ lowValueReasons: new Map([
         options:[
           {id:"device", label:"Offloading device or total contact cast", tier:"high", why:"Offloading has the greatest effect of any single intervention on whether this wound heals and whether it recurs. It costs a fraction of a single MRI, and it is among the items most often omitted from the discharge plan."},
           {id:"shoe", label:"Return to a regular shoe", tier:"low", why:"He has absent protective sensation and cannot feel the pressure he places through the wound. Continued weight-bearing is the principal driver of ulcer recurrence and of subsequent amputation."}
-        ]},
-      { id:"followup", question:"Follow-up", hint:"Absent posterior tibial pulse. A1c 9.8% six months ago.",
-        options:[
-          {id:"all", label:"Podiatry, plus vascular for the absent pulse, plus diabetes follow-up", tier:"high", why:"Each driver of recurrence is addressed: podiatry for the wound, vascular for the absent posterior tibial pulse, and diabetes follow-up for an A1c of 9.8. His glycemic control was already inadequate before this admission."},
-          {id:"pod", label:"Podiatry alone", tier:"intermediate", why:"Necessary, but incomplete. It leaves the absent pulse and the uncontrolled diabetes unaddressed."},
-          {id:"pcp", label:"Primary care in six weeks", tier:"low", why:"Six weeks is too long an interval for a healing diabetic foot wound with impaired perfusion, and primary care is not the appropriate specialty to follow it."}
         ]}
     ],
     pathwayHtml: `
@@ -3251,7 +3244,7 @@ lowValueReasons: new Map([
 <strong>Discharge plan</strong>
 <ul class="small">
   <li><strong>Oral therapy</strong> with a highly bioavailable agent &ndash; no line, no home infusion.</li>
-  <li><strong>A short course</strong>, counted from the debridement. This is soft tissue, not bone.</li>
+  <li><strong>A 5 day course</strong>, counted from the debridement &ndash; not from admission. This is soft tissue, not bone.</li>
   <li><strong>Offloading</strong> &ndash; the single highest-yield intervention for healing and recurrence.</li>
   <li><strong>Podiatry, vascular and diabetes follow-up</strong> &ndash; the wound, the perfusion and the cause.</li>
 </ul>
