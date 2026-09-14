@@ -111,6 +111,14 @@ a:hover{color:var(--accent-dark)}
 .tab.active{background:var(--accent);border-color:var(--accent);
   color:var(--on-accent);font-weight:600}
 .tab.active:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+/* Case 6 collapses to a single tab and expands into its four stages */
+#case6Tabs{display:contents}
+#case6Tabs.hidden{display:none}
+.tab.tab-sub{font-size:.82rem;padding:7px 13px}
+.tab.tab-sub::before{content:"";display:inline-block;width:0}
+#tab6group::after{content:" \203A";font-weight:700;opacity:.55}
+#tab6group.completed::after{content:""}
+
 .tabs .tab.completed{padding-right:30px;position:relative;color:var(--muted)}
 .tabs .tab.completed::after{
   content:"✓";position:absolute;right:11px;top:50%;transform:translateY(-50%);
@@ -518,10 +526,13 @@ textarea{min-height:96px;resize:vertical}
     <button class="tab" id="tab3" type="button">Case 3: Return visit</button>
     <button class="tab" id="tab4" type="button">Case 4: Back pain</button>
     <button class="tab" id="tab5" type="button">Case 5: Med reconciliation</button>
-    <button class="tab" id="tab6" type="button">Case 6a: Diabetic foot</button>
-    <button class="tab" id="tab7" type="button">Case 6b: Initial management</button>
-    <button class="tab" id="tab8" type="button">Case 6c: Day 1</button>
-    <button class="tab" id="tab9" type="button">Case 6d: Day 2</button>
+    <button class="tab" id="tab6group" type="button">Case 6: Diabetic foot</button>
+    <span id="case6Tabs" class="hidden">
+      <button class="tab tab-sub" id="tab6" type="button">6a &middot; Presentation</button>
+      <button class="tab tab-sub" id="tab7" type="button">6b &middot; Initial management</button>
+      <button class="tab tab-sub" id="tab8" type="button">6c &middot; Day 1</button>
+      <button class="tab tab-sub" id="tab9" type="button">6d &middot; Day 2</button>
+    </span>
     <button class="tab" id="tab10" type="button">Post-test</button>
   </div>
 
@@ -3363,7 +3374,20 @@ function resetCaseCompletion(){
   COMPLETED_CASES.clear();
   try{
     document.querySelectorAll(".tabs .tab").forEach(b=>b.classList.remove("completed"));
+    updateCase6Group();
   }catch(e){}
+}
+
+// Case 6 shows as one tab until the learner is inside it, then expands to 6a-6d.
+function updateCase6Group(){
+  const group = document.getElementById("tab6group");
+  const sub = document.getElementById("case6Tabs");
+  if (!group || !sub) return;
+  const inside = (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 9);
+  group.classList.toggle("hidden", inside);
+  sub.classList.toggle("hidden", !inside);
+  const allDone = [6,7,8,9].every(i => COMPLETED_CASES.has(i));
+  group.classList.toggle("completed", allDone);
 }
 
 function markCaseCompleted(caseId){
@@ -3371,6 +3395,7 @@ function markCaseCompleted(caseId){
     COMPLETED_CASES.add(caseId);
     const tab = document.getElementById("tab" + String(caseId));
     if (tab) tab.classList.add("completed");
+    updateCase6Group();
   }catch(e){}
 }
 
@@ -3910,6 +3935,8 @@ function setActiveCase(caseId){
   const activeTab = document.getElementById("tab"+caseId);
   if (activeTab) activeTab.classList.add("active");
 
+  updateCase6Group();
+
   const cfg = CASES[caseId];
   caseTitleEl.textContent = cfg ? cfg.title : ("Case " + caseId);
   caseContentEl.innerHTML = cfg ? cfg.contentHtml : "";
@@ -4269,6 +4296,7 @@ document.getElementById("tab6").addEventListener("click", ()=>setActiveCase(6));
 document.getElementById("tab7").addEventListener("click", ()=>setActiveCase(7));
 document.getElementById("tab8").addEventListener("click", ()=>setActiveCase(8));
 document.getElementById("tab9").addEventListener("click", ()=>setActiveCase(9));
+document.getElementById("tab6group").addEventListener("click", ()=>setActiveCase(6));
 document.getElementById("tab10").addEventListener("click", ()=>setActiveCase(10));
 
 if (continueBtnEl){
