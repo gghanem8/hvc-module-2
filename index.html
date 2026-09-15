@@ -22,6 +22,9 @@
   --heading:#0d141a;
   --muted:#5f6d78;
   --border:#d8dfe5;
+  /* #d8dfe5 is 1.35:1 on white, under the 3:1 WCAG asks for control boundaries.
+     --border-strong is used on anything the learner has to find and click. */
+  --border-strong:#8d9aa4;
   --hairline:#eaeef1;
 
   --accent:#14607a;
@@ -79,6 +82,54 @@ body{
 @media (max-width:700px){
   .container{margin:12px;padding:20px 18px 24px;border-radius:12px}
 }
+.linkcode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.linkcode-grid input{text-transform:uppercase;letter-spacing:.14em;font-family:var(--mono)}
+@media (max-width:640px){
+  .linkcode-grid{grid-template-columns:1fr}
+  .linkcode-grid input{letter-spacing:.08em}
+}
+ul.plain{list-style:none;margin:0;padding:0}
+ul.plain>li{margin:0 0 9px}
+.fs-none{color:var(--muted);font-style:italic;font-weight:500}
+tr.fs-unordered .fs-lab{color:var(--muted)}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;min-width:0}
+.table-wrap table{min-width:20rem}
+.fs-wrap{min-width:0}
+.card{min-width:0}
+.survey-heading{margin:18px 0 10px;font-size:1rem;color:var(--heading)}
+.survey-heading:first-child{margin-top:0}
+.kn-item,.lk-item{border:1px solid var(--border);border-radius:12px;padding:14px 16px;
+  margin:0 0 12px;background:var(--surface);min-width:0}
+.kn-legend{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+  font-weight:700;padding:0 4px}
+.kn-stem{margin:6px 0 12px;line-height:1.5}
+.kn-options{display:flex;flex-direction:column;gap:8px}
+.kn-option{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;min-height:44px;
+  border:1.5px solid var(--border-strong);border-radius:10px;cursor:pointer;line-height:1.45}
+.kn-option:hover{background:var(--chip)}
+.kn-option input{margin-top:3px;flex:0 0 auto}
+.lk-legend{font-weight:600;line-height:1.45;padding:0 4px;color:var(--ink)}
+.lk-scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.lk-cell{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;
+  padding:10px 6px;min-height:44px;border:1.5px solid var(--border-strong);border-radius:10px;cursor:pointer}
+.lk-cell:hover{background:var(--chip)}
+.lk-num{font-weight:700;font-family:var(--mono)}
+.lk-word{font-size:.72rem;color:var(--muted);line-height:1.25}
+.survey-unanswered{border-color:var(--no);box-shadow:0 0 0 3px var(--no-soft)}
+.kn-yours{margin:6px 0;font-size:.88rem;color:var(--no);font-weight:600}
+.kn-answer{margin:6px 0;font-size:.88rem;font-weight:600;color:var(--heading)}
+@media (max-width:640px){
+  .lk-scale{grid-template-columns:1fr;gap:6px}
+  .lk-cell{flex-direction:row;justify-content:flex-start;gap:10px;text-align:left}
+  .lk-word{font-size:.85rem}
+}
+.resume-banner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);
+  border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:.9rem;font-weight:600}
+.resume-banner button{margin-left:auto;font-weight:600}
+.resume-banner button + button{margin-left:0}
+#linkCodePreview code{font-family:var(--mono);font-size:1.05rem;letter-spacing:.18em;
+  background:var(--accent-soft);color:var(--accent);padding:3px 9px;border-radius:7px;font-weight:700}
 
 /* ---------- type ---------- */
 h1,h2,h3,h4{color:var(--heading);margin:0 0 10px;line-height:1.25;
@@ -103,8 +154,8 @@ a:hover{color:var(--accent-dark)}
   padding-bottom:14px;border-bottom:1px solid var(--border)}
 .tab{
   font:inherit;font-size:.87rem;font-weight:500;
-  border:1px solid var(--border);background:var(--chip);color:var(--ink);
-  border-radius:999px;padding:7px 15px;cursor:pointer;
+  border:1.5px solid var(--border-strong, #b9c4cc);background:var(--chip);color:var(--ink);
+  border-radius:999px;padding:9px 15px;min-height:40px;cursor:pointer;
   transition:background .14s ease, border-color .14s ease, color .14s ease;
 }
 .tab:hover{background:#e0e6ea}
@@ -126,9 +177,25 @@ a:hover{color:var(--accent-dark)}
 }
 .tabs .tab.active.completed{color:var(--on-accent)}
 .tabs .tab.active.completed::after{color:var(--on-accent)}
+/* Real tab semantics: the strip announced itself as a tablist while its children
+   were plain buttons, and the active state was carried by background colour alone. */
+.tabs .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);
+  color:var(--on-accent);font-weight:600}
+@media (max-width:700px){
+  /* Eleven wrapped pills took 300-380px of vertical space above every case. */
+  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;padding-bottom:12px;margin:12px 0 16px;
+    scrollbar-width:thin}
+  .tabs .tab{flex:0 0 auto;scroll-snap-align:start;min-height:40px}
+  #case6Tabs{display:contents}
+}
 
 /* ---------- layout blocks ---------- */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* Grid items default to min-width:auto, so a card containing a min-width table
+   pushes its own track wider than the viewport and the whole page scrolls
+   sideways. These let the track shrink and the table scroll inside its wrapper. */
+.grid2>*{min-width:0}
 @media (max-width:820px){.grid2{grid-template-columns:1fr}}
 
 .card{
@@ -171,16 +238,16 @@ a:hover{color:var(--accent-dark)}
 
 .test-list{
   max-height:330px;overflow-y:auto;
-  border:1px solid var(--border);border-radius:10px;
+  border:1.5px solid var(--border-strong);border-radius:10px;
   background:var(--surface);padding:6px;
 }
 label{display:block;margin:2px 0}
 .test-list label{
-  padding:7px 10px;border-radius:8px;font-size:.94rem;cursor:pointer;
-  display:flex;align-items:center;gap:9px;
+  padding:10px;border-radius:8px;font-size:.94rem;cursor:pointer;min-height:44px;
+  display:flex;align-items:center;gap:10px;
 }
 .test-list label:hover{background:var(--accent-soft)}
-.test-list input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;flex:none;margin:0}
+.test-list input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px;flex:none;margin:0}
 
 /* ---------- buttons ---------- */
 button.primary{
@@ -332,8 +399,8 @@ tr:last-child td{border-bottom:none}
 
 select,textarea,
 input[type=text],input[type=password],input[type=email],input[type=number]{
-  width:100%;padding:10px 12px;margin:6px 0;
-  border:1px solid var(--border);border-radius:var(--radius-sm);
+  width:100%;padding:11px 12px;margin:6px 0;min-height:44px;
+  border:1.5px solid var(--border-strong);border-radius:var(--radius-sm);
   font:inherit;font-size:.95rem;
   background:var(--surface);color:var(--ink);
   outline:none;
@@ -439,6 +506,30 @@ textarea{min-height:96px;resize:vertical}
       <input type="text" id="trainingLevelOtherInput" class="hidden" placeholder="Please specify" />
     </div>
 
+    <div class="field-group" style="border-top:1px solid var(--hairline); padding-top:14px; margin-top:4px;">
+      <div class="field-label">Anonymous linking code <span class="required-star">*</span></div>
+      <p class="small muted" style="margin:4px 0 10px;">
+        These three answers are combined into a code that links your pre-test to your post-test without
+        identifying you. The answers themselves are never stored. <strong>Answer them the same way every
+        time you open this module</strong>, including in future years.
+      </p>
+      <div class="linkcode-grid">
+        <div>
+          <label class="field-label tiny" for="lcMother">First 2 letters of your mother&rsquo;s first name</label>
+          <input type="text" id="lcMother" maxlength="2" placeholder="MA" autocomplete="off" />
+        </div>
+        <div>
+          <label class="field-label tiny" for="lcDay">Day of the month you were born (01&ndash;31)</label>
+          <input type="text" id="lcDay" maxlength="2" placeholder="07" autocomplete="off" inputmode="numeric" />
+        </div>
+        <div>
+          <label class="field-label tiny" for="lcCity">First 2 letters of your city of birth</label>
+          <input type="text" id="lcCity" maxlength="2" placeholder="CH" autocomplete="off" />
+        </div>
+      </div>
+      <div id="linkCodePreview" class="small muted" style="margin-top:8px;">Your code will appear here.</div>
+    </div>
+
     <div class="field-group">
       <label class="field-label" for="siteUsernameInput">Username <span class="required-star">*</span></label>
       <input type="text" id="siteUsernameInput" placeholder="Enter username" autocomplete="username" />
@@ -513,27 +604,32 @@ textarea{min-height:96px;resize:vertical}
 <div id="app" class="hidden">
 
 <div class="container">
+  <div id="resumeBanner" class="hidden resume-banner" role="status">
+    <span>Welcome back &mdash; your progress was restored.</span>
+    <button type="button" id="resumeDismiss" class="tab">Dismiss</button>
+    <button type="button" id="resumeRestart" class="tab">Start over</button>
+  </div>
   <h1>Medical Case Simulator</h1>
   <div class="muted">
     Practice high-value care by selecting the <strong>initial diagnostic tests</strong> you would order at this stage of the encounter.
     <strong>Costs are hidden until you submit.</strong>
   </div>
 
-  <div class="tabs" role="tablist">
-    <button class="tab active" id="tab0" type="button">Pre-test</button>
-    <button class="tab" id="tab1" type="button">Case 1: Chest pain</button>
-    <button class="tab" id="tab2" type="button">Case 2: Sore throat</button>
-    <button class="tab" id="tab3" type="button">Case 3: Return visit</button>
-    <button class="tab" id="tab4" type="button">Case 4: Back pain</button>
-    <button class="tab" id="tab5" type="button">Case 5: Med reconciliation</button>
-    <button class="tab" id="tab6group" type="button">Case 6: Diabetic foot</button>
-    <span id="case6Tabs" class="hidden">
-      <button class="tab tab-sub" id="tab6" type="button">6a &middot; Presentation</button>
-      <button class="tab tab-sub" id="tab7" type="button">6b &middot; Initial management</button>
-      <button class="tab tab-sub" id="tab8" type="button">6c &middot; Day 1</button>
-      <button class="tab tab-sub" id="tab9" type="button">6d &middot; Day 2</button>
+  <div class="tabs" role="tablist" aria-label="Module sections">
+    <button class="tab active" id="tab0" type="button" role="tab" aria-selected="true">Pre-test</button>
+    <button class="tab" id="tab1" type="button" role="tab" aria-selected="false" tabindex="-1">Case 1: Chest pain</button>
+    <button class="tab" id="tab2" type="button" role="tab" aria-selected="false" tabindex="-1">Case 2: Sore throat</button>
+    <button class="tab" id="tab3" type="button" role="tab" aria-selected="false" tabindex="-1">Case 3: Return visit</button>
+    <button class="tab" id="tab4" type="button" role="tab" aria-selected="false" tabindex="-1">Case 4: Back pain</button>
+    <button class="tab" id="tab5" type="button" role="tab" aria-selected="false" tabindex="-1">Case 5: Med reconciliation</button>
+    <button class="tab" id="tab6group" type="button" role="tab" aria-selected="false" tabindex="-1">Case 6: Diabetic foot</button>
+    <span id="case6Tabs" class="hidden" role="presentation">
+      <button class="tab tab-sub" id="tab6" type="button" role="tab" aria-selected="false" tabindex="-1">6a &middot; Presentation</button>
+      <button class="tab tab-sub" id="tab7" type="button" role="tab" aria-selected="false" tabindex="-1">6b &middot; Initial management</button>
+      <button class="tab tab-sub" id="tab8" type="button" role="tab" aria-selected="false" tabindex="-1">6c &middot; Day 1</button>
+      <button class="tab tab-sub" id="tab9" type="button" role="tab" aria-selected="false" tabindex="-1">6d &middot; Day 2</button>
     </span>
-    <button class="tab" id="tab10" type="button">Post-test</button>
+    <button class="tab" id="tab10" type="button" role="tab" aria-selected="false" tabindex="-1">Post-test</button>
   </div>
 
   <h2 id="caseTitle"></h2>
@@ -541,42 +637,32 @@ textarea{min-height:96px;resize:vertical}
 
   <!-- Case 5 uses its own embedded UI to preserve module integrity -->
   <div id="case5MedRec" class="hidden" style="margin-top:12px;">
-    <iframe id="medRecFrame" title="Medication reconciliation case" style="width:100%; border:0; border-radius:12px; min-height:1200px; background:transparent;"></iframe>
-    <div class="tiny" id="case5Status" style="margin-top:10px;"></div>
+    <iframe id="medRecFrame" title="Medication reconciliation case" style="width:100%; border:0; border-radius:12px; min-height:420px; background:transparent;"></iframe>
+    <div class="tiny" id="case5Status" role="status" style="margin-top:10px;"></div>
+    <div id="case5Fallback" class="hidden" style="margin-top:12px;">
+      <div class="missed-block">
+        <div class="missed-title">This case did not load</div>
+        <p class="small" style="margin:6px 0 10px;">
+          The medication reconciliation case could not start. This is usually a temporary
+          loading problem rather than anything you did.
+        </p>
+        <button type="button" class="tab" id="case5Retry">Try loading it again</button>
+        <button type="button" class="tab" id="case5Skip">Skip this case and continue</button>
+      </div>
+    </div>
   </div>
 
   <div id="pretestSection" class="hidden survey-card">
     <div class="card">
       <h3 style="margin-top:0;">Pre-test</h3>
-      <p class="small">Please rate your level of agreement or disagreement with the following statements.</p>
+      <p class="small">
+        Two short parts: eight clinical questions, then five statements about your own practice.
+        You will answer all thirteen again at the end of the module, so answers are not shown now.
+      </p>
       <form id="pretestForm">
-        <table class="likert-table">
-          <tr>
-            <th>Statement</th>
-            <th>1<br><span class="tiny">Strongly Disagree</span></th>
-            <th>2<br><span class="tiny">Disagree</span></th>
-            <th>3<br><span class="tiny">Neither agree nor disagree</span></th>
-            <th>4<br><span class="tiny">Agree</span></th>
-            <th>5<br><span class="tiny">Strongly agree</span></th>
-          </tr>
-          <tr>
-            <td>Prior to this course, I had exposure to formal teaching on high-value care principles.</td>
-            <td><input type="radio" name="pre_q1" value="1"></td><td><input type="radio" name="pre_q1" value="2"></td><td><input type="radio" name="pre_q1" value="3"></td><td><input type="radio" name="pre_q1" value="4"></td><td><input type="radio" name="pre_q1" value="5"></td>
-          </tr>
-          <tr>
-            <td>Prior to this course, I encountered high-value care concepts during clinical rotations.</td>
-            <td><input type="radio" name="pre_q2" value="1"></td><td><input type="radio" name="pre_q2" value="2"></td><td><input type="radio" name="pre_q2" value="3"></td><td><input type="radio" name="pre_q2" value="4"></td><td><input type="radio" name="pre_q2" value="5"></td>
-          </tr>
-          <tr>
-            <td>I feel comfortable applying high-value care principles in clinical decision-making.</td>
-            <td><input type="radio" name="pre_q3" value="1"></td><td><input type="radio" name="pre_q3" value="2"></td><td><input type="radio" name="pre_q3" value="3"></td><td><input type="radio" name="pre_q3" value="4"></td><td><input type="radio" name="pre_q3" value="5"></td>
-          </tr>
-          <tr>
-            <td>I routinely consider cost and value when recommending tests or treatments.</td>
-            <td><input type="radio" name="pre_q4" value="1"></td><td><input type="radio" name="pre_q4" value="2"></td><td><input type="radio" name="pre_q4" value="3"></td><td><input type="radio" name="pre_q4" value="4"></td><td><input type="radio" name="pre_q4" value="5"></td>
-          </tr>
-        </table>
-        <div id="pretestValidationError" class="launch-error hidden"></div>
+        <div id="preKnowledgeMount"></div>
+        <div id="preAttitudeMount"></div>
+        <div id="pretestValidationError" class="launch-error hidden" role="alert"></div>
         <button class="primary" type="submit">Submit Pre-test</button>
       </form>
     </div>
@@ -585,43 +671,21 @@ textarea{min-height:96px;resize:vertical}
   <div id="posttestSection" class="hidden survey-card">
     <div class="card">
       <h3 style="margin-top:0;">Post-test</h3>
-      <p class="small">Please rate your level of agreement or disagreement with the following statements.</p>
+      <p class="small">
+        The same eight clinical questions and five statements you saw at the start, then a few
+        questions about the session itself. Your score and the reasoning for each clinical
+        question are shown after you submit.
+      </p>
       <form id="posttestForm">
-        <table class="likert-table">
-          <tr>
-            <th>Statement</th>
-            <th>1<br><span class="tiny">Strongly Disagree</span></th>
-            <th>2<br><span class="tiny">Disagree</span></th>
-            <th>3<br><span class="tiny">Neither agree nor disagree</span></th>
-            <th>4<br><span class="tiny">Agree</span></th>
-            <th>5<br><span class="tiny">Strongly agree</span></th>
-          </tr>
-          <tr>
-            <td>The session improved my understanding of high-value care principles.</td>
-            <td><input type="radio" name="post_q1" value="1"></td><td><input type="radio" name="post_q1" value="2"></td><td><input type="radio" name="post_q1" value="3"></td><td><input type="radio" name="post_q1" value="4"></td><td><input type="radio" name="post_q1" value="5"></td>
-          </tr>
-          <tr>
-            <td>The feedback provided during the session was clear and helpful.</td>
-            <td><input type="radio" name="post_q2" value="1"></td><td><input type="radio" name="post_q2" value="2"></td><td><input type="radio" name="post_q2" value="3"></td><td><input type="radio" name="post_q2" value="4"></td><td><input type="radio" name="post_q2" value="5"></td>
-          </tr>
-          <tr>
-            <td>This session increased my awareness of the costs associated with clinical decisions.</td>
-            <td><input type="radio" name="post_q3" value="1"></td><td><input type="radio" name="post_q3" value="2"></td><td><input type="radio" name="post_q3" value="3"></td><td><input type="radio" name="post_q3" value="4"></td><td><input type="radio" name="post_q3" value="5"></td>
-          </tr>
-          <tr>
-            <td>I feel more comfortable applying high-value care principles in clinical decision-making.</td>
-            <td><input type="radio" name="post_q4" value="1"></td><td><input type="radio" name="post_q4" value="2"></td><td><input type="radio" name="post_q4" value="3"></td><td><input type="radio" name="post_q4" value="4"></td><td><input type="radio" name="post_q4" value="5"></td>
-          </tr>
-          <tr>
-            <td>I would recommend incorporating this high-value care session in medical training.</td>
-            <td><input type="radio" name="post_q5" value="1"></td><td><input type="radio" name="post_q5" value="2"></td><td><input type="radio" name="post_q5" value="3"></td><td><input type="radio" name="post_q5" value="4"></td><td><input type="radio" name="post_q5" value="5"></td>
-          </tr>
-        </table>
+        <div id="postKnowledgeMount"></div>
+        <div id="postAttitudeMount"></div>
+        <div id="postProgramMount"></div>
         <label class="field-label" for="postFeedbackText">Do you have any additional feedback or suggestions for these modules?</label>
         <textarea id="postFeedbackText" name="post_feedback" placeholder="Optional free response"></textarea>
-        <div id="posttestValidationError" class="launch-error hidden"></div>
+        <div id="posttestValidationError" class="launch-error hidden" role="alert"></div>
         <button class="primary" type="submit">Submit Post-test</button>
       </form>
+      <div id="knowledgeResults" class="hidden" style="margin-top:16px;"></div>
     </div>
   </div>
 
@@ -631,10 +695,13 @@ textarea{min-height:96px;resize:vertical}
     Costs stay hidden until you submit.
   </div>
 
-  <input type="text" id="search" placeholder="Search & add orders (e.g., CBC, CXR, CTA, COVID)…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="search" />
+  <label class="field-label" for="search">Search and add orders</label>
+  <input type="text" id="search" aria-describedby="dxHint"
+         placeholder="Search &amp; add orders (e.g., CBC, CXR, CTA, COVID)&hellip;"
+         autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="search" />
 
   <form id="orderForm">
-    <div class="test-list" id="matchList"></div>
+    <div class="test-list" id="matchList" role="group" aria-label="Available orders"></div>
 
     <div class="card" style="margin-top:12px;">
       <h3 style="margin:0 0 8px 0;">Selected orders</h3>
@@ -643,12 +710,43 @@ textarea{min-height:96px;resize:vertical}
     </div>
 
     
+    <div id="wellsContainer" class="wells-box hidden">
+      <h4 style="margin-top:0;">Step 1 &mdash; Score his pre-test probability</h4>
+      <div class="small muted">
+        Work out the Wells score for this patient before you order anything. Age is <strong>not</strong> part of Wells.
+      </div>
+      <div style="margin-top:10px;">
+        <label><input type="checkbox" class="wells" data-points="3"> Clinical signs/symptoms of DVT (leg swelling, pain with palpation)</label>
+        <label><input type="checkbox" class="wells" data-points="3"> PE is the most likely diagnosis (no better alternative)</label>
+        <label><input type="checkbox" class="wells" data-points="1.5"> HR &gt; 100 bpm</label>
+        <label><input type="checkbox" class="wells" data-points="1.5"> Immobilization &ge;3 days or surgery in previous 4 weeks</label>
+        <label><input type="checkbox" class="wells" data-points="1.5"> Previous DVT/PE</label>
+        <label><input type="checkbox" class="wells" data-points="1"> Hemoptysis</label>
+        <label><input type="checkbox" class="wells" data-points="1"> Malignancy (treatment within 6 months or palliative)</label>
+      </div>
+      <div style="margin-top:10px;" class="small">
+        <strong>Your Wells score:</strong> <span id="wellsScore">0.0</span>
+        <span class="muted"> &mdash; <span id="wellsInterp">PE unlikely</span></span>
+      </div>
+      <fieldset class="kn-item" id="wellsCommit_block" style="margin-top:12px;">
+        <legend class="kn-legend">Commit to an interpretation</legend>
+        <p class="kn-stem">On that score, how would you classify him?</p>
+        <div class="kn-options">
+          <label class="kn-option"><input type="radio" name="wellsCommit" value="unlikely">
+            <span>PE unlikely (Wells &le; 4) &mdash; a D-dimer can rule it out</span></label>
+          <label class="kn-option"><input type="radio" name="wellsCommit" value="likely">
+            <span>PE likely (Wells &gt; 4) &mdash; go to definitive imaging</span></label>
+        </div>
+      </fieldset>
+    </div>
+
     <div id="decisionBlock" class="hidden"></div>
 
+    <div id="orderFormError" class="launch-error hidden" role="alert"></div>
     <button class="primary" type="submit">Submit Orders</button>
   </form>
 
-  <div id="results" class="hidden">
+  <div id="results" class="hidden" role="region" aria-live="polite" aria-label="Results">
     <h2>Results</h2>
     <p><strong>Final Diagnosis:</strong> <span id="finalDx"></span></p>
 
@@ -656,6 +754,7 @@ textarea{min-height:96px;resize:vertical}
       <div class="card">
         <h3 style="margin-top:0;">Your Orders</h3>
         <div id="orderFeedback"></div>
+        <div id="redundancyFeedback"></div>
         <div id="missedFeedback"></div>
         <div id="decisionFeedback"></div>
       </div>
@@ -664,24 +763,7 @@ textarea{min-height:96px;resize:vertical}
         <h3 style="margin-top:0;">Recommended Diagnostic Pathway</h3>
         <div class="summary" id="recommendedPathwayBox"></div>
 
-        <!-- Case 1 only: Wells tool shows AFTER submit (moved under pathway) -->
-        <div id="wellsContainer" class="wells-box hidden">
-          <h4>Wells Score for PE (optional learning tool)</h4>
-          <div class="small muted">Select findings (age is <strong>not</strong> part of Wells). This does not change your grading; it’s for learning.</div>
-          <div style="margin-top:10px;">
-            <label><input type="checkbox" class="wells" data-points="3"> Clinical signs/symptoms of DVT (leg swelling, pain with palpation)</label>
-            <label><input type="checkbox" class="wells" data-points="3"> PE is the most likely diagnosis (no better alternative)</label>
-            <label><input type="checkbox" class="wells" data-points="1.5"> HR &gt; 100 bpm</label>
-            <label><input type="checkbox" class="wells" data-points="1.5"> Immobilization ≥3 days or surgery in previous 4 weeks</label>
-            <label><input type="checkbox" class="wells" data-points="1.5"> Previous DVT/PE</label>
-            <label><input type="checkbox" class="wells" data-points="1"> Hemoptysis</label>
-            <label><input type="checkbox" class="wells" data-points="1"> Malignancy (treatment within 6 months or palliative)</label>
-          </div>
-          <div style="margin-top:10px;" class="small">
-            <strong>Your Wells score:</strong> <span id="wellsScore">0.0</span>
-            <span class="muted"> — Interpretation: <span id="wellsInterp">Low</span></span>
-          </div>
-        </div>
+        <div id="wellsFeedback"></div>
       </div>
     </div>
 
@@ -697,7 +779,7 @@ textarea{min-height:96px;resize:vertical}
     </div>
     <div id="pathwayComparisonSection">
     <h3 style="margin-top:16px;">Pathway Comparison</h3>
-    <table>
+    <div class="table-wrap"><table>
       <tr>
         <th></th>
         <th>Your Pathway</th>
@@ -718,7 +800,7 @@ textarea{min-height:96px;resize:vertical}
         <td id="studentCost"></td>
         <td id="recommendedCost"></td>
       </tr>
-    </table>
+    </table></div>
     </div>
 
     <div id="caseAttribution" class="tiny"></div>
@@ -751,7 +833,7 @@ textarea{min-height:96px;resize:vertical}
 :root{
   --bg:#eef1f4; --surface:#ffffff; --panel:#f4f7f9;
   --ink:#1b242c; --heading:#0d141a; --muted:#5f6d78;
-  --border:#d8dfe5; --hairline:#eaeef1;
+  --border:#d8dfe5; --border-strong:#8d9aa4; --hairline:#eaeef1;
   --accent:#14607a; --accent-dark:#0f4c60; --accent-soft:#e2eef2;
   --ok:#0f7a3d; --ok-soft:#e4f3ea;
   --mid:#8a5a00; --mid-soft:#faf0dc;
@@ -863,6 +945,14 @@ label{font-size:.88rem}
 
 /* Per-medication value feedback — same semantics as the parent module */
 .hvcRow td{border-bottom:1px solid var(--hairline)}
+.hvcTag{font-weight:700;font-size:.82rem;margin-bottom:5px}
+.hvcTag-green{color:var(--ok)} .hvcTag-orange{color:var(--mid)} .hvcTag-red{color:var(--no)}
+tr.medrow.rowUnanswered td{background:var(--no-soft);box-shadow:inset 3px 0 0 var(--no)}
+.tableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:640px){
+  .options{grid-template-columns:1fr}
+  table{min-width:30rem}
+}
 .hvcRow.hvcGreen  td{background:var(--ok-soft)}
 .hvcRow.hvcOrange td{background:var(--mid-soft)}
 .hvcRow.hvcRed    td{background:var(--no-soft)}
@@ -955,7 +1045,7 @@ Next to each medication below, decide whether to <b>continue the home medication
 
 <div class="card">
 <h2>Medication Reconciliation</h2>
-<table id="tbl"></table>
+<div class="tableWrap"><table id="tbl"></table></div>
 </div>
 
 <div class="card">
@@ -985,7 +1075,9 @@ Next to each medication below, decide whether to <b>continue the home medication
 </div>
 
 <script>
-const MODULE_VERSION = "v12";
+// Case 5 iframe version. Kept in step with the parent APP_VERSION so a row
+// carrying only medrecModuleVersion can still be placed in a cohort.
+const MODULE_VERSION = "v30_2026_09_15";
 const GOOGLE_SHEETS_WEBAPP_URL = ""; // Paste your deployed Google Apps Script Web App URL here (optional)
 
 // Send information back to the parent (Case 1–4 module) for unified analytics.
@@ -1143,6 +1235,7 @@ ROWS.forEach(r=>{
   // main row
   let tr=document.createElement("tr");
   tr.id = "row_"+r.id;
+  tr.className = "medrow";
   tr.innerHTML=`
   <td>${r.home?'<div class="medbox">'+r.home.l+'<div class="medcost hide">$'+(Math.round(r.home.c*100)/100).toFixed(2)+' per month</div></div>':'—'}</td>
   <td>${r.hosp?'<div class="medbox">'+r.hosp.l+'<div class="medcost hide">$'+(Math.round(r.hosp.c*100)/100).toFixed(2)+' per month</div></div>':'—'}</td>
@@ -1161,6 +1254,7 @@ ROWS.forEach(r=>{
   hvc.id="hvc_"+r.id;
   hvc.innerHTML = `<td colspan="3">
       <div class="hvcBox">
+        <div class="hvcTag" id="hvcTag_${r.id}"></div>
         <div id="hvcText_${r.id}"></div>
       </div>
     </td>`;
@@ -1178,6 +1272,25 @@ ROWS.forEach(r=>{
 
 
 document.getElementById("submit").onclick=()=>{
+  // Every row must have a decision. Previously a blank row fell through the
+  // grading chain to the final "green" branch, so an untouched form submitted
+  // clean at $0 and marked the case complete.
+  const unanswered = ROWS.filter(r => !document.querySelector('input[name="'+r.id+'"]:checked'));
+  document.querySelectorAll("tr.medrow").forEach(el=>el.classList.remove("rowUnanswered"));
+  if (unanswered.length){
+    unanswered.forEach(r=>{
+      const row = document.getElementById("row_"+r.id);
+      if (row) row.classList.add("rowUnanswered");
+    });
+    setStatus(unanswered.length === 1
+      ? "One medication still needs a decision. It is highlighted below."
+      : unanswered.length + " medications still need a decision. They are highlighted below.", "warn");
+    const first = document.getElementById("row_"+unanswered[0].id);
+    if (first){ try { first.scrollIntoView({behavior:"smooth", block:"center"}); } catch(e){} }
+    postHeight();
+    return;
+  }
+
   document.querySelectorAll(".medcost").forEach(e=>e.classList.remove("hide"));
   document.querySelectorAll(".hvcRow").forEach(e=>e.classList.remove("hide"));
 
@@ -1233,6 +1346,14 @@ document.getElementById("submit").onclick=()=>{
       }
 
       hvcContainer.classList.add(status==="green" ? "hvcGreen" : status==="orange" ? "hvcOrange" : "hvcRed");
+      // A text tier, so the judgement does not depend on seeing the row colour.
+      const tagEl = document.getElementById("hvcTag_"+r.id);
+      if (tagEl){
+        tagEl.textContent = status==="green" ? "\u2705 Reasonable choice"
+                          : status==="orange" ? "\u26a0\ufe0f Higher-cost choice"
+                          : "\u274c Low-value choice";
+        tagEl.className = "hvcTag hvcTag-" + status;
+      }
       payload["hvc_"+r.id] = status;
       hvcSummary.push(r.id + ":" + status);
     }
@@ -1275,7 +1396,9 @@ document.getElementById("submit").onclick=()=>{
   postToGoogleSheet(payload);
 };
 
-document.getElementById("reset").onclick=()=>location.reload();
+document.getElementById("reset").onclick=()=>{
+      if (confirm("Reset this case? Your medication decisions will be cleared.")) location.reload();
+    };
 </script>
 
 </body>
@@ -1463,7 +1586,10 @@ const ANALYTICS_TIMEOUT_MS = 4000;
 
 
 // Build / version info (helps auditing in Google Sheets)
-const APP_VERSION = "HVC_SIM_V25_PRO_2026_03_05_5_CASES_INTEGRATED";
+// Bumped whenever the instrument or the rubric changes, so cohorts are separable.
+// 2026-09: added objective knowledge items, anonymous linking code, session
+// resume, redundancy scoring, Case 4 management decisions, scored Wells step.
+const APP_VERSION = "HVC_SIM_V30_2026_09_15_6_CASES_KNOWLEDGE_ITEMS";
 const ANALYTICS_FETCH_MODE = "no-cors"; // "no-cors" is most compatible (e.g., Google Apps Script)
 
 function getFetchMode(){
@@ -1475,6 +1601,83 @@ function getFetchMode(){
   }
 }
 
+/* =========================
+   Participant identity (added 2026-09)
+   Three pieces, in increasing durability:
+     LINK_CODE      - student-generated; survives a new device and a new year.
+     PARTICIPANT_ID - random, persisted in localStorage; links same-browser returns
+                      even if the student mistypes the linking code.
+     SESSION_ID     - one attempt. Persisted for 24h so a refresh or a crash
+                      continues the same attempt instead of orphaning it.
+   STORAGE_OK records whether localStorage actually worked, so an analyst can tell
+   "this student cleared their storage" from "linkage silently broke".
+   ========================= */
+const LS_PARTICIPANT = "hvc_participant_id_v1";
+const LS_SESSION     = "hvc_session_v1";
+const SESSION_TTL_MS = 24*60*60*1000;
+
+let STORAGE_OK = true;
+let LINK_CODE = "";
+let PARTICIPANT_ID = "";
+
+function lsGet(k){ try { return window.localStorage.getItem(k); } catch(e){ STORAGE_OK = false; return null; } }
+function lsSet(k,v){ try { window.localStorage.setItem(k,v); return true; } catch(e){ STORAGE_OK = false; return false; } }
+function lsDel(k){ try { window.localStorage.removeItem(k); } catch(e){ STORAGE_OK = false; } }
+
+function randomId(prefix){
+  if (window.crypto && crypto.randomUUID) return prefix + "_" + crypto.randomUUID();
+  return prefix + "_" + Math.random().toString(16).slice(2) + Date.now().toString(36);
+}
+
+/* Two letters + two digits + two letters -> e.g. "MA07CH".
+   Letters only from the name fields and digits only from the day, so a student who
+   types "Ma." and one who types "ma" land on the same code. */
+function computeLinkCode(){
+  const clean = (id, re) => String(document.getElementById(id)?.value || "")
+    .toUpperCase().replace(re, "").slice(0,2);
+  const mo  = clean("lcMother", /[^A-Z]/g);
+  const cy  = clean("lcCity",   /[^A-Z]/g);
+  let day   = clean("lcDay",    /[^0-9]/g);
+  if (day.length === 1) day = "0" + day;
+  if (mo.length < 2 || cy.length < 2 || !/^[0-9]{2}$/.test(day)) return "";
+  const d = parseInt(day, 10);
+  if (d < 1 || d > 31) return "";
+  return mo + day + cy;
+}
+
+function renderLinkCodePreview(){
+  const el = document.getElementById("linkCodePreview");
+  if (!el) return;
+  const code = computeLinkCode();
+  el.innerHTML = code
+    ? 'Your linking code: <code>' + escapeHtml(code) + '</code>'
+    : 'Your code will appear here.';
+}
+
+function getParticipantId(){
+  let id = lsGet(LS_PARTICIPANT);
+  if (!id){ id = randomId("pt"); lsSet(LS_PARTICIPANT, id); }
+  return id;
+}
+
+/* Reuse an in-flight attempt after a refresh; start a new one after 24h. */
+function resolveSessionId(forceNew){
+  if (!forceNew){
+    try {
+      const raw = lsGet(LS_SESSION);
+      if (raw){
+        const obj = JSON.parse(raw);
+        if (obj && obj.sessionId && obj.startedAt && (Date.now() - obj.startedAt) < SESSION_TTL_MS){
+          return obj.sessionId;
+        }
+      }
+    } catch(e){ /* fall through and mint a new one */ }
+  }
+  const sid = randomId("sess");
+  lsSet(LS_SESSION, JSON.stringify({ sessionId: sid, startedAt: Date.now() }));
+  return sid;
+}
+
 function getContextMeta(){
   const meta = { appVersion: APP_VERSION };
   try { meta.pageUrl = location.href || ""; } catch(e){ meta.pageUrl = ""; }
@@ -1482,6 +1685,10 @@ function getContextMeta(){
   try { meta.ua = navigator.userAgent || ""; } catch(e){ meta.ua = ""; }
   try { meta.lang = navigator.language || ""; } catch(e){ meta.lang = ""; }
   try { meta.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch(e){ meta.timezone = ""; }
+  meta.seq = nextSeq();
+  meta.linkCode = LINK_CODE || "";
+  meta.participantId = PARTICIPANT_ID || "";
+  meta.storageOk = STORAGE_OK ? "yes" : "no";
   return meta;
 }
 
@@ -1522,17 +1729,88 @@ function safeJson(obj){
   try { return JSON.stringify(obj); } catch(e){ return "{}"; }
 }
 
+const LOCAL_ATTEMPTS_MAX = 400;
 function persistLocal(payload){
+  const key = "hvc_simulator_attempts";
   try{
-    const key = "hvc_simulator_attempts";
     const prev = JSON.parse(localStorage.getItem(key) || "[]");
     const copy = Object.assign({ receivedAt: nowIso() }, payload || {});
     prev.push(copy);
-    localStorage.setItem(key, JSON.stringify(prev));
+    // Unbounded growth used to hit the quota on a shared machine and then fail
+    // silently on every subsequent write.
+    localStorage.setItem(key, JSON.stringify(prev.slice(-LOCAL_ATTEMPTS_MAX)));
   }catch(e){
-    // ignore storage failures
+    // Most likely quota. Drop the oldest half and try once more rather than
+    // losing the current event too.
+    try{
+      const prev = JSON.parse(localStorage.getItem(key) || "[]");
+      const kept = prev.slice(Math.floor(prev.length/2));
+      kept.push(Object.assign({ receivedAt: nowIso() }, payload || {}));
+      localStorage.setItem(key, JSON.stringify(kept));
+    }catch(e2){ STORAGE_OK = false; }
   }
 }
+
+/* =========================
+   Delivery (rewritten 2026-09)
+
+   Previously: sendBeacon fire-and-forget, its boolean return discarded, no retry,
+   no sequence numbers. A session that lost three of six submissions was
+   indistinguishable in the data from one where the student did three cases.
+
+   Now: every payload carries a monotonic seq, unsent payloads go to a durable
+   outbox and are retried on the next event, on regaining connectivity, and on
+   page load. Gaps in seq are detectable after the fact.
+   ========================= */
+const LS_OUTBOX = "hvc_outbox_v1";
+const OUTBOX_MAX = 200;
+let SEQ = 0;
+
+function nextSeq(){ SEQ += 1; return SEQ; }
+
+function readOutbox(){
+  try { return JSON.parse(lsGet(LS_OUTBOX) || "[]"); } catch(e){ return []; }
+}
+function writeOutbox(arr){
+  try { lsSet(LS_OUTBOX, JSON.stringify(arr.slice(-OUTBOX_MAX))); } catch(e){}
+}
+function queueForRetry(payload){
+  const box = readOutbox();
+  // Never queue the same event twice.
+  if (payload && payload.eventId && box.some(x => x && x.eventId === payload.eventId)) return;
+  box.push(payload);
+  writeOutbox(box);
+}
+function dropFromOutbox(eventId){
+  if (!eventId) return;
+  writeOutbox(readOutbox().filter(x => !x || x.eventId !== eventId));
+}
+
+/* Returns true only when the browser accepted the payload for delivery. */
+function trySendBeacon(url, payload){
+  try {
+    if (!navigator.sendBeacon) return false;
+    const blob = new Blob([safeJson(payload)], {type:"text/plain;charset=UTF-8"});
+    // The boolean matters: sendBeacon refuses payloads over the queue limit
+    // (~64KB), and module_complete with its full cases array can approach that.
+    return navigator.sendBeacon(url, blob) === true;
+  } catch(e){ return false; }
+}
+
+async function flushOutbox(){
+  const box = readOutbox();
+  if (!box.length || !ANALYTICS_ENDPOINT) return;
+  let url;
+  try { url = buildAnalyticsUrl("collect"); } catch(e){ return; }
+  for (const item of box.slice()){
+    if (!item) { dropFromOutbox(null); continue; }
+    item.retried = (Number(item.retried) || 0) + 1;
+    item.retriedAt = nowIso();
+    if (trySendBeacon(url, item)) dropFromOutbox(item.eventId);
+  }
+}
+
+window.addEventListener("online", ()=>{ flushOutbox(); });
 
 async function postToBackend(payload){
   if (!ANALYTICS_ENDPOINT) return;
@@ -1553,16 +1831,18 @@ async function postToBackend(payload){
 
   const mode = getFetchMode();
 
+  // Anything still queued from a previous failure goes out first, so the
+  // sheet sees events roughly in order.
+  try { await flushOutbox(); } catch(e){}
+
   try{
-    // Prefer sendBeacon when available (more reliable on navigation/close).
-    // sendBeacon typically behaves like a "no-cors" send: you don't read a response, but the request is delivered.
-    try{
-      if (navigator.sendBeacon && mode === "no-cors"){
-        const blob = new Blob([safeJson(fullPayload)], {type:"text/plain;charset=UTF-8"});
-        navigator.sendBeacon(url, blob);
-        return;
-      }
-    }catch(e){}
+    if (navigator.sendBeacon && mode === "no-cors"){
+      if (trySendBeacon(url, fullPayload)) return;
+      // Rejected: too large, or the queue is full. Keep it for the next attempt
+      // rather than losing it silently.
+      queueForRetry(fullPayload);
+      return;
+    }
 
     const ctl = new AbortController();
     const t = setTimeout(()=>ctl.abort(), ANALYTICS_TIMEOUT_MS);
@@ -1581,7 +1861,7 @@ async function postToBackend(payload){
 
     clearTimeout(t);
   }catch(e){
-    // fail quietly; localStorage still has a copy
+    queueForRetry(fullPayload);
   }
 }
 
@@ -1657,6 +1937,15 @@ function normalizeAdminRow(r){
 
   // Backfill from payload if available
   if (payload && typeof payload === "object"){
+    // Bring across EVERY field the payload carries, not just the handful the
+    // admin table displays. Without this the CSV can only ever export the
+    // columns the sheet happened to flatten.
+    Object.keys(payload).forEach(k=>{
+      if (k === "payloadJson") return;
+      const cur = rr[k];
+      if (cur === undefined || cur === null || cur === "") rr[k] = payload[k];
+    });
+
     if (!rr.eventId && payload.eventId) rr.eventId = payload.eventId;
     if (!rr.type && payload.type) rr.type = payload.type;
     if (!rr.moduleMode && payload.moduleMode) rr.moduleMode = payload.moduleMode;
@@ -1786,40 +2075,98 @@ function renderAdminRows(rows){
   }
 }
 
+/* =========================
+   CSV export (rewritten 2026-09)
+
+   The old exporter hard-coded 12 columns and dropped every outcome variable:
+   no survey items, no knowledge scores, no valueCounts, no missed orders, no
+   decisions, no appVersion. The one analysis path the investigator actually had
+   produced a file with a single cost number in it.
+
+   This version emits a stable, documented core set first (so the columns an
+   analyst needs are always in the same place) and then unions in every other
+   scalar key present in the data, so nothing added later silently disappears.
+   ========================= */
+const CSV_CORE_COLUMNS = [
+  // identity + provenance
+  "receivedAt","source","seq","eventId","type","appVersion","moduleMode",
+  "sessionId","participantId","linkCode","learnerId","storageOk","retried",
+  "institution","trainingLevel","trainingLevelRaw","trainingLevelOther",
+  // timing
+  "eventAt","startedAt","submittedAt","completedAt",
+  // case-level outcome
+  "caseId","caseTitle","caseDiagnosis",
+  "totalCost","costType","recommendedCost","deltaCost",
+  "valueHigh","valueIntermediate","valueLow",
+  "orders","orderedAppropriateText","orderedIntermediateText","orderedLowValueText",
+  "missedRecommendedText","missedRecommendedCount","unlistedLowValueCount",
+  "redundantPairsText","redundantPairCount","redundantExtraCost",
+  "decisionsText","decisionHighCount","decisionIntermediateCount","decisionLowCount",
+  "wellsScore","wellsCommitted","wellsScoreCorrect","wellsClassificationCorrect",
+  // knowledge outcome
+  "knowledgeTotal","pretestKnowledgeScore","posttestKnowledgeScore","knowledgeDelta",
+  "pretestKnowledgeDetail","posttestKnowledgeDetail",
+  // attitude scale outcome
+  "attitudeItems","pretestAttitudeMean","posttestAttitudeMean","attitudeMeanDelta",
+  "pretestAttitudeSum","posttestAttitudeSum","attitudeDeltaDetail",
+  // med rec
+  "medrecMonthlyTotal","medrecAnnualTotal","medrecAnonId",
+  // free text last, because it is the column most likely to be long
+  "posttestFeedback"
+];
+
+function csvScalar(v){
+  if (v == null) return "";
+  if (Array.isArray(v)) return toTextList(v, " | ");
+  if (typeof v === "object") return safeJson(v);
+  return String(v);
+}
+
+function flattenForCsv(r){
+  const out = Object.assign({}, r);
+  // valueCounts was a nested object with no flat mirror, so it never reached a column.
+  const vc = r.valueCounts || {};
+  out.valueHigh = vc.high != null ? vc.high : "";
+  out.valueIntermediate = vc.intermediate != null ? vc.intermediate : "";
+  out.valueLow = vc.low != null ? vc.low : "";
+  delete out.valueCounts;
+
+  out.orders = toTextList(
+    Array.isArray(r.orderNames) && r.orderNames.length ? r.orderNames
+    : (Array.isArray(r.orders) && r.orders.length ? r.orders
+    : (r.orders || r.ordersText || r.ordersJson || "")),
+    " | "
+  );
+
+  // Survey item columns (pre_k1..post_p5) come through as-is from surveyFlatFields.
+  return out;
+}
+
 function rowsToCsv(rows){
-  const header = ["receivedAt","source","eventId","type","moduleMode","sessionId","caseId","caseTitle","eventAt","totalCost","costType","orders"];
+  const flat = (rows || []).map(raw => flattenForCsv(normalizeAdminRow(raw)));
+
+  // Core columns first, then anything else that actually appeared, alphabetically.
+  const seen = new Set(CSV_CORE_COLUMNS);
+  const extras = [];
+  const NOISY = new Set(["payloadJson","medrecRaw","cases","ua","referrer","pageUrl"]);
+  flat.forEach(r=>{
+    Object.keys(r).forEach(k=>{
+      if (seen.has(k) || NOISY.has(k)) return;
+      seen.add(k); extras.push(k);
+    });
+  });
+  extras.sort();
+  const header = CSV_CORE_COLUMNS.concat(extras);
+
   const lines = [header];
-
-  for (const raw of (rows || [])){
-    const r = normalizeAdminRow(raw);
-
-    const ordersText = toTextList(
-      Array.isArray(r.orderNames) && r.orderNames.length ? r.orderNames
-      : (Array.isArray(r.orders) && r.orders.length ? r.orders
-      : (r.orders || r.ordersText || r.ordersJson || "")),
-      " | "
-    );
-
-    lines.push([
-      r.receivedAt || "",
-      r.source || "",
-      r.eventId || "",
-      r.type || "",
-      r.moduleMode || "",
-      r.sessionId || "",
-      r.caseId || "",
-      r.caseTitle || "",
-      r.submittedAt || r.completedAt || r.startedAt || "",
-      (r.totalCost != null ? String(r.totalCost) : ""),
-      r.costType || "",
-      ordersText
-    ]);
-  }
+  flat.forEach(r=>{
+    lines.push(header.map(k => csvScalar(r[k])));
+  });
 
   return lines.map(row => row.map(v => {
-    const s = String(v ?? "");
-    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
-    return s;
+    const str = String(v ?? "");
+    if (/[",\n\r]/.test(str)) return '"' + str.replace(/"/g,'""') + '"';
+    return str;
   }).join(",")).join("\n");
 }
 
@@ -1852,7 +2199,9 @@ function validateLaunchFields(){
   const username = (document.getElementById("siteUsernameInput")?.value || "").trim();
   const password = (document.getElementById("sitePasswordInput")?.value || "").trim();
   let msg = "";
+  const code = computeLinkCode();
   if (!info.institution) msg = "Please enter your institution before starting the module.";
+  else if (!code) msg = "Please complete all three parts of the anonymous linking code (two letters, a day between 01 and 31, two letters).";
   else if (!info.trainingLevel) msg = "Please select your level of training before starting the module.";
   else if (info.trainingLevel === "Other" && !info.trainingLevelOther) msg = "Please specify your level of training.";
   else if (!username) msg = "Please enter the username before starting the module.";
@@ -1865,13 +2214,270 @@ function validateLaunchFields(){
   return !msg;
 }
 
+/* =========================
+   Assessment instrument (added 2026-09)
+
+   One definition, rendered into both the pre-test and the post-test, so the two
+   administrations are identical by construction rather than by careful editing.
+
+   KNOWLEDGE_ITEMS  - 8 scored single-best-answer items. Same items, same order,
+                      both times. No feedback at pre-test, so the pre-test does
+                      not teach the post-test.
+   REPEATED_ITEMS   - the 5-item attitude scale, worded identically in both.
+                      This is the entire Likert instrument and the only set a
+                      paired pre/post comparison should use.
+   PROGRAM_ITEMS    - post-test only (satisfaction / program evaluation). These
+                      have no baseline and are not a change measure.
+
+   The vignettes deliberately use different patients from the ones in the cases,
+   so the post-test measures transfer rather than recall of a specific case.
+   ========================= */
+const LIKERT = [
+  {v:"1", label:"Strongly disagree"},
+  {v:"2", label:"Disagree"},
+  {v:"3", label:"Neither agree nor disagree"},
+  {v:"4", label:"Agree"},
+  {v:"5", label:"Strongly agree"}
+];
+
+const KNOWLEDGE_ITEMS = [
+  {
+    id:"k1",
+    stem:"A healthy 20-year-old presents with three days of sore throat, subjective fever, and a prominent dry cough. On exam there is no tonsillar exudate and no anterior cervical lymphadenopathy. Which is the most appropriate next step?",
+    options:[
+      {v:"a", label:"Rapid antigen detection test, and treat if positive"},
+      {v:"b", label:"Throat culture regardless of the rapid test result"},
+      {v:"c", label:"Empiric antibiotics without testing"},
+      {v:"d", label:"Symptomatic management with return precautions, without testing"}
+    ],
+    correct:"d",
+    rationale:"The presence of a cough with no exudate and no adenopathy puts the modified Centor (McIsaac) score at 1. At 0–1, neither rapid antigen testing nor culture nor antibiotics is recommended: the pre-test probability of group A strep is low enough that a positive result more likely reflects carriage than acute infection."
+  },
+  {
+    id:"k2",
+    stem:"A 38-year-old presents with five days of low back pain that began while moving furniture. He has no fever, no history of cancer, no IV drug use, no weight loss, and no bowel or bladder symptoms. His neurologic exam and straight leg raise are normal. What is the most appropriate initial imaging?",
+    options:[
+      {v:"a", label:"No imaging"},
+      {v:"b", label:"Lumbar spine radiographs"},
+      {v:"c", label:"MRI lumbar spine without contrast"},
+      {v:"d", label:"CT lumbar spine"}
+    ],
+    correct:"a",
+    rationale:"Acute low back pain without red flags does not warrant imaging. Early imaging does not improve pain, function, or outcomes, and it frequently reveals disc bulges and degenerative changes that are equally common in people without symptoms — findings that drive further imaging, referral, and occasionally surgery."
+  },
+  {
+    id:"k3",
+    stem:"A 62-year-old is on postoperative day four from a total hip replacement and develops pleuritic chest pain, a heart rate of 108, and an oxygen saturation of 91% on room air. Clinical suspicion for pulmonary embolism is high. What is the role of a D-dimer here?",
+    options:[
+      {v:"a", label:"Obtain a D-dimer first and image only if it is elevated"},
+      {v:"b", label:"Obtain a D-dimer to gauge the severity of the embolism"},
+      {v:"c", label:"Proceed directly to CT pulmonary angiography"},
+      {v:"d", label:"Obtain a D-dimer and a lower extremity ultrasound before imaging"}
+    ],
+    correct:"c",
+    rationale:"D-dimer is a rule-out test, and it only works where pre-test probability is low. With high pre-test probability, a negative D-dimer does not lower the post-test probability enough to stop the workup, so it adds cost and delay without changing the need for definitive imaging. It also does not measure severity."
+  },
+  {
+    id:"k4",
+    stem:"A patient arrives with hypotension and a suspected infectious source. Which best describes the recommended relationship between blood cultures and antibiotics?",
+    options:[
+      {v:"a", label:"Withhold antibiotics until the blood cultures result"},
+      {v:"b", label:"Draw blood cultures first, but do not delay antibiotics to obtain them"},
+      {v:"c", label:"Give antibiotics first and draw cultures the following morning"},
+      {v:"d", label:"Draw cultures only if the patient fails to improve on empiric therapy"}
+    ],
+    correct:"b",
+    rationale:"Cultures drawn after antibiotics lose yield, and that yield is what lets you narrow therapy later. But mortality rises with each hour antibiotics are delayed in septic shock, so the cultures never justify holding the drug. Draw them first when you can do it without delay."
+  },
+  {
+    id:"k5",
+    stem:"A 19-year-old collapses during basketball practice with a brief loss of consciousness and rapid, complete recovery. There was no prodrome. His vital signs and cardiac and neurologic examinations are normal. What is the most appropriate next step?",
+    options:[
+      {v:"a", label:"Reassurance, since syncope in young people is usually vasovagal"},
+      {v:"b", label:"EKG and echocardiogram"},
+      {v:"c", label:"Tilt table testing"},
+      {v:"d", label:"CT head"}
+    ],
+    correct:"b",
+    rationale:"Syncope that happens <em>during</em> exertion, without a prodrome, is the presentation that separates benign vasovagal syncope from a structural or electrical cardiac cause \u2014 hypertrophic cardiomyopathy, an anomalous coronary artery, a channelopathy. The echocardiogram is expensive and it is still the high-value choice, because the result determines whether he can safely return to play. CT head is the reflex order in syncope and almost never explains it in the absence of focal findings or head trauma."
+  },
+  {
+    id:"k6",
+    stem:"A previously healthy adult was admitted with community-acquired pneumonia. He has now been afebrile for 48 hours, is breathing comfortably on room air, and is eating normally. Which total antibiotic duration is most consistent with current guidance?",
+    options:[
+      {v:"a", label:"Five days, given that he has been clinically stable for 48 hours"},
+      {v:"b", label:"Ten days"},
+      {v:"c", label:"Fourteen days"},
+      {v:"d", label:"Continue until the chest X-ray has cleared"}
+    ],
+    correct:"a",
+    rationale:"Five days is enough for community-acquired pneumonia once the patient reaches clinical stability. Longer courses do not reduce relapse or mortality, and they add <em>C. difficile</em>, resistance and drug adverse effects. The last option is the more instructive error: the radiographic infiltrate lags weeks behind clinical recovery, so treating until the film clears means treating a picture rather than a patient."
+  },
+  {
+    id:"k7",
+    stem:"A 30-year-old woman is seen for a routine preoperative visit before an elective knee arthroscopy. She is afebrile and has no dysuria, urgency, frequency, or flank pain. She mentions that her urine has looked cloudy. What is the most appropriate next step?",
+    options:[
+      {v:"a", label:"Urinalysis and urine culture; treat if organisms are found"},
+      {v:"b", label:"Urine culture alone"},
+      {v:"c", label:"Empiric antibiotics for a presumed urinary tract infection"},
+      {v:"d", label:"No urine testing"}
+    ],
+    correct:"d",
+    rationale:"Outside of pregnancy and certain urologic procedures, asymptomatic bacteriuria should be neither screened for nor treated. Cloudy urine is not a symptom. Testing here mostly finds colonization, and treating it exposes the patient to antibiotic harms and resistance with no benefit."
+  },
+  {
+    id:"k8",
+    stem:"Which statement best describes what makes a test high-value?",
+    options:[
+      {v:"a", label:"It is the least expensive test that addresses the question"},
+      {v:"b", label:"It keeps the total number of tests ordered as low as possible"},
+      {v:"c", label:"Its result is likely to change what you do for the patient"},
+      {v:"d", label:"It can be deferred until symptoms have persisted for several days"}
+    ],
+    correct:"c",
+    rationale:"High-value care is not the same as cheap care or minimal care. A $2,000 CT that establishes a diagnosis and changes treatment is high-value; a $20 test whose result changes nothing is not. The question is always whether the result will change management — which is why a sick patient may warrant a broad, expensive workup and a well patient may warrant none at all."
+  }
+];
+
+/* The attitude scale. Five items, worded identically at pre-test and post-test,
+   and nowhere else in the module -- this is the whole Likert instrument, and the
+   only set a paired pre/post comparison should use.
+
+   The earlier version mixed three repeated items with two "prior to this course"
+   items that could not be re-asked, so the pre-test and post-test scales were
+   different lengths and only partly comparable. Each item below maps to something
+   the module actually teaches:
+     r1  general self-efficacy
+     r2  habitual cost consideration
+     r3  the core concept: does the result change management
+     r4  the conversation (Case 4's imaging discussion)
+     r5  price awareness (the chargemaster)  */
+const REPEATED_ITEMS = [
+  { id:"r1", stem:"I feel comfortable applying high-value care principles in clinical decision-making." },
+  { id:"r2", stem:"I routinely consider cost and value when recommending tests or treatments." },
+  { id:"r3", stem:"I can recognize when a test is unlikely to change what I do for a patient." },
+  { id:"r4", stem:"I feel prepared to explain to a patient why a test they have asked for is unlikely to help them." },
+  { id:"r5", stem:"I have a reasonable sense of what common tests and imaging studies cost." }
+];
+
+// Post-test only: program evaluation.
+const PROGRAM_ITEMS = [
+  { id:"p1", stem:"The session improved my understanding of high-value care principles." },
+  { id:"p2", stem:"The feedback provided during the session was clear and helpful." },
+  { id:"p3", stem:"This session increased my awareness of the costs associated with clinical decisions." },
+  { id:"p4", stem:"I would recommend incorporating this high-value care session in medical training." },
+  { id:"p5", stem:"The cases felt relevant to the clinical work I expect to do." }
+];
+
+function renderKnowledgeItems(mountId, prefix){
+  const mount = document.getElementById(mountId);
+  if (!mount) return;
+  const html = KNOWLEDGE_ITEMS.map((item, i) => {
+    const name = prefix + "_" + item.id;
+    const opts = item.options.map(o => `
+        <label class="kn-option">
+          <input type="radio" name="${name}" value="${o.v}">
+          <span>${escapeHtml(o.label)}</span>
+        </label>`).join("");
+    return `
+      <fieldset class="kn-item" id="${name}_block">
+        <legend class="kn-legend">Question ${i+1} of ${KNOWLEDGE_ITEMS.length}</legend>
+        <p class="kn-stem">${escapeHtml(item.stem)}</p>
+        <div class="kn-options">${opts}</div>
+      </fieldset>`;
+  }).join("");
+  mount.innerHTML = `<h4 class="survey-heading">Clinical questions</h4>${html}`;
+}
+
+function renderLikertItems(mountId, prefix, items, heading){
+  const mount = document.getElementById(mountId);
+  if (!mount) return;
+  const rows = items.map(item => {
+    const name = prefix + "_" + item.id;
+    const cells = LIKERT.map(l => `
+        <label class="lk-cell">
+          <input type="radio" name="${name}" value="${l.v}">
+          <span class="lk-num">${l.v}</span>
+          <span class="lk-word">${l.label}</span>
+        </label>`).join("");
+    return `
+      <fieldset class="lk-item" id="${name}_block">
+        <legend class="lk-legend">${escapeHtml(item.stem)}</legend>
+        <div class="lk-scale">${cells}</div>
+      </fieldset>`;
+  }).join("");
+  mount.innerHTML = `<h4 class="survey-heading">${escapeHtml(heading)}</h4>${rows}`;
+}
+
+function buildSurveys(){
+  renderKnowledgeItems("preKnowledgeMount", "pre");
+  renderKnowledgeItems("postKnowledgeMount", "post");
+  renderLikertItems("preAttitudeMount", "pre", REPEATED_ITEMS, "About your own practice");
+  renderLikertItems("postAttitudeMount", "post", REPEATED_ITEMS, "About your own practice");
+  renderLikertItems("postProgramMount", "post", PROGRAM_ITEMS, "About this session");
+}
+
+/* Mean of the 5-item attitude scale. Returns null if any item is unanswered,
+   because a partial mean is not comparable to a complete one. */
+function scoreAttitude(responses, prefix){
+  if (!responses) return null;
+  const vals = REPEATED_ITEMS.map(it => Number(responses[prefix + "_" + it.id]));
+  if (vals.some(v => !(v >= 1 && v <= 5))) return null;
+  const sum = vals.reduce((a,b)=>a+b, 0);
+  return { values: vals, sum, mean: Math.round((sum / vals.length) * 100) / 100 };
+}
+
+function scoreKnowledge(responses, prefix){
+  const detail = KNOWLEDGE_ITEMS.map(item => {
+    const chosen = responses[prefix + "_" + item.id] || "";
+    return { id:item.id, chosen, correct:item.correct, isCorrect: chosen === item.correct };
+  });
+  return { detail, score: detail.filter(d=>d.isCorrect).length, total: KNOWLEDGE_ITEMS.length };
+}
+
+function renderKnowledgeResults(graded){
+  const el = document.getElementById("knowledgeResults");
+  if (!el) return;
+  const items = KNOWLEDGE_ITEMS.map((item, i) => {
+    const d = graded.detail[i];
+    const chosenOpt  = item.options.find(o => o.v === d.chosen);
+    const correctOpt = item.options.find(o => o.v === item.correct);
+    const cls = d.isCorrect ? "good" : "bad";
+    const tag = d.isCorrect ? "✅ Correct" : "❌ Incorrect";
+    const yours = d.isCorrect ? "" :
+      `<div class="kn-yours">You chose: ${escapeHtml(chosenOpt ? chosenOpt.label : "(no answer)")}</div>`;
+    return `
+      <div class="dfb-item ${cls}">
+        <div class="dfb-head"><strong>Question ${i+1}</strong> <span class="pill">${tag}</span></div>
+        <div class="kn-stem small">${escapeHtml(item.stem)}</div>
+        ${yours}
+        <div class="kn-answer">Best answer: ${escapeHtml(correctOpt ? correctOpt.label : "")}</div>
+        <!-- rationale is author-written module content, not learner input, so a
+             little inline markup is allowed here. Everything else stays escaped. -->
+        <div class="small">${item.rationale}</div>
+      </div>`;
+  }).join("");
+  el.innerHTML = `
+    <h3 style="margin-top:0;">Your clinical questions: ${graded.score} of ${graded.total}</h3>
+    <p class="small muted">These are the same eight questions you answered at the start of the module.</p>
+    ${items}`;
+  el.classList.remove("hidden");
+}
+
+function surveyItemIds(prefix){
+  // Knowledge items and the attitude scale are identical in both administrations.
+  // Only the post-test adds the program-evaluation block.
+  const ids = KNOWLEDGE_ITEMS.map(x=>x.id).concat(REPEATED_ITEMS.map(x=>x.id));
+  return prefix === "pre" ? ids : ids.concat(PROGRAM_ITEMS.map(x=>x.id));
+}
+
 function getSurveyResponses(prefix){
   const out = {};
-  const total = prefix === "pre" ? 4 : 5;
-  for (let i=1; i<=total; i++){
-    const checked = document.querySelector(`input[name="${prefix}_q${i}"]:checked`);
-    out[`${prefix}_q${i}`] = checked ? String(checked.value) : "";
-  }
+  surveyItemIds(prefix).forEach(id=>{
+    const name = prefix + "_" + id;
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    out[name] = checked ? String(checked.value) : "";
+  });
   if (prefix === "post"){
     out.post_feedback = (document.getElementById("postFeedbackText")?.value || "").trim();
   }
@@ -1879,17 +2485,80 @@ function getSurveyResponses(prefix){
 }
 
 function validateSurvey(prefix){
-  const total = prefix === "pre" ? 4 : 5;
   const errEl = document.getElementById(prefix === "pre" ? "pretestValidationError" : "posttestValidationError");
-  let ok = true;
-  for (let i=1; i<=total; i++){
-    if (!document.querySelector(`input[name="${prefix}_q${i}"]:checked`)) { ok = false; break; }
-  }
+  const missing = [];
+  surveyItemIds(prefix).forEach(id=>{
+    const name = prefix + "_" + id;
+    if (!document.querySelector(`input[name="${name}"]:checked`)) missing.push(name);
+  });
+
+  // Mark every unanswered block, not just the first, and take the student to it.
+  document.querySelectorAll(".kn-item, .lk-item").forEach(el=>el.classList.remove("survey-unanswered"));
+  missing.forEach(name=>{
+    const block = document.getElementById(name + "_block");
+    if (block) block.classList.add("survey-unanswered");
+  });
+
+  const ok = missing.length === 0;
   if (errEl){
-    errEl.textContent = ok ? "" : "Please answer all required questions before continuing.";
+    errEl.textContent = ok ? "" :
+      (missing.length === 1
+        ? "One question is still unanswered. It is highlighted below."
+        : missing.length + " questions are still unanswered. They are highlighted below.");
     errEl.classList.toggle("hidden", ok);
   }
+  if (!ok){
+    const first = document.getElementById(missing[0] + "_block");
+    if (first) { try { first.scrollIntoView({behavior:"smooth", block:"center"}); } catch(e){} }
+  }
   return ok;
+}
+
+/* Flattened survey fields for the sheet: one column per item, plus the scored
+   knowledge totals and a per-item correctness string. Built from the stored
+   response objects so every event type produces the same column set. */
+function surveyFlatFields(){
+  const out = {};
+  const pre  = PRETEST_RESPONSES  || {};
+  const post = POSTTEST_RESPONSES || {};
+
+  KNOWLEDGE_ITEMS.forEach(it=>{
+    out["pre_"  + it.id] = pre["pre_"  + it.id] || "";
+    out["post_" + it.id] = post["post_" + it.id] || "";
+  });
+  REPEATED_ITEMS.forEach(it=>{
+    out["pre_"  + it.id] = pre["pre_"  + it.id] || "";
+    out["post_" + it.id] = post["post_" + it.id] || "";
+  });
+  PROGRAM_ITEMS.forEach(it=>{ out["post_" + it.id] = post["post_" + it.id] || ""; });
+
+  const preG  = PRETEST_RESPONSES  ? scoreKnowledge(pre,  "pre")  : null;
+  const postG = POSTTEST_RESPONSES ? scoreKnowledge(post, "post") : null;
+  out.knowledgeTotal        = KNOWLEDGE_ITEMS.length;
+  out.pretestKnowledgeScore  = preG  ? preG.score  : "";
+  out.posttestKnowledgeScore = postG ? postG.score : "";
+  out.knowledgeDelta = (preG && postG) ? (postG.score - preG.score) : "";
+  out.pretestKnowledgeDetail  = preG  ? preG.detail.map(d=>d.id + ":" + (d.chosen || "-") + (d.isCorrect ? "+" : "-")).join(" ") : "";
+  out.posttestKnowledgeDetail = postG ? postG.detail.map(d=>d.id + ":" + (d.chosen || "-") + (d.isCorrect ? "+" : "-")).join(" ") : "";
+  const preA  = scoreAttitude(pre,  "pre");
+  const postA = scoreAttitude(post, "post");
+  out.attitudeItems = REPEATED_ITEMS.length;
+  out.pretestAttitudeMean  = preA  ? preA.mean : "";
+  out.posttestAttitudeMean = postA ? postA.mean : "";
+  out.pretestAttitudeSum   = preA  ? preA.sum  : "";
+  out.posttestAttitudeSum  = postA ? postA.sum  : "";
+  out.attitudeMeanDelta = (preA && postA)
+    ? Math.round((postA.mean - preA.mean) * 100) / 100 : "";
+  // Per-item change, so a single column shows which stems moved.
+  out.attitudeDeltaDetail = (preA && postA)
+    ? REPEATED_ITEMS.map((it,i)=>{
+        const d = postA.values[i] - preA.values[i];
+        return it.id + ":" + (d > 0 ? "+" : "") + d;
+      }).join(" ")
+    : "";
+
+  out.posttestFeedback = post.post_feedback || "";
+  return out;
 }
 
 function logSurveySubmission(kind, responses){
@@ -1900,25 +2569,32 @@ function logSurveySubmission(kind, responses){
     eventId: newEventId(kind),
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
-    learnerId: null,
+    learnerId: LINK_CODE || null,
     institution: PARTICIPANT_INFO.institution || "",
     trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
     trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
     trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
     submittedAt: nowIso(),
-    pretestQ1: prefix === "pre" ? (responses.pre_q1 || "") : (PRETEST_RESPONSES?.pre_q1 || ""),
-    pretestQ2: prefix === "pre" ? (responses.pre_q2 || "") : (PRETEST_RESPONSES?.pre_q2 || ""),
-    pretestQ3: prefix === "pre" ? (responses.pre_q3 || "") : (PRETEST_RESPONSES?.pre_q3 || ""),
-    pretestQ4: prefix === "pre" ? (responses.pre_q4 || "") : (PRETEST_RESPONSES?.pre_q4 || ""),
-    posttestQ1: prefix === "post" ? (responses.post_q1 || "") : (POSTTEST_RESPONSES?.post_q1 || ""),
-    posttestQ2: prefix === "post" ? (responses.post_q2 || "") : (POSTTEST_RESPONSES?.post_q2 || ""),
-    posttestQ3: prefix === "post" ? (responses.post_q3 || "") : (POSTTEST_RESPONSES?.post_q3 || ""),
-    posttestQ4: prefix === "post" ? (responses.post_q4 || "") : (POSTTEST_RESPONSES?.post_q4 || ""),
-    posttestQ5: prefix === "post" ? (responses.post_q5 || "") : (POSTTEST_RESPONSES?.post_q5 || ""),
-    posttestFeedback: prefix === "post" ? (responses.post_feedback || "") : (POSTTEST_RESPONSES?.post_feedback || "")
-  }, getContextMeta());
+  }, surveyFlatFields(), getContextMeta());
   CASE_LOG.push(payload);
   persistLocal(payload);
+  postToBackend(payload);
+}
+
+/* Nothing was logged until a student clicked Start, so students who opened the
+   module and never began were invisible and there was no denominator. */
+function logLandingView(){
+  if (!ANALYTICS_ENDPOINT) return;
+  if (lsGet("hvc_landing_logged_v1")) return;   // once per browser, not per reload
+  lsSet("hvc_landing_logged_v1", nowIso());
+  const payload = Object.assign({
+    eventId: newEventId("landing_view", ""),
+    type: "landing_view",
+    moduleMode: "",
+    sessionId: "",
+    learnerId: null,
+    eventAt: nowIso()
+  }, getContextMeta());
   postToBackend(payload);
 }
 
@@ -1929,13 +2605,13 @@ function logModuleStart(){
     eventId: newEventId("module_start"),
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
-    learnerId: null,
+    learnerId: LINK_CODE || null,
     institution: PARTICIPANT_INFO.institution || "",
     trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
     trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
     trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
     startedAt: nowIso()
-  }, getContextMeta());
+  }, surveyFlatFields(), getContextMeta());
 
   CASE_LOG.push(payload);
   persistLocal(payload);
@@ -1970,21 +2646,11 @@ function logCaseSubmission(caseId, selectedIds, totalCost, extra){
     eventId: newEventId("case_submission", caseId),
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
-    learnerId: null,
+    learnerId: LINK_CODE || null,
     institution: PARTICIPANT_INFO.institution || "",
     trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
     trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
     trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
-    pretestQ1: PRETEST_RESPONSES?.pre_q1 || "",
-    pretestQ2: PRETEST_RESPONSES?.pre_q2 || "",
-    pretestQ3: PRETEST_RESPONSES?.pre_q3 || "",
-    pretestQ4: PRETEST_RESPONSES?.pre_q4 || "",
-    posttestQ1: POSTTEST_RESPONSES?.post_q1 || "",
-    posttestQ2: POSTTEST_RESPONSES?.post_q2 || "",
-    posttestQ3: POSTTEST_RESPONSES?.post_q3 || "",
-    posttestQ4: POSTTEST_RESPONSES?.post_q4 || "",
-    posttestQ5: POSTTEST_RESPONSES?.post_q5 || "",
-    posttestFeedback: POSTTEST_RESPONSES?.post_feedback || "",
     caseId: caseId,
     caseTitle: cfg ? cfg.title : ("Case " + caseId),
     caseDiagnosis: cfg ? cfg.diagnosis : "",
@@ -1993,7 +2659,7 @@ function logCaseSubmission(caseId, selectedIds, totalCost, extra){
     orderNames: names,
     totalCost: Number(totalCost || 0),
     costType: "diagnostic"
-  }, mergedExtra, getContextMeta());
+  }, mergedExtra, surveyFlatFields(), getContextMeta());
 
   CASE_LOG.push(payload);
   persistLocal(payload);
@@ -2034,21 +2700,11 @@ function logMedRecSubmission(medPayload){
     eventId: newEventId("case_submission", 5),
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
-    learnerId: null,
+    learnerId: LINK_CODE || null,
     institution: PARTICIPANT_INFO.institution || "",
     trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
     trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
     trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
-    pretestQ1: PRETEST_RESPONSES?.pre_q1 || "",
-    pretestQ2: PRETEST_RESPONSES?.pre_q2 || "",
-    pretestQ3: PRETEST_RESPONSES?.pre_q3 || "",
-    pretestQ4: PRETEST_RESPONSES?.pre_q4 || "",
-    posttestQ1: POSTTEST_RESPONSES?.post_q1 || "",
-    posttestQ2: POSTTEST_RESPONSES?.post_q2 || "",
-    posttestQ3: POSTTEST_RESPONSES?.post_q3 || "",
-    posttestQ4: POSTTEST_RESPONSES?.post_q4 || "",
-    posttestQ5: POSTTEST_RESPONSES?.post_q5 || "",
-    posttestFeedback: POSTTEST_RESPONSES?.post_feedback || "",
     caseId: 5,
     caseTitle: (cfg && cfg.title) ? cfg.title : "Case 5 – Medication reconciliation",
     caseDiagnosis: (cfg && cfg.diagnosis) ? cfg.diagnosis : "Medication reconciliation",
@@ -2086,17 +2742,51 @@ function logMedRecSubmission(medPayload){
       .map(s=>s.trim())
       .filter(Boolean),
     medrecRaw: medPayload
-  }, getContextMeta());
+  }, surveyFlatFields(), getContextMeta());
 
   CASE_LOG.push(payload);
   persistLocal(payload);
   postToBackend(payload);
 }
 
+function logCase5Skipped(){
+  if (MODULE_MODE !== "teaching") return;
+  const payload = Object.assign({
+    eventId: newEventId("case5_skipped", 5),
+    type: "case5_skipped",
+    moduleMode: MODULE_MODE,
+    sessionId: SESSION_ID,
+    learnerId: LINK_CODE || null,
+    institution: PARTICIPANT_INFO.institution || "",
+    trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
+    caseId: 5,
+    caseTitle: "Case 5 \u2013 Medication reconciliation",
+    reason: "iframe_failed_to_load",
+    eventAt: nowIso()
+  }, surveyFlatFields(), getContextMeta());
+  CASE_LOG.push(payload);
+  postToBackend(payload);
+}
+
 function logModuleComplete(){
   if (MODULE_MODE === "fun") return;
 
-  const caseSubs = CASE_LOG.filter(x => x.type === "case_submission");
+  const allCaseSubs = CASE_LOG.filter(x => x.type === "case_submission");
+
+  // A case can be resubmitted after the answer has been revealed, and every
+  // resubmission emits its own event. Summing them all double-counted the cost
+  // of any case the learner revisited, so the summary keeps the LAST submission
+  // per case and records how many attempts there were.
+  const lastByCase = new Map();
+  const attemptsByCase = new Map();
+  allCaseSubs.forEach(x=>{
+    const k = String(x.caseId);
+    lastByCase.set(k, x);
+    attemptsByCase.set(k, (attemptsByCase.get(k) || 0) + 1);
+  });
+  const caseSubs = Array.from(lastByCase.values())
+    .sort((a,b)=>Number(a.caseId||0) - Number(b.caseId||0));
+
   const sumCost = caseSubs.reduce((s,x)=>s+Number(x.totalCost||0), 0);
 
   // Note: totalCost is an "encounter diagnostic cost" for Cases 1–4,
@@ -2112,23 +2802,18 @@ function logModuleComplete(){
     eventId: newEventId("module_complete"),
     moduleMode: MODULE_MODE,
     sessionId: SESSION_ID,
-    learnerId: null,
+    learnerId: LINK_CODE || null,
     institution: PARTICIPANT_INFO.institution || "",
     trainingLevel: getResolvedTrainingLevel(PARTICIPANT_INFO),
     trainingLevelRaw: PARTICIPANT_INFO.trainingLevel || "",
     trainingLevelOther: PARTICIPANT_INFO.trainingLevelOther || "",
-    pretestQ1: PRETEST_RESPONSES?.pre_q1 || "",
-    pretestQ2: PRETEST_RESPONSES?.pre_q2 || "",
-    pretestQ3: PRETEST_RESPONSES?.pre_q3 || "",
-    pretestQ4: PRETEST_RESPONSES?.pre_q4 || "",
-    posttestQ1: POSTTEST_RESPONSES?.post_q1 || "",
-    posttestQ2: POSTTEST_RESPONSES?.post_q2 || "",
-    posttestQ3: POSTTEST_RESPONSES?.post_q3 || "",
-    posttestQ4: POSTTEST_RESPONSES?.post_q4 || "",
-    posttestQ5: POSTTEST_RESPONSES?.post_q5 || "",
-    posttestFeedback: POSTTEST_RESPONSES?.post_feedback || "",
     completedAt: nowIso(),
     totalCostAllCases: Number(sumCost || 0),
+    caseSubmissionEvents: allCaseSubs.length,
+    casesAttempted: caseSubs.length,
+    resubmittedCases: Array.from(attemptsByCase.entries())
+      .filter(([,n]) => n > 1)
+      .map(([k,n]) => "case" + k + ":" + n + "x").join(" | "),
     diagnosticTotalCost: Number(diagnosticTotal || 0),
     medrecSelectedMonthlyTotalLatest: medLatest ? Number(medLatest.totalCost || 0) : 0,
     medrecMonthlyChangeLatest: (medLatest && medLatest.medrecMonthlyTotals) ? Number(medLatest.medrecMonthlyTotals.change || 0) : 0,
@@ -2144,9 +2829,17 @@ function logModuleComplete(){
       recommendedCost: x.recommendedCost,
       deltaCost: x.deltaCost,
       valueCounts: x.valueCounts,
+      missedRecommendedText: x.missedRecommendedText || "",
+      missedRecommendedCount: x.missedRecommendedCount,
+      decisionsText: x.decisionsText || "",
+      decisionHighCount: x.decisionHighCount,
+      decisionIntermediateCount: x.decisionIntermediateCount,
+      decisionLowCount: x.decisionLowCount,
+      redundantPairCount: x.redundantPairCount,
+      attempts: attemptsByCase.get(String(x.caseId)) || 1,
       submittedAt: x.submittedAt
     }))
-  }, getContextMeta());
+  }, surveyFlatFields(), getContextMeta());
 
   persistLocal(payload);
   postToBackend(payload);
@@ -2505,6 +3198,7 @@ lowValueReasons: new Map([
   highValueReasons: new Map([
     ["CBC","High Value – Concern for bacterial pneumonia/sepsis; helps assess leukocytosis and severity."],
     ["BMP","High Value – Sepsis workup includes renal/electrolyte evaluation; helps guide fluids/med dosing."],
+    ["CMP","High Value – Acceptable alternative to BMP; adds hepatic function, which is worth having if you are worried about organ dysfunction."],
     ["CXR","High Value – Worsening cough + focal crackles: imaging is appropriate to evaluate pneumonia."],
     ["LACTATE","High Value – Assesses for tissue hypoperfusion in suspected sepsis and guides resuscitation."],
     ["BLOOD_CX","High Value – In suspected sepsis, blood cultures are indicated prior to antibiotics when feasible."],
@@ -2522,7 +3216,6 @@ lowValueReasons: new Map([
   ["PDF_4631250","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
   ["PDF_4631270","Low Value – CT chest exposes a young patient to unnecessary radiation; start with CXR to evaluate pneumonia."],
   ["CTPA","Low Value – CTA chest is unnecessary for this presentation; prioritize pneumonia/sepsis evaluation with CXR and cultures."],
-  ["RPP","Low Value – In an otherwise healthy, non-immunocompromised patient with suspected bacterial pneumonia/sepsis, RPP is unlikely to change management; focus on treatment and source evaluation."],
   ["NO_TESTING","Low Value – Ill-appearing with sepsis physiology; diagnostic evaluation is indicated."],
   ["PDF_4569819","Low Value – In a patient presenting with sepsis, the decision to start antibiotics should be based on clinical evaluation alone. Procalcitonin may help later with de-escalation or discontinuation, but it is not useful for the initial presentation."]
 ]),
@@ -2658,6 +3351,36 @@ lowValueReasons: new Map([
       ["NO_TESTING","For this presentation, no diagnostic testing is the high-value choice. With a short duration of pain, no red flags and a normal neurologic exam, imaging does not change management and risks incidental findings that drive further testing."]
     ]),
     recommendedIds: ["NO_TESTING"],
+    decisions: [
+      { id:"analgesia", question:"Initial pharmacologic management", hint:"",
+        options:[
+          {id:"nsaid", label:"A scheduled NSAID for a short course, with acetaminophen as needed", tier:"high", why:"NSAIDs are first-line for acute low back pain and outperform placebo for pain and function. Scheduling rather than dosing as-needed keeps him ahead of the pain, which is what lets him stay active."},
+          {id:"relax", label:"A skeletal muscle relaxant alone", tier:"intermediate", why:"Cyclobenzaprine and similar agents give modest short-term benefit, much of it sedation. Reasonable as a night-time adjunct, weaker as the only thing you give him."},
+          {id:"opioid", label:"Oxycodone as needed for pain", tier:"low", why:"Opioids are no more effective than NSAIDs for acute low back pain, and a first prescription in an opioid-naive patient carries a measurable risk of long-term use. Guidelines recommend against them as first-line here."},
+          {id:"steroid", label:"A short oral corticosteroid taper", tier:"low", why:"Systemic steroids have not shown benefit in acute low back pain without radiculopathy, and even with radiculopathy the effect on pain is minimal. He has a normal neurologic exam and a negative straight leg raise."}
+        ]},
+      { id:"activity", question:"Activity advice", hint:"",
+        options:[
+          {id:"active", label:"Stay active and continue normal activity as tolerated", tier:"high", why:"Staying active produces faster recovery and less disability than rest. This is one of the better-supported recommendations in all of musculoskeletal medicine, and it costs nothing."},
+          {id:"pt", label:"Refer to physical therapy today", tier:"intermediate", why:"Not harmful, and helpful for some patients. Most acute strains resolve within weeks regardless, so early referral mostly shifts cost forward. Physical therapy is higher-yield if he is still symptomatic at four to six weeks."},
+          {id:"bedrest", label:"Strict bed rest for three to five days", tier:"low", why:"Bed rest prolongs recovery and increases disability compared with staying active. It is one of the clearest examples of an intervention that feels protective and is not."},
+          {id:"untilwell", label:"Bed rest until he is pain-free, then a gradual return", tier:"low", why:"Same problem as above, with a longer exposure. Waiting for the pain to disappear before moving delays the thing that makes the pain go away."}
+        ]},
+      { id:"imagingtalk", question:"He asks for an X-ray \u201cjust to be safe.\u201d What do you tell him?", hint:"",
+        options:[
+          {id:"explain", label:"Explain that imaging this early does not change the treatment, and often shows age-related changes that lead to more testing", tier:"high", why:"This is the part of high-value care that actually happens in the room. Patients who are told why generally accept it; the explanation takes about ninety seconds and is the difference between a shared decision and a refusal."},
+          {id:"order", label:"Order the X-ray, since it is inexpensive and it preserves the relationship", tier:"low", why:"A plain film is cheap on its own, but it is rarely the end of the sequence. A degenerative finding on an X-ray in a 45-year-old invites an MRI, and the MRI invites a referral. The relationship is better served by an explanation than by a test you do not believe in."},
+          {id:"unavailable", label:"Tell him imaging is not available for this indication", tier:"low", why:"It is not true, and it swaps a clinical explanation for a bureaucratic one. Patients who are stonewalled tend to seek the imaging somewhere else, usually somewhere with less context about them."},
+          {id:"defer", label:"Defer the discussion and tell him to come back if he is not better", tier:"intermediate", why:"Better than ordering the film, but it leaves his question unanswered and makes it likely he asks again, or asks someone else."}
+        ]},
+      { id:"followup", question:"Return precautions and follow-up", hint:"",
+        options:[
+          {id:"redflags", label:"Specific red-flag precautions, and follow-up if he is not improving by four to six weeks", tier:"high", why:"Naming what should bring him back \u2014 new weakness, numbness in the groin, loss of bowel or bladder control, fever \u2014 is what makes it safe not to image today. The four-to-six-week mark is when persistent symptoms start to change the calculus."},
+          {id:"oneweek", label:"Routine follow-up in one week regardless of how he is doing", tier:"intermediate", why:"Reasonable, and some patients want it, but most will be improving by then and the visit adds cost without adding much. Return precautions do more work than a scheduled recheck."},
+          {id:"mri2wk", label:"Tell him you will order an MRI if any pain persists past two weeks", tier:"low", why:"Two weeks is well inside the normal recovery window for a lumbar strain. Committing to imaging on that timeline guarantees you will image a patient who was going to get better anyway."},
+          {id:"none", label:"No follow-up needed", tier:"low", why:"The decision not to image rests on the absence of red flags today. Without telling him what to watch for, that decision has no safety net."}
+        ]},
+    ],
     pathwayHtml: `
 <strong>Answer</strong>
 <p class="small">
@@ -2689,6 +3412,22 @@ lowValueReasons: new Map([
 <ul class="small">
   <li><strong>Early imaging (CT/MRI) without red flags</strong>: increases incidental findings and costs without improving outcomes.</li>
   <li><strong>Broad lab panels by default</strong>: low yield when there are no systemic symptoms.</li>
+</ul>
+
+<strong>The visit is not empty</strong>
+<p class="small">
+  Ordering nothing is the easy half of this case. The harder half is what you actually do, because
+  &ldquo;no imaging&rdquo; is only defensible if the rest of the visit is done well.
+</p>
+<ul class="small">
+  <li><strong>Scheduled NSAID</strong> with acetaminophen as needed. Opioids are not more effective for acute
+      low back pain, and the first prescription is where long-term use starts.</li>
+  <li><strong>Stay active.</strong> Bed rest prolongs recovery. This is one of the better-supported
+      recommendations in musculoskeletal medicine and it costs nothing.</li>
+  <li><strong>Answer the imaging question out loud.</strong> Ninety seconds of explanation is the difference
+      between a shared decision and a patient who gets the scan somewhere else.</li>
+  <li><strong>Name the red flags.</strong> New weakness, saddle numbness, loss of bowel or bladder control,
+      fever. This is the safety net that makes not imaging today reasonable, and it is the step most often skipped.</li>
 </ul>
 
 <strong>Clinical pearl</strong>
@@ -2832,6 +3571,7 @@ lowValueReasons: new Map([
         Your initial labs have returned. He remains <strong>hypotensive with a MAP of 62</strong>, tachycardic and
         febrile, and is drowsy but rousable. Nothing has been started yet beyond peripheral access.
       </p>
+      <p class="small muted hidden" id="orderedResultsNote"></p>
       <div class="fs-wrap">
         <table class="fs">
           <thead>
@@ -2847,34 +3587,34 @@ lowValueReasons: new Map([
             <tr><td class="fs-lab">SpO&#8322; <span class="fs-unit">%</span></td><td class="fs-val">96</td></tr>
             <tr><td class="fs-lab">Weight <span class="fs-unit">kg</span></td><td class="fs-val">92</td></tr>
 
-            <tr class="fs-sect"><td colspan="2">Complete blood count</td></tr>
-            <tr><td class="fs-lab">WBC <span class="fs-unit">K/&micro;L</span></td><td class="fs-val"><span class="fs-hi">18.4</span></td></tr>
-            <tr><td class="fs-lab">Neutrophils <span class="fs-unit">%</span></td><td class="fs-val"><span class="fs-hi">86</span></td></tr>
-            <tr><td class="fs-lab">Haemoglobin <span class="fs-unit">g/dL</span></td><td class="fs-val">13.8</td></tr>
-            <tr><td class="fs-lab">Platelets <span class="fs-unit">K/&micro;L</span></td><td class="fs-val">265</td></tr>
+            <tr data-req="CBC" class="fs-sect"><td colspan="2">Complete blood count</td></tr>
+            <tr data-req="CBC"><td class="fs-lab">WBC <span class="fs-unit">K/&micro;L</span></td><td class="fs-val"><span class="fs-hi">18.4</span></td></tr>
+            <tr data-req="CBC"><td class="fs-lab">Neutrophils <span class="fs-unit">%</span></td><td class="fs-val"><span class="fs-hi">86</span></td></tr>
+            <tr data-req="CBC"><td class="fs-lab">Haemoglobin <span class="fs-unit">g/dL</span></td><td class="fs-val">13.8</td></tr>
+            <tr data-req="CBC"><td class="fs-lab">Platelets <span class="fs-unit">K/&micro;L</span></td><td class="fs-val">265</td></tr>
 
-            <tr class="fs-sect"><td colspan="2">Chemistry</td></tr>
-            <tr><td class="fs-lab">Sodium <span class="fs-unit">mmol/L</span></td><td class="fs-val">136</td></tr>
-            <tr><td class="fs-lab">Potassium <span class="fs-unit">mmol/L</span></td><td class="fs-val">4.2</td></tr>
-            <tr><td class="fs-lab">Chloride <span class="fs-unit">mmol/L</span></td><td class="fs-val">101</td></tr>
-            <tr><td class="fs-lab">Bicarbonate <span class="fs-unit">mmol/L</span></td><td class="fs-val">22</td></tr>
-            <tr><td class="fs-lab">BUN <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">30</span></td></tr>
-            <tr><td class="fs-lab">Creatinine <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">1.25</span></td></tr>
-            <tr><td class="fs-lab">Glucose <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">358</span></td></tr>
-            <tr><td class="fs-lab">Albumin <span class="fs-unit">g/dL</span></td><td class="fs-val">3.6</td></tr>
-            <tr><td class="fs-lab">AST / ALT <span class="fs-unit">U/L</span></td><td class="fs-val">24 / 28</td></tr>
-            <tr><td class="fs-lab">Total bilirubin <span class="fs-unit">mg/dL</span></td><td class="fs-val">0.8</td></tr>
+            <tr data-req="BMP|CMP" class="fs-sect"><td colspan="2">Chemistry</td></tr>
+            <tr data-req="BMP|CMP"><td class="fs-lab">Sodium <span class="fs-unit">mmol/L</span></td><td class="fs-val">136</td></tr>
+            <tr data-req="BMP|CMP"><td class="fs-lab">Potassium <span class="fs-unit">mmol/L</span></td><td class="fs-val">4.2</td></tr>
+            <tr data-req="BMP|CMP"><td class="fs-lab">Chloride <span class="fs-unit">mmol/L</span></td><td class="fs-val">101</td></tr>
+            <tr data-req="BMP|CMP"><td class="fs-lab">Bicarbonate <span class="fs-unit">mmol/L</span></td><td class="fs-val">22</td></tr>
+            <tr data-req="BMP|CMP"><td class="fs-lab">BUN <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">30</span></td></tr>
+            <tr data-req="BMP|CMP"><td class="fs-lab">Creatinine <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">1.25</span></td></tr>
+            <tr data-req="BMP|CMP|GLUCOSE"><td class="fs-lab">Glucose <span class="fs-unit">mg/dL</span></td><td class="fs-val"><span class="fs-hi">358</span></td></tr>
+            <tr data-req="CMP|ALBUMIN"><td class="fs-lab">Albumin <span class="fs-unit">g/dL</span></td><td class="fs-val">3.6</td></tr>
+            <tr data-req="CMP"><td class="fs-lab">AST / ALT <span class="fs-unit">U/L</span></td><td class="fs-val">24 / 28</td></tr>
+            <tr data-req="CMP"><td class="fs-lab">Total bilirubin <span class="fs-unit">mg/dL</span></td><td class="fs-val">0.8</td></tr>
 
             <tr class="fs-sect"><td colspan="2">Perfusion &amp; coagulation</td></tr>
-            <tr><td class="fs-lab">Lactate <span class="fs-unit">mg/dL (mmol/L)</span></td><td class="fs-val"><span class="fs-hi">26 (2.9)</span></td></tr>
-            <tr><td class="fs-lab">INR</td><td class="fs-val">1.1</td></tr>
-            <tr><td class="fs-lab">PTT <span class="fs-unit">sec</span></td><td class="fs-val">30</td></tr>
+            <tr data-req="LACTATE"><td class="fs-lab">Lactate <span class="fs-unit">mg/dL (mmol/L)</span></td><td class="fs-val"><span class="fs-hi">26 (2.9)</span></td></tr>
+            <tr data-req="PT_INR"><td class="fs-lab">INR</td><td class="fs-val">1.1</td></tr>
+            <tr data-req="PTT"><td class="fs-lab">PTT <span class="fs-unit">sec</span></td><td class="fs-val">30</td></tr>
 
             <tr class="fs-sect"><td colspan="2">Microbiology &amp; imaging</td></tr>
-            <tr><td class="fs-lab">Blood cultures</td><td class="fs-val">Drawn &middot; pending</td></tr>
-            <tr><td class="fs-lab">Deep tissue culture</td><td class="fs-val">Drawn &middot; pending</td></tr>
-            <tr><td class="fs-lab">Foot X-ray</td><td class="fs-val">Soft tissue swelling; no gas, no bony destruction</td></tr>
-            <tr><td class="fs-lab">Chest X-ray</td><td class="fs-val">No infiltrate, no effusion</td></tr>
+            <tr data-req="BLOOD_CX"><td class="fs-lab">Blood cultures</td><td class="fs-val">Drawn &middot; pending</td></tr>
+            <tr data-req="PDF_4569728"><td class="fs-lab">Deep tissue culture</td><td class="fs-val">Drawn &middot; pending</td></tr>
+            <tr data-req="XR_FOOT"><td class="fs-lab">Foot X-ray</td><td class="fs-val">Soft tissue swelling; no gas, no bony destruction</td></tr>
+            <tr data-req="CXR"><td class="fs-lab">Chest X-ray</td><td class="fs-val">No infiltrate, no effusion</td></tr>
           </tbody>
         </table>
         <div class="fs-note">Values flagged in red are outside the reference range.</div>
@@ -3037,32 +3777,14 @@ lowValueReasons: new Map([
         </div>
       </div>
     `,
-    highValueIds: new Set(["NO_TESTING"]),
-    highValueReasons: new Map([
-      ["NO_TESTING","High Value – He is getting better and no test you order today changes that. Today is about what you stop."]
-    ]),
-    intermediateIds: new Map([
-      ["PDF_4567076","Intermediate – With clusters on the Gram stain, a negative MRSA nasal screen has a high negative predictive value and could let you stop vancomycin a day earlier. Cheap, and it can genuinely change something."]
-    ]),
-    lowValueReasons: new Map([
-      ["LACTATE","Low Value – It has normalised and he is no longer septic. Rechecking it answers a question you have already answered."],
-      ["CBC","Low Value – He is improving. Daily phlebotomy on a stable patient causes iatrogenic anaemia and generates incidental findings that lead to more testing."],
-      ["BMP","Low Value – Renal function is normal and stable. Daily chemistry on an improving patient is reflex, not reasoning."],
-      ["CMP","Low Value – As above, and broader still."],
-      ["CRP","Low Value – Trending an inflammatory marker daily does not outpace the bedside examination in a patient whose erythema you can see receding."],
-      ["ESR","Low Value – Slow to change and not guiding any decision here."],
-      ["BLOOD_CX","Low Value – No growth at 24 hours in a patient who is improving. Repeat cultures find nothing and prolong the stay."],
-      ["MRI_LE_NONJOINT","Low Value – The consultant who physically examined the wound documented no indication. Ordering $5,470 of imaging to overrule that is the most expensive way to disregard a specialist."],
-      ["MRI_LE_NONJOINT_WWO","Low Value – As above, with contrast added."],
-      ["BONE_BX","Low Value – The gold standard for a diagnosis nobody is making."],
-      ["PDF_4569819","Low Value – Procalcitonin has a role in guiding antibiotic discontinuation, but here the plan is already governed by cultures that return tomorrow."],
-      ["XR_FOOT","Low Value – Already obtained on admission and unchanged clinically. Repeating it adds nothing."]
-    ]),
+    // Orders are disabled in this stage (ordersDisabled: true), so no order-level
+    // grading can render here. The rubric lives in the decisions and pathwayHtml below.
+    highValueIds: new Set([]),
+    intermediateIds: new Map([]),
+    lowValueReasons: new Map([]),
     missedSeverity: "neutral",
-    missedReasons: new Map([
-      ["NO_TESTING","Nothing further needs testing today. He is improving, and the decisions that matter are about what you stop and what you start."]
-    ]),
-    recommendedIds: ["NO_TESTING"],
+    missedReasons: new Map([]),
+    recommendedIds: [],
     decisions: [
       { id:"tele", question:"Telemetry", hint:"",
         options:[
@@ -3173,33 +3895,14 @@ lowValueReasons: new Map([
         Susceptibilities are back, so the antibiotics can finally move &mdash; and discharge planning starts today.
       </div>
     `,
-    highValueIds: new Set(["NO_TESTING"]),
-    highValueReasons: new Map([
-      ["NO_TESTING","High Value – The culture is final and he has clinically resolved. What is left is narrowing his antibiotics and getting him out."]
-    ]),
-    intermediateIds: new Map([
-      ["PDF_4569806","Intermediate – If an A1c was not sent on admission, it is worth having before discharge: his home regimen was already failing at 9.8%, and the discharge plan should reflect that."]
-    ]),
-    lowValueReasons: new Map([
-      ["BLOOD_CX","Low Value – No growth at 48 hours in a patient who has clinically resolved. Repeat cultures here prolong the stay and find nothing."],
-      ["CBC","Low Value – He is ready for discharge planning. A repeat count will not change the antibiotic, the duration or the disposition."],
-      ["BMP","Low Value – Renal function has been stable throughout."],
-      ["CMP","Low Value – As above, and broader."],
-      ["CRP","Low Value – Following an inflammatory marker to normal is not a discharge criterion for a soft tissue infection that has clinically resolved."],
-      ["ESR","Low Value – Not guiding any decision here."],
-      ["LACTATE","Low Value – He resolved his sepsis two days ago."],
-      ["VANC_LEVEL","Low Value – Monitoring the level of an antibiotic you should be stopping today. Once the organism is known to be methicillin-susceptible, the answer is to change the drug, not to measure it."],
-      ["MRI_LE_NONJOINT","Low Value – No osteomyelitis was ever suspected, and he has clinically resolved. $5,470 for reassurance."],
-      ["MRI_LE_NONJOINT_WWO","Low Value – As above, with contrast."],
-      ["BONE_BX","Low Value – Invasive, expensive, and aimed at a diagnosis nobody is making."],
-      ["PDF_4567076","Low Value – The organism is identified as methicillin-susceptible. A MRSA screen now can only confuse the picture."],
-      ["XR_FOOT","Low Value – Already obtained, and unchanged clinically."]
-    ]),
+    // Orders are disabled in this stage (ordersDisabled: true), so no order-level
+    // grading can render here. The rubric lives in the decisions and pathwayHtml below.
+    highValueIds: new Set([]),
+    intermediateIds: new Map([]),
+    lowValueReasons: new Map([]),
     missedSeverity: "neutral",
-    missedReasons: new Map([
-      ["NO_TESTING","Nothing more needs testing. The culture is back and he has resolved; today is about narrowing therapy and planning discharge."]
-    ]),
-    recommendedIds: ["NO_TESTING"],
+    missedReasons: new Map([]),
+    recommendedIds: [],
     decisions: [
       { id:"narrow", question:"Antibiotic therapy now that susceptibilities are back", hint:"Deep tissue culture: MSSA.",
         options:[
@@ -3318,10 +4021,16 @@ const trainingLevelOtherInputEl = document.getElementById("trainingLevelOtherInp
 
 let CASE5_LOADED = false;
 let CASE5_SUBMITTED = false;
+/* What the learner actually ordered in 6a, so 6b can hand back only those
+   results. Under-ordering the sick patient was the headline finding of round 1,
+   and the case used to hand over a full panel regardless, which removed the
+   consequence. */
+let CASE6A_ORDERS = null;   // null = 6a not submitted yet, so show everything
 let CASE5_LAST_PAYLOAD = null;
 
 const orderFeedbackEl = document.getElementById("orderFeedback");
 const missedFeedbackEl = document.getElementById("missedFeedback");
+const redundancyFeedbackEl = document.getElementById("redundancyFeedback");
 const decisionBlockEl = document.getElementById("decisionBlock");
 const decisionFeedbackEl = document.getElementById("decisionFeedback");
 const recommendedPathwayBoxEl = document.getElementById("recommendedPathwayBox");
@@ -3390,6 +4099,20 @@ function markCaseCompleted(caseId){
     if (tab) tab.classList.add("completed");
     updateCase6Group();
   }catch(e){}
+  saveState();
+}
+
+function showFormError(msg){
+  const el = document.getElementById("orderFormError");
+  if (!el) { alert(msg); return; }
+  el.textContent = msg;
+  el.classList.remove("hidden");
+  clearTimeout(showFormError._t);
+  showFormError._t = setTimeout(()=>el.classList.add("hidden"), 9000);
+}
+
+function isTouchDevice(){
+  try { return window.matchMedia("(hover: none)").matches; } catch(e){ return false; }
 }
 
 
@@ -3402,11 +4125,37 @@ function setCase5Status(msg, cls){
   case5StatusEl.className = "tiny " + (cls || "");
 }
 
+let CASE5_READY = false;
+let CASE5_WATCHDOG = null;
+
+/* The whole case lives in an iframe that talks to us over postMessage. If its
+   script throws, no "ready" message ever arrives and the student is left staring
+   at an empty box with no way forward. Watch for that and offer a way out. */
+function armCase5Watchdog(){
+  if (CASE5_WATCHDOG) clearTimeout(CASE5_WATCHDOG);
+  CASE5_WATCHDOG = setTimeout(()=>{
+    if (CASE5_READY || CASE5_SUBMITTED) return;
+    const fb = document.getElementById("case5Fallback");
+    if (fb) fb.classList.remove("hidden");
+    setCase5Status("The case did not report that it loaded.", "warn");
+  }, 8000);
+}
+
 function ensureCase5Loaded(){
   if (CASE5_LOADED) return;
   if (!medRecFrameEl || !case5SrcTplEl) return;
+  setCase5Status("Loading the medication reconciliation case\u2026", "muted");
   medRecFrameEl.srcdoc = case5SrcTplEl.innerHTML;
   CASE5_LOADED = true;
+  armCase5Watchdog();
+}
+
+function reloadCase5(){
+  CASE5_LOADED = false;
+  CASE5_READY = false;
+  const fb = document.getElementById("case5Fallback");
+  if (fb) fb.classList.add("hidden");
+  ensureCase5Loaded();
 }
 
 function setDxUiVisible(visible){
@@ -3436,7 +4185,14 @@ function setCase5Visible(visible){
   if (!case5WrapEl) return;
   case5WrapEl.classList.toggle("hidden", !show);
   case5WrapEl.style.display = show ? "block" : "none";
-  if (show) ensureCase5Loaded();
+  if (show){
+    ensureCase5Loaded();
+    // startModule and restoreSession set srcdoc directly, so arm the watchdog
+    // here too rather than only inside ensureCase5Loaded().
+    if (!CASE5_READY && !CASE5_SUBMITTED) armCase5Watchdog();
+  } else if (CASE5_WATCHDOG){
+    clearTimeout(CASE5_WATCHDOG); CASE5_WATCHDOG = null;
+  }
 }
 function setSurveyVisible(which){
   const showPre = which === "pre";
@@ -3467,6 +4223,10 @@ window.addEventListener("message", (evt)=>{
     return;
   }
   if (data.kind === "case5_medrec_ready"){
+    CASE5_READY = true;
+    if (CASE5_WATCHDOG) { clearTimeout(CASE5_WATCHDOG); CASE5_WATCHDOG = null; }
+    const fb = document.getElementById("case5Fallback");
+    if (fb) fb.classList.add("hidden");
     setCase5Status("Ready. Complete the medication reconciliation, then submit to reveal costs.", "muted");
     // If the learner already submitted earlier in this session, keep the Finish button visible.
     if (CASE5_SUBMITTED && continueBtnEl){
@@ -3587,16 +4347,15 @@ function renderMatches(){
 
   matches = matches.slice(0, MAX_MATCHES);
 
-  matchListEl.innerHTML = "";
+  // Build the whole string once. `innerHTML +=` per item re-serialised and
+  // re-parsed the entire list on every iteration, which is 152 reparses per
+  // keystroke on an empty query and is perceptible on a mid-range phone.
+  let html = "";
   for (const o of matches){
-    const checked = selectedIds.has(o.id) ? "checked" : "";
-    matchListEl.innerHTML += `
-      <label>
-        <input type="checkbox" value="${o.id}" ${checked} />
-        ${o.name}
-      </label>
-    `;
+    const checked = selectedIds.has(o.id) ? " checked" : "";
+    html += `<label><input type="checkbox" value="${escAttr(o.id)}"${checked} /> ${escapeHtml(o.name)}</label>`;
   }
+  matchListEl.innerHTML = html;
 }
 
 function renderSelectedOrders(){
@@ -3629,6 +4388,114 @@ function renderSelectedOrders(){
 /* =========================
    Grading per case
    ========================= */
+/* =========================
+   Redundancy (added 2026-09)
+
+   The rubric only ever charged for orders on an explicit low-value list, so a
+   student who ordered the entire high-value list scored as flawless even when
+   two of those orders measured the same thing. These pairs are scored and
+   reported separately from valueCounts: they are not "wrong", they are
+   duplicated work, and they are one of the most common real-world patterns.
+   ========================= */
+const REDUNDANT_PAIRS = [
+  { ids:["BMP","CMP"], note:"A CMP contains every analyte in a BMP. Ordering both bills twice for the same chemistries." },
+  { ids:["CMP","ALBUMIN"], note:"Albumin is a component of the CMP." },
+  { ids:["CMP","PDF_4560058"], note:"The hepatic function panel duplicates the liver tests already in the CMP." },
+  { ids:["CMP","GLUCOSE"], note:"Glucose is a component of the CMP." },
+  { ids:["BMP","GLUCOSE"], note:"Glucose is a component of the BMP." },
+  { ids:["CBC","WBC_COUNT"], note:"The white count is part of the CBC." },
+  { ids:["CTPA","PDF_4631250"], note:"CT pulmonary angiography already images the chest. A second CT chest adds radiation and cost without adding information." },
+  { ids:["CTPA","PDF_4631270"], note:"CT pulmonary angiography already images the chest. A second CT chest adds radiation and cost without adding information." },
+  { ids:["CTPA","DDIMER_QUANT"], note:"Once you have committed to definitive imaging, the D-dimer cannot change what you do next." },
+  { ids:["MRI_L_SPINE","MRI_L_SPINE_WWO"], note:"Two protocols of the same study. Order one." },
+  { ids:["MRI_LE_NONJOINT","MRI_LE_NONJOINT_WWO"], note:"Two protocols of the same study. Order one." },
+  { ids:["MRI_BRAIN","MRI_BRAIN_WWO"], note:"Two protocols of the same study. Order one." },
+  { ids:["CT_L_SPINE","PDF_4639508"], note:"Two protocols of the same study. Order one." },
+  { ids:["CT_L_SPINE","MRI_L_SPINE"], note:"Two cross-sectional studies of the same spinal segment on the same visit." },
+  { ids:["XR_L_SPINE","CT_L_SPINE"], note:"The CT answers everything the plain film would have, at higher resolution." },
+  { ids:["XR_L_SPINE","MRI_L_SPINE"], note:"The MRI answers everything the plain film would have." },
+  { ids:["SWAB_SUPERFICIAL","PDF_4569728"], note:"A superficial swab and a deep wound culture are billed the same and sample the same wound. The deep specimen is the one that guides therapy." },
+  { ids:["PDF_4564703","PDF_4564702"], note:"Qualitative and quantitative serum hCG on the same visit. Pick the one that answers your question." },
+  { ids:["PDF_4564702","PDF_4569705"], note:"Serum and urine hCG measure the same thing." },
+  { ids:["PDF_4564703","PDF_4569705"], note:"Serum and urine hCG measure the same thing." },
+  { ids:["DVT_US","PDF_4633971"], note:"Both are lower extremity venous duplex studies." },
+  { ids:["PDF_4633972","PDF_4636880"], note:"Bilateral and unilateral arterial duplex of the same territory." },
+  { ids:["RPP","COVID_PCR"], note:"The respiratory pathogen panel already includes SARS-CoV-2." },
+  { ids:["RPP","FLU_PCR"], note:"The respiratory pathogen panel already includes influenza." },
+  { ids:["RPP","PDF_4566756"], note:"The respiratory pathogen panel already includes RSV." },
+  { ids:["ESR","CRP"], note:"Both are non-specific inflammatory markers that tend to move together. One is almost always enough; the second rarely changes a decision." }
+];
+
+function findRedundancies(ids){
+  const set = (ids instanceof Set) ? ids : new Set(ids);
+  const out = [];
+  REDUNDANT_PAIRS.forEach(pair=>{
+    if (pair.ids.every(id => set.has(id))){
+      out.push({
+        ids: pair.ids.slice(),
+        names: pair.ids.map(id => (getOrderById(id)?.name || id)),
+        extraCost: Math.min.apply(null, pair.ids.map(id => Number(getOrderById(id)?.cost || 0))),
+        note: pair.note
+      });
+    }
+  });
+  return out;
+}
+
+function renderRedundancyFeedback(redundancies){
+  if (!redundancyFeedbackEl) return;
+  if (!redundancies.length){ redundancyFeedbackEl.innerHTML = ""; return; }
+  const wasted = redundancies.reduce((a,r)=>a + r.extraCost, 0);
+  const rows = redundancies.map(r => `
+    <li class="dfb-item warn">
+      <div class="dfb-head"><strong>${escapeHtml(r.names.join("  +  "))}</strong>
+        <span class="pill">⚠️ Duplicated</span></div>
+      <div class="small">${escapeHtml(r.note)}</div>
+    </li>`).join("");
+  redundancyFeedbackEl.innerHTML = `
+    <div class="missed-block">
+      <div class="missed-title">Duplicated orders</div>
+      <p class="small muted" style="margin:4px 0 10px;">
+        These are not wrong, but each pair measures the same thing twice. Roughly
+        ${formatMoney(wasted)} of this bill bought no additional information.
+      </p>
+      <ul class="plain">${rows}</ul>
+    </div>`;
+}
+
+/* =========================
+   Category-aware fallback (added 2026-09)
+
+   Each case names 14-21 of the 152 catalog items explicitly. Everything else used
+   to render one fixed sentence asserting "low pre-test probability" - a clinical
+   claim the module has no basis for making about an arbitrary order. These give
+   the honest version: why this class of test is usually low-yield when it is not
+   driven by a specific question, and an acknowledgement that the module scores
+   one expected pathway.
+   ========================= */
+const FALLBACK_RULES = [
+  { re:/\bMRI\b/i, text:"MRI was not part of the expected workup here. Cross-sectional imaging earns its cost when a specific question is waiting on the answer; ordered speculatively, its main yield is incidental findings that generate further testing." },
+  { re:/\bCTA\b|angiograph/i, text:"CT angiography was not part of the expected workup here. It is the right study when a vascular question is driving management, and an expensive way to look around when one is not." },
+  { re:/^CT\b|\bCT\s/i, text:"CT was not part of the expected workup here. The radiation and the cost are justified when the result changes what you do; otherwise the most likely finding is an incidental one." },
+  { re:/ultrasound/i, text:"This ultrasound was not part of the expected workup here. Ultrasound is cheap relative to CT and MRI, but a study without a specific question still mostly generates findings you then have to chase." },
+  { re:/X-ray|radiograph|scanogram/i, text:"This radiograph was not part of the expected workup here. Plain films are inexpensive, but imaging a region the history and exam have not implicated rarely changes management." },
+  { re:/culture|swab|gram stain/i, text:"This culture was not part of the expected workup here. Cultures are most useful when there is a specific site of concern; sampling without one tends to grow colonizers and drive antibiotics the patient does not need." },
+  { re:/PCR|panel.*PCR|antigen|serolog/i, text:"This test was not part of the expected workup here. Molecular testing is high-value when a positive result changes treatment, isolation or counselling, and low-value when it only names something you would manage the same way regardless." },
+  { re:/biopsy/i, text:"This is an invasive procedure and was not part of the expected workup here. It carries procedural risk on top of its cost." },
+  { re:/level$/i, text:"This drug level was not part of the expected workup here. Levels guide dosing once a drug is running; they are not a diagnostic test." },
+  { re:/\bMRI|\bCT|ultrasound|X-ray/i, text:"This imaging was not part of the expected workup here." }
+];
+const FALLBACK_DEFAULT = "This test was not part of the expected workup here. Adding a lab that is not answering a specific question rarely changes management, and results at the edges of the reference range generate follow-up testing of their own.";
+const FALLBACK_CAVEAT = "This module scores one expected pathway, and reasonable clinicians differ at the margins. If you can say what this result would have changed, that is worth raising with your preceptor.";
+
+function fallbackReasonFor(orderId){
+  const name = getOrderById(orderId)?.name || "";
+  for (const rule of FALLBACK_RULES){
+    if (rule.re.test(name)) return rule.text;
+  }
+  return FALLBACK_DEFAULT;
+}
+
 function gradeOrder(orderId){
   const cfg = CASES[ACTIVE_CASE];
 
@@ -3641,7 +4508,7 @@ function gradeOrder(orderId){
         if (rule.re.test(name)) { lr = rule.reason; break; }
       }
     }
-    if (!lr) lr = "Not recommended for this presentation; low pre-test probability and unlikely to change management.";
+    if (!lr) lr = fallbackReasonFor(orderId);
     return { cls:"bad", tag:"❌ Low-value", reason: lr };
   }
 
@@ -3654,8 +4521,12 @@ function gradeOrder(orderId){
     return { cls:"warn", tag:"⚠️ Intermediate-yield", reason: cfg.intermediateIds.get(orderId) || "May be appropriate in selected scenarios." };
   }
 
-  const lr = (cfg.lowValueReasons && cfg.lowValueReasons.has(orderId)) ? cfg.lowValueReasons.get(orderId) : "Not recommended for this presentation; low pre-test probability and unlikely to change management.";
-    return { cls:"bad", tag:"❌ Low-value", reason: lr };
+  if (cfg.lowValueReasons && cfg.lowValueReasons.has(orderId)){
+    return { cls:"bad", tag:"\u274c Low-value", reason: cfg.lowValueReasons.get(orderId) };
+  }
+  // Not named by this case. Say what the module actually knows instead of
+  // asserting a pre-test probability it has no basis for.
+  return { cls:"bad", tag:"\u274c Low-value", reason: fallbackReasonFor(orderId), isFallback: true };
 }
 
 /* =========================
@@ -3885,35 +4756,150 @@ function renderBreakdownTable(orderIds, title){
 
   let html = `
     <div class="small" style="margin-bottom:6px;"><strong>${title}</strong></div>
-    <table>
+    <div class="table-wrap"><table>
       <tr><th>Order</th><th>Cost</th></tr>
   `;
   for (const o of rows){
     html += `<tr><td>${o.name}</td><td>${formatMoney(o.cost)}</td></tr>`;
   }
-  html += `<tr><td><strong>Total</strong></td><td><strong>${formatMoney(total)}</strong></td></tr></table>`;
+  html += `<tr><td><strong>Total</strong></td><td><strong>${formatMoney(total)}</strong></td></tr></table></div>`;
   return { html, total };
 }
 
 /* =========================
    Wells (case 1 only) – shown after submit under pathway
    ========================= */
+/* The Wells tool used to appear after submission, compute a number, and do
+   nothing with it. It is now the first step of Case 1: the learner scores the
+   patient, commits to an interpretation, and is graded on both.
+
+   The expected score for this vignette is 6.0 -- "PE most likely diagnosis" (3),
+   HR > 100 (1.5), immobilised >= 3 days (1.5). Two-tier Wells is used, because
+   the > 4 / <= 4 split is the one that actually drives the D-dimer decision.
+   Three-tier would call 6.0 "moderate", which reads as less urgent than it is. */
+const WELLS_EXPECTED = [
+  { points:3,   label:"PE is the most likely diagnosis", present:true,
+    why:"He has pleuritic pain, hypoxia and tachycardia two weeks into immobility, and a clear chest exam. Nothing else on the table explains it better." },
+  { points:1.5, label:"HR > 100 bpm", present:true, why:"He is 110." },
+  { points:1.5, label:"Immobilisation \u2265 3 days or surgery in the previous 4 weeks", present:true,
+    why:"Two weeks largely in bed after a fall." },
+  { points:3,   label:"Clinical signs of DVT", present:false, why:"No leg swelling or tenderness on exam." },
+  { points:1.5, label:"Previous DVT/PE", present:false, why:"No prior history given." },
+  { points:1,   label:"Haemoptysis", present:false, why:"Not reported." },
+  { points:1,   label:"Malignancy", present:false, why:"No history of cancer." }
+];
+const WELLS_EXPECTED_SCORE = 6.0;
+
+function wellsInterpretation(score){ return score > 4 ? "likely" : "unlikely"; }
+
 function resetWellsUI(){
   wellsScoreEl.textContent = "0.0";
-  wellsInterpEl.textContent = "Low";
+  wellsInterpEl.textContent = "PE unlikely (\u2264 4)";
   wellsContainerEl.querySelectorAll("input.wells").forEach(cb => { cb.checked = false; });
+  wellsContainerEl.querySelectorAll('input[name="wellsCommit"]').forEach(r => { r.checked = false; });
+  const blk = document.getElementById("wellsCommit_block");
+  if (blk) blk.classList.remove("survey-unanswered");
 }
-function computeWells(){
-  const boxes = wellsContainerEl.querySelectorAll("input.wells");
+
+function currentWellsScore(){
   let score = 0;
-  boxes.forEach(cb => { if (cb.checked) score += Number(cb.dataset.points || 0); });
+  wellsContainerEl.querySelectorAll("input.wells").forEach(cb => {
+    if (cb.checked) score += Number(cb.dataset.points || 0);
+  });
+  return score;
+}
 
-  let interp = "Low";
-  if (score > 6) interp = "High";
-  else if (score >= 2) interp = "Moderate";
-
+function computeWells(){
+  const score = currentWellsScore();
   wellsScoreEl.textContent = score.toFixed(1);
-  wellsInterpEl.textContent = interp;
+  wellsInterpEl.textContent = score > 4 ? "PE likely (> 4)" : "PE unlikely (\u2264 4)";
+}
+
+function gradeWells(){
+  const score = currentWellsScore();
+  const committed = document.querySelector('input[name="wellsCommit"]:checked')?.value || "";
+  return {
+    score,
+    expected: WELLS_EXPECTED_SCORE,
+    scoreCorrect: Math.abs(score - WELLS_EXPECTED_SCORE) < 0.01,
+    committed,
+    // Did they read their own number correctly?
+    internallyConsistent: committed === wellsInterpretation(score),
+    // Does the final classification match the vignette?
+    classificationCorrect: committed === wellsInterpretation(WELLS_EXPECTED_SCORE)
+  };
+}
+
+function renderWellsFeedback(w){
+  const el = document.getElementById("wellsFeedback");
+  if (!el) return;
+  if (!w){ el.innerHTML = ""; return; }
+
+  const rows = WELLS_EXPECTED.map(c => `
+    <li class="small">
+      <strong>${c.present ? "+" + c.points : "0"}</strong> &nbsp;${escapeHtml(c.label)}
+      <span class="muted">&mdash; ${escapeHtml(c.why)}</span>
+    </li>`).join("");
+
+  const cls = w.classificationCorrect ? "good" : "bad";
+  const tag = w.classificationCorrect ? "\u2705 Correct" : "\u274c Incorrect";
+
+  let note = "";
+  if (!w.scoreCorrect && w.internallyConsistent && w.classificationCorrect){
+    note = "<p class=\"small\">Your total came out at " + w.score.toFixed(1) + " rather than 6.0, but it landed on the "
+         + "right side of the threshold, so the decision it drives is the same.</p>";
+  } else if (!w.internallyConsistent){
+    note = "<p class=\"small\">Your checkboxes totalled " + w.score.toFixed(1) + ", which is \u201cPE "
+         + escapeHtml(wellsInterpretation(w.score)) + "\u201d on the two-tier cut-off, but you classified him as \u201cPE "
+         + escapeHtml(w.committed || "\u2014") + ".\u201d Worth re-reading the threshold.</p>";
+  }
+
+  el.innerHTML = `
+    <div class="dfb-item ${cls}" style="margin-top:12px;">
+      <div class="dfb-head"><strong>Wells score</strong> <span class="pill">${tag}</span></div>
+      <div class="small">You scored him <strong>${w.score.toFixed(1)}</strong> and called him
+        <strong>PE ${escapeHtml(w.committed || "\u2014")}</strong>. The expected score is
+        <strong>${WELLS_EXPECTED_SCORE.toFixed(1)}</strong>, which is <strong>PE likely</strong>.</div>
+      ${note}
+      <ul class="plain" style="margin-top:8px;">${rows}</ul>
+      <p class="small" style="margin-bottom:0;">
+        This is the number that decides whether a D-dimer is worth ordering. Above the threshold,
+        a negative D-dimer does not lower the probability enough to stop, so it buys delay and cost
+        and you image anyway. Below it, the D-dimer is the whole point.
+      </p>
+    </div>`;
+}
+
+/* Blank out results the learner never ordered. Rows carry data-req with a
+   pipe-separated list of order ids, any one of which produces that result. */
+function applyOrderedResultsFilter(){
+  if (ACTIVE_CASE !== 7) return;
+  if (!CASE6A_ORDERS) return;           // 6a not done; don't punish a tab jump
+  const have = new Set(CASE6A_ORDERS);
+  let missing = 0;
+  caseContentEl.querySelectorAll("[data-req]").forEach(row=>{
+    const reqs = String(row.getAttribute("data-req") || "").split("|").filter(Boolean);
+    if (reqs.some(id => have.has(id))) return;
+    row.classList.add("fs-unordered");
+    const val = row.querySelector(".fs-val");
+    if (val){ val.innerHTML = '<span class="fs-none">Not ordered</span>'; missing++; }
+    else {
+      // a section header: mark the whole section
+      const cell = row.querySelector("td");
+      if (cell && !cell.querySelector(".fs-none")) {
+        cell.innerHTML = cell.innerHTML + ' <span class="fs-none">&mdash; not ordered</span>';
+      }
+    }
+  });
+  const note = caseContentEl.querySelector("#orderedResultsNote");
+  if (note){
+    note.innerHTML = missing
+      ? 'You ordered ' + (have.size) + ' test' + (have.size === 1 ? '' : 's') + ' in the previous stage. '
+        + 'Results you did not order are marked <strong>not ordered</strong> &mdash; you are deciding without them, '
+        + 'which is the situation your ordering created.'
+      : 'Every result below reflects something you ordered in the previous stage.';
+    note.classList.remove("hidden");
+  }
 }
 
 /* =========================
@@ -3923,21 +4909,46 @@ function setActiveCase(caseId){
   ACTIVE_CASE = caseId;
   selectedIds.clear();
   searchEl.value = "";
+  CASE_DIRTY = false;
 
-  document.querySelectorAll("button[id^=\"tab\"]").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll('button[id^="tab"]').forEach(b=>{
+    b.classList.remove("active");
+    if (b.getAttribute("role") === "tab"){
+      b.setAttribute("aria-selected","false");
+      b.tabIndex = -1;
+    }
+  });
   const activeTab = document.getElementById("tab"+caseId);
-  if (activeTab) activeTab.classList.add("active");
+  if (activeTab){
+    activeTab.classList.add("active");
+    if (activeTab.getAttribute("role") === "tab"){
+      activeTab.setAttribute("aria-selected","true");
+      activeTab.tabIndex = 0;
+    }
+    try { activeTab.scrollIntoView({block:"nearest", inline:"nearest"}); } catch(e){}
+  }
 
   updateCase6Group();
 
   const cfg = CASES[caseId];
   caseTitleEl.textContent = cfg ? cfg.title : ("Case " + caseId);
   caseContentEl.innerHTML = cfg ? cfg.contentHtml : "";
+  applyOrderedResultsFilter();
+
+  if (caseId === 1){
+    wellsContainerEl.classList.remove("hidden");
+    resetWellsUI();
+    computeWells();
+  } else {
+    wellsContainerEl.classList.add("hidden");
+  }
+  renderWellsFeedback(null);
 
   resultsEl.classList.add("hidden");
   if (continueBtnEl) continueBtnEl.classList.add("hidden");
   orderFeedbackEl.innerHTML = "";
   if (missedFeedbackEl) missedFeedbackEl.innerHTML = "";
+  if (redundancyFeedbackEl) redundancyFeedbackEl.innerHTML = "";
   if (decisionFeedbackEl) decisionFeedbackEl.innerHTML = "";
   studentBreakdownEl.innerHTML = "";
   recommendedBreakdownEl.innerHTML = "";
@@ -3946,8 +4957,7 @@ function setActiveCase(caseId){
   recommendedCostEl.textContent = "";
   attributionEl.textContent = "";
 
-  wellsContainerEl.classList.add("hidden");
-  resetWellsUI();
+  // Wells visibility is decided above, by case.
   setSurveyVisible(null);
 
   if (caseId === 0){
@@ -4014,6 +5024,8 @@ if (decisionBlockEl){
     if (t && t.type === "radio" && t.name && t.name.indexOf("dec_") === 0){
       const did = t.name.slice(4);
       DECISION_ANSWERS.set(did, t.value);
+      CASE_DIRTY = true;
+      saveState();
       const box = document.getElementById("dec_" + did);
       if (box) box.classList.remove("decision-unanswered");
 
@@ -4043,11 +5055,19 @@ matchListEl.addEventListener("change", (e)=>{
     if (e.target.checked) selectedIds.add(id);
     else selectedIds.delete(id);
 
-    // Clear search box after selection, return to full list, and keep rapid entry flow
-    searchEl.value = "";
-    renderMatches();
+    // Clear search box after selection, return to full list, and keep rapid entry flow.
+    // On touch, refocusing re-opens the keyboard over the case on every single tap,
+    // so the query is preserved there instead.
+    if (isTouchDevice()){
+      renderMatches();
+    } else {
+      searchEl.value = "";
+      renderMatches();
+      searchEl.focus();
+    }
     renderSelectedOrders();
-    searchEl.focus();
+    CASE_DIRTY = true;
+    saveState();
   }
 });
 
@@ -4064,12 +5084,19 @@ selectedOrdersBoxEl.addEventListener("click", (e)=>{
   if (cb) cb.checked = false;
 
   renderSelectedOrders();
+  CASE_DIRTY = true;
+  saveState();
 });
 
 wellsContainerEl.addEventListener("change", (e)=>{
   if (e.target && e.target.classList && e.target.classList.contains("wells")){
     computeWells();
   }
+  if (e.target && e.target.name === "wellsCommit"){
+    const blk = document.getElementById("wellsCommit_block");
+    if (blk) blk.classList.remove("survey-unanswered");
+  }
+  CASE_DIRTY = true;
 });
 
 orderFormEl.addEventListener("submit", (e)=>{
@@ -4077,13 +5104,25 @@ orderFormEl.addEventListener("submit", (e)=>{
   if (ACTIVE_CASE === 5) return;
   const cfgPre = CASES[ACTIVE_CASE];
   if (!(cfgPre && cfgPre.ordersDisabled) && selectedIds.size === 0){
-    alert("Please select at least one option.");
+    showFormError("Select at least one order, or choose \u201cNo diagnostic testing necessary\u201d if that is your answer.");
+    return;
+  }
+
+  if (ACTIVE_CASE === 1 && !document.querySelector('input[name="wellsCommit"]:checked')){
+    const blk = document.getElementById("wellsCommit_block");
+    if (blk){
+      blk.classList.add("survey-unanswered");
+      try { blk.scrollIntoView({behavior:"smooth", block:"center"}); } catch(e){}
+    }
+    showFormError("Score the Wells criteria and commit to an interpretation before ordering.");
     return;
   }
 
   const cfg = CASES[ACTIVE_CASE];
   if (!decisionsAllAnswered(cfg)){
-    alert("Please answer every management decision before submitting.");
+    // An alert() here used to fire immediately and freeze the smooth scroll that
+    // decisionsAllAnswered() had just started.
+    showFormError("Answer every management decision before submitting. The unanswered ones are highlighted.");
     return;
   }
   const gradedDecisions = gradeDecisions(cfg);
@@ -4091,20 +5130,17 @@ orderFormEl.addEventListener("submit", (e)=>{
   recommendedPathwayBoxEl.innerHTML = cfg.pathwayHtml || "";
   attributionEl.textContent = cfg.attribution || "";
 
-  if (ACTIVE_CASE === 1){
-    wellsContainerEl.classList.remove("hidden");
-    resetWellsUI();
-  } else {
-    wellsContainerEl.classList.add("hidden");
-  }
-
   let studentTotal = 0;
   let feedbackHtml = "<ul>";
   const chosen = Array.from(selectedIds).map(id => idToOrder.get(id)).filter(Boolean);
 
+  const wellsGraded = (ACTIVE_CASE === 1) ? gradeWells() : null;
+
+  let fallbackCount = 0;
   for (const o of chosen){
     const g = gradeOrder(o.id);
     studentTotal += Number(o.cost||0);
+    if (g.isFallback) fallbackCount++;
     feedbackHtml += `
       <li class="${g.cls}">
         ${o.name}
@@ -4115,7 +5151,13 @@ orderFormEl.addEventListener("submit", (e)=>{
     `;
   }
   feedbackHtml += `</ul><p><strong>Total Cost:</strong> ${formatMoney(studentTotal)}</p>`;
+  if (fallbackCount){
+    feedbackHtml += `<p class="small muted" style="margin-top:-4px;">${FALLBACK_CAVEAT}</p>`;
+  }
   orderFeedbackEl.innerHTML = feedbackHtml;
+
+  const redundancies = findRedundancies(selectedIds);
+  renderRedundancyFeedback(redundancies);
 
   // Data capture (Teaching mode only)
   // Include recommended cost and simple value counts for easier faculty review
@@ -4131,6 +5173,10 @@ orderFormEl.addEventListener("submit", (e)=>{
     .map(id => (idToOrder.get(id)?.name || id));
 
   const valueCounts = { high: 0, intermediate: 0, low: 0 };
+  // How many of the low-value calls came from the generic fallback rather than a
+  // reason this case wrote. A high number here means the case needs more explicit
+  // entries, not that the student did something unusual.
+  let fallbackGraded = 0;
   // Also capture *which* tests fell into each value tier (names) for clearer downstream analytics.
   const orderedAppropriate = [];
   const orderedIntermediate = [];
@@ -4144,13 +5190,22 @@ orderFormEl.addEventListener("submit", (e)=>{
 
     if (g.cls === "good") { valueCounts.high++; orderedAppropriate.push(nm); }
     else if (g.cls === "warn") { valueCounts.intermediate++; orderedIntermediate.push(nm); }
-    else { valueCounts.low++; orderedLowValue.push(nm); }
+    else { valueCounts.low++; orderedLowValue.push(nm); if (g.isFallback) fallbackGraded++; }
   }
 
   const decisionCounts = { high:0, intermediate:0, low:0 };
   for (const g of gradedDecisions){ if (decisionCounts[g.tier] !== undefined) decisionCounts[g.tier]++; }
 
   logCaseSubmission(ACTIVE_CASE, selectedIds, studentTotal, {
+    redundantPairs: redundancies.map(r=>r.ids.join("+")),
+    redundantPairsText: redundancies.map(r=>r.names.join(" + ")).join(" | "),
+    redundantPairCount: redundancies.length,
+    redundantExtraCost: redundancies.reduce((a,r)=>a + r.extraCost, 0),
+    unlistedLowValueCount: fallbackGraded,
+    wellsScore: wellsGraded ? wellsGraded.score : "",
+    wellsCommitted: wellsGraded ? wellsGraded.committed : "",
+    wellsScoreCorrect: wellsGraded ? (wellsGraded.scoreCorrect ? "yes" : "no") : "",
+    wellsClassificationCorrect: wellsGraded ? (wellsGraded.classificationCorrect ? "yes" : "no") : "",
     recommendedIds: recIdsForLog,
     recommendedCost: Number(recTotalForLog || 0),
     deltaCost: Number((studentTotal - recTotalForLog) || 0),
@@ -4189,6 +5244,7 @@ orderFormEl.addEventListener("submit", (e)=>{
   if (cfg && cfg.ordersDisabled){
     orderFeedbackEl.innerHTML = "";
     if (missedFeedbackEl) missedFeedbackEl.innerHTML = "";
+    if (redundancyFeedbackEl) redundancyFeedbackEl.innerHTML = "";
     studentBreakdownEl.innerHTML = "";
     recommendedBreakdownEl.innerHTML = "";
     studentCostEl.textContent = "";
@@ -4249,9 +5305,34 @@ orderFormEl.addEventListener("submit", (e)=>{
       ? ("Completed (CXR + CBC + BMP)" + (hasSputum ? " + sputum culture" : ""))
       : "Incomplete";
     pathRow2RecEl.textContent = "CXR + CBC + BMP + sputum culture";
+  } else if (ACTIVE_CASE === 6){
+    const hasLactate = selectedIds.has("LACTATE");
+    const hasBloodCx = selectedIds.has("BLOOD_CX");
+    const hasCBC = selectedIds.has("CBC");
+    const hasBMPorCMP = selectedIds.has("BMP") || selectedIds.has("CMP");
+    const hasCXR = selectedIds.has("CXR");
+    const hasFootXR = selectedIds.has("XR_FOOT");
+    const hasDeepCx = selectedIds.has("PDF_4569728");
+    const bundle = [hasLactate, hasBloodCx, hasCBC, hasBMPorCMP, hasCXR].filter(Boolean).length;
+
+    pathRow1LabelEl.textContent = "Sepsis evaluation";
+    pathRow1StudentEl.textContent = (bundle === 5)
+      ? "Complete (lactate, blood cultures, CBC, BMP, CXR)"
+      : (bundle + " of 5 obtained" + (hasLactate ? "" : " \u2014 no lactate") + (hasBloodCx ? "" : (hasLactate ? " \u2014 no blood cultures" : ", no blood cultures")));
+    pathRow1RecEl.textContent = "Lactate + blood cultures before antibiotics, CBC, BMP, CXR";
+
+    pathRow2LabelEl.textContent = "Source evaluation";
+    pathRow2StudentEl.textContent = (hasFootXR && hasDeepCx)
+      ? "Complete (foot X-ray + deep tissue culture)"
+      : (hasDeepCx ? "Deep tissue culture obtained \u2014 no foot X-ray"
+                   : (hasFootXR ? "Foot X-ray obtained \u2014 no deep tissue culture"
+                                : "Not obtained"));
+    pathRow2RecEl.textContent = "Foot X-ray + deep tissue culture at debridement";
   } else {
     const hasNoTesting = selectedIds.has("NO_TESTING");
-    const hasImaging = selectedIds.has("CT_L_SPINE") || selectedIds.has("CT_L_SPINE") || selectedIds.has("XR_L_SPINE");
+    const SPINE_IMAGING = ["CT_L_SPINE","XR_L_SPINE","MRI_L_SPINE","MRI_L_SPINE_WWO","MRI_T_SPINE","XR_PELVIS","PDF_4639508"];
+    const imagingOrdered = SPINE_IMAGING.filter(id => selectedIds.has(id));
+    const hasImaging = imagingOrdered.length > 0;
 
     pathRow1LabelEl.textContent = "Diagnostic testing";
     pathRow1StudentEl.textContent = hasNoTesting ? "No testing ordered" : "Testing ordered";
@@ -4263,6 +5344,8 @@ orderFormEl.addEventListener("submit", (e)=>{
   }
 
   resultsEl.classList.remove("hidden");
+  // On a phone the results render below the fold, so submitting looked like it did nothing.
+  requestAnimationFrame(()=>{ try{ resultsEl.scrollIntoView({behavior:"smooth", block:"start"}); }catch(_){ } });
   if (continueBtnEl) {
     continueBtnEl.classList.remove("hidden");
     continueBtnEl.textContent = nextButtonLabel(ACTIVE_CASE);
@@ -4275,22 +5358,59 @@ orderFormEl.addEventListener("submit", (e)=>{
   const showPathway = ((ACTIVE_CASE >= 1 && ACTIVE_CASE <= 4) || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 9))
                       && !(cfgNow && cfgNow.ordersDisabled);
   if (pc) pc.style.display = showPathway ? "block" : "none";
+  if (ACTIVE_CASE === 6) CASE6A_ORDERS = Array.from(selectedIds);
+  renderWellsFeedback(ACTIVE_CASE === 1 ? wellsGraded : null);
+
   // Initialize any post-submit interactive elements (e.g., sepsis checklist)
   initSepsisChecklist();
+  CASE_DIRTY = false;
+  saveState();
 });
 
-document.getElementById("tab0").addEventListener("click", ()=>setActiveCase(0));
-document.getElementById("tab1").addEventListener("click", ()=>setActiveCase(1));
-document.getElementById("tab2").addEventListener("click", ()=>setActiveCase(2));
-document.getElementById("tab3").addEventListener("click", ()=>setActiveCase(3));
-document.getElementById("tab4").addEventListener("click", ()=>setActiveCase(4));
-document.getElementById("tab5").addEventListener("click", ()=>setActiveCase(5));
-document.getElementById("tab6").addEventListener("click", ()=>setActiveCase(6));
-document.getElementById("tab7").addEventListener("click", ()=>setActiveCase(7));
-document.getElementById("tab8").addEventListener("click", ()=>setActiveCase(8));
-document.getElementById("tab9").addEventListener("click", ()=>setActiveCase(9));
-document.getElementById("tab6group").addEventListener("click", ()=>setActiveCase(6));
-document.getElementById("tab10").addEventListener("click", ()=>setActiveCase(10));
+/* Tab clicks discard whatever is in the current case, so ask first when the
+   student has work in progress that has not been submitted. */
+function goToCase(caseId){
+  if (caseId === ACTIVE_CASE) return;
+  if (CASE_DIRTY && !confirm("Leave this case? The orders and answers you have selected here will be cleared.")) return;
+  setActiveCase(caseId);
+  saveState();
+}
+
+/* Arrow-key navigation, which a role="tablist" implies and this one did not have. */
+const TAB_ORDER = ["tab0","tab1","tab2","tab3","tab4","tab5","tab6group","tab6","tab7","tab8","tab9","tab10"];
+const TAB_CASE  = { tab0:0, tab1:1, tab2:2, tab3:3, tab4:4, tab5:5, tab6group:6, tab6:6, tab7:7, tab8:8, tab9:9, tab10:10 };
+document.querySelector(".tabs").addEventListener("keydown",(e)=>{
+  if (!["ArrowRight","ArrowLeft","Home","End"].includes(e.key)) return;
+  const visible = TAB_ORDER
+    .map(id=>document.getElementById(id))
+    .filter(el => el && el.offsetParent !== null);
+  if (!visible.length) return;
+  const idx = visible.indexOf(document.activeElement);
+  if (idx === -1) return;
+  e.preventDefault();
+  let next = idx;
+  if (e.key === "ArrowRight") next = (idx + 1) % visible.length;
+  else if (e.key === "ArrowLeft") next = (idx - 1 + visible.length) % visible.length;
+  else if (e.key === "Home") next = 0;
+  else next = visible.length - 1;
+  const target = visible[next];
+  target.tabIndex = 0;
+  target.focus();
+  goToCase(TAB_CASE[target.id]);
+});
+
+document.getElementById("tab0").addEventListener("click", ()=>goToCase(0));
+document.getElementById("tab1").addEventListener("click", ()=>goToCase(1));
+document.getElementById("tab2").addEventListener("click", ()=>goToCase(2));
+document.getElementById("tab3").addEventListener("click", ()=>goToCase(3));
+document.getElementById("tab4").addEventListener("click", ()=>goToCase(4));
+document.getElementById("tab5").addEventListener("click", ()=>goToCase(5));
+document.getElementById("tab6").addEventListener("click", ()=>goToCase(6));
+document.getElementById("tab7").addEventListener("click", ()=>goToCase(7));
+document.getElementById("tab8").addEventListener("click", ()=>goToCase(8));
+document.getElementById("tab9").addEventListener("click", ()=>goToCase(9));
+document.getElementById("tab6group").addEventListener("click", ()=>goToCase(6));
+document.getElementById("tab10").addEventListener("click", ()=>goToCase(10));
 
 if (continueBtnEl){
   continueBtnEl.addEventListener("click", ()=>{
@@ -4330,12 +5450,143 @@ if (continueBtnEl){
   });
 }
 
+/* =========================
+   Session resume (added 2026-09)
+   The module is required and asynchronous, so a closed tab, a phone that evicted
+   the page, or a mis-tap on the tab strip used to destroy everything silently.
+   State is written on every meaningful change and restored on load.
+   ========================= */
+const LS_STATE = "hvc_module_state_v1";
+const STATE_TTL_MS = 24*60*60*1000;
+let RESTORING = false;          // suppresses saves while we replay state
+let CASE_DIRTY = false;         // unsubmitted work in the current case
+
+function saveState(){
+  if (RESTORING || MODULE_MODE !== "teaching") return;
+  try {
+    const decisions = {};
+    DECISION_ANSWERS.forEach((v,k)=>{ decisions[k] = v; });
+    lsSet(LS_STATE, JSON.stringify({
+      savedAt: Date.now(),
+      sessionId: SESSION_ID,
+      linkCode: LINK_CODE,
+      participantInfo: PARTICIPANT_INFO,
+      activeCase: ACTIVE_CASE,
+      completed: Array.from(COMPLETED_CASES),
+      selected: Array.from(selectedIds),
+      decisions,
+      pretest: PRETEST_RESPONSES,
+      posttest: POSTTEST_RESPONSES,
+      case5Submitted: CASE5_SUBMITTED,
+      case6aOrders: CASE6A_ORDERS,
+      seq: SEQ,
+      caseLog: CASE_LOG
+    }));
+  } catch(e){ /* quota or private mode; the module still works, it just won't resume */ }
+}
+
+function clearState(){ lsDel(LS_STATE); }
+
+function readSavedState(){
+  try {
+    const raw = lsGet(LS_STATE);
+    if (!raw) return null;
+    const st = JSON.parse(raw);
+    if (!st || !st.savedAt || (Date.now() - st.savedAt) > STATE_TTL_MS) { clearState(); return null; }
+    return st;
+  } catch(e){ return null; }
+}
+
+/* Put the launch fields back so the student does not retype them, then replay
+   the module state. Returns true if a session was resumed. */
+function restoreSession(){
+  const st = readSavedState();
+  if (!st) return false;
+
+  RESTORING = true;
+  try {
+    MODULE_MODE = "teaching";
+    SESSION_ID = st.sessionId || resolveSessionId(false);
+    LINK_CODE = st.linkCode || "";
+    PARTICIPANT_ID = getParticipantId();
+    PARTICIPANT_INFO = st.participantInfo || PARTICIPANT_INFO;
+    CASE_LOG = Array.isArray(st.caseLog) ? st.caseLog : [];
+    PRETEST_RESPONSES = st.pretest || null;
+    POSTTEST_RESPONSES = st.posttest || null;
+    CASE5_SUBMITTED = !!st.case5Submitted;
+    CASE6A_ORDERS = Array.isArray(st.case6aOrders) ? st.case6aOrders : null;
+    SEQ = Number(st.seq) || 0;
+
+    try{
+      if (medRecFrameEl && case5SrcTplEl && !CASE5_LOADED){
+        medRecFrameEl.srcdoc = case5SrcTplEl.innerHTML;
+        CASE5_LOADED = true;
+      }
+    }catch(e){}
+
+    try {
+      if (landingEl) { landingEl.classList.add("hidden"); landingEl.style.display = "none"; landingEl.style.pointerEvents = "none"; }
+      if (adminPanelEl) { adminPanelEl.classList.add("hidden"); }
+      if (appEl) { appEl.classList.remove("hidden"); appEl.style.display = "block"; }
+    } catch(e) {}
+
+    resetCaseCompletion();
+    (st.completed || []).forEach(markCaseCompleted);
+
+    setActiveCase(Number(st.activeCase) || 0);
+
+    // setActiveCase clears these, so replay them afterwards.
+    (st.selected || []).forEach(id => selectedIds.add(id));
+    try { renderMatches(); renderSelectedOrders(); } catch(e){}
+    if (st.decisions){
+      Object.keys(st.decisions).forEach(k=>{
+        const val = st.decisions[k];
+        DECISION_ANSWERS.set(k, val);
+        const el = document.querySelector('input[name="dec_' + k + '"][value="' + val + '"]');
+        if (el) el.checked = true;
+      });
+    }
+    restoreSurveyInputs("pre", PRETEST_RESPONSES);
+    restoreSurveyInputs("post", POSTTEST_RESPONSES);
+  } catch(e){
+    RESTORING = false;
+    return false;
+  }
+  RESTORING = false;
+
+  const banner = document.getElementById("resumeBanner");
+  if (banner) banner.classList.remove("hidden");
+  return true;
+}
+
+function restoreSurveyInputs(prefix, responses){
+  if (!responses) return;
+  Object.keys(responses).forEach(name=>{
+    const val = responses[name];
+    if (!val) return;
+    if (name.endsWith("_feedback")){
+      const ta = document.getElementById(prefix === "post" ? "postFeedbackText" : "");
+      if (ta) ta.value = val;
+      return;
+    }
+    const el = document.querySelector('input[name="' + name + '"][value="' + val + '"]');
+    if (el) el.checked = true;
+  });
+}
+
 // Landing page start controls
 function startModule(mode){
   if (!validateLaunchFields()) return;
   PARTICIPANT_INFO = getParticipantInfo();
+  LINK_CODE = computeLinkCode();
+  PARTICIPANT_ID = getParticipantId();
   MODULE_MODE = mode;
-  SESSION_ID = getSessionId();
+  // A fresh click on Start begins a new attempt; a refresh mid-attempt does not
+  // reach here, because restoreSession() resumes instead.
+  SESSION_ID = resolveSessionId(true);
+  clearState();
+  CASE_DIRTY = false;
+  CASE6A_ORDERS = null;
   CASE_LOG = [];
   resetCaseCompletion();
   CASE5_SUBMITTED = false;
@@ -4359,8 +5610,10 @@ function startModule(mode){
 
 
 setActiveCase(0);
-  // Put cursor in search box for rapid entry
-  if (searchEl) searchEl.focus();
+  saveState();
+  // Put cursor in search box for rapid entry. Skipped on touch, where it just
+  // pops the keyboard over the case.
+  if (searchEl && !isTouchDevice()) searchEl.focus();
   window.scrollTo({top: 0, behavior: "smooth"});
 }
 
@@ -4395,13 +5648,19 @@ if (posttestFormEl){
     if (!validateSurvey("post")) return;
     POSTTEST_RESPONSES = getSurveyResponses("post");
     logSurveySubmission("posttest_submission", POSTTEST_RESPONSES);
-    markCaseCompleted(6);
+    markCaseCompleted(10);
+    renderKnowledgeResults(scoreKnowledge(POSTTEST_RESPONSES, "post"));
     if (continueBtnEl){
       continueBtnEl.classList.remove("hidden");
       continueBtnEl.textContent = "Finish Module";
     }
   });
 }
+
+["lcMother","lcDay","lcCity"].forEach(id=>{
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", renderLinkCodePreview);
+});
 
 if (startFunBtn) startFunBtn.addEventListener("click", ()=>startModule("fun"));
 if (startTeachingBtn) startTeachingBtn.addEventListener("click", ()=>startModule("teaching"));
@@ -4498,6 +5757,49 @@ if (adminOpenExportBtnEl){
     window.open(buildAnalyticsUrl("export"), "_blank", "noopener");
   });
 }
+
+/* =========================
+   Boot + unload guard
+   ========================= */
+window.addEventListener("beforeunload", (e)=>{
+  saveState();
+  if (MODULE_MODE === "teaching" && CASE_DIRTY){
+    e.preventDefault();
+    e.returnValue = "";
+    return "";
+  }
+});
+// A backgrounded mobile tab can be discarded without ever firing beforeunload.
+window.addEventListener("pagehide", ()=>{ saveState(); });
+document.addEventListener("visibilitychange", ()=>{ if (document.hidden) saveState(); });
+
+const resumeDismissEl = document.getElementById("resumeDismiss");
+const resumeRestartEl = document.getElementById("resumeRestart");
+const resumeBannerEl  = document.getElementById("resumeBanner");
+if (resumeDismissEl) resumeDismissEl.addEventListener("click", ()=>{
+  if (resumeBannerEl) resumeBannerEl.classList.add("hidden");
+});
+if (resumeRestartEl) resumeRestartEl.addEventListener("click", ()=>{
+  if (!confirm("Start over? Everything you have done so far will be cleared.")) return;
+  clearState();
+  location.reload();
+});
+
+const case5RetryEl = document.getElementById("case5Retry");
+const case5SkipEl  = document.getElementById("case5Skip");
+if (case5RetryEl) case5RetryEl.addEventListener("click", reloadCase5);
+if (case5SkipEl) case5SkipEl.addEventListener("click", ()=>{
+  // Never trap a student in a broken case in a required module. Mark it skipped
+  // rather than completed, so the data says what actually happened.
+  markCaseCompleted(5);
+  logCase5Skipped();
+  goToCase(6);
+});
+
+buildSurveys();
+logLandingView();
+try { flushOutbox(); } catch(e){}
+try { restoreSession(); } catch(e){ /* a corrupt saved state must never block the module */ }
 
 if (adminDownloadCsvBtnEl){
   adminDownloadCsvBtnEl.addEventListener("click", async ()=>{
