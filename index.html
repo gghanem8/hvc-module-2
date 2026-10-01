@@ -556,61 +556,11 @@ textarea{min-height:96px;resize:vertical}
     <button class="primary" id="startTeaching" type="button" style="width:100%; padding:16px 18px; font-size:18px; border-radius:12px;">
       Start Module
     </button>
-    <div style="margin-top:14px; display:flex; justify-content:flex-end;">
-  <button class="tab" id="adminLoginBtn" type="button" style="padding:10px 14px; border-radius:12px;">Admin login</button>
-</div>
   </div>
 </div>
 
 </div>
 
-
-<div class="container hidden" id="adminPanel">
-  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-    <div>
-      <h1 style="margin:0;">Admin Dashboard</h1>
-      <div class="muted">View submitted case data collected from the module.</div>
-    </div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="tab" id="adminRefreshBtn" type="button">Refresh</button>
-      <button class="tab" id="adminTestBtn" type="button">Test connection</button>
-      <button class="tab" id="adminOpenExportBtn" type="button">Open export</button>
-      <button class="tab" id="adminDownloadCsvBtn" type="button">Download CSV</button>
-      <button class="tab" id="adminBackBtn" type="button">Back</button>
-    </div>
-  </div>
-
-  <div class="hint small" style="margin-top:14px;">
-    If the table is empty, confirm your Google Apps Script endpoint is set in <code>ANALYTICS_ENDPOINT</code> and that your endpoint supports <code>?action=export</code>.
-  </div>
-
-  <div class="card" style="margin-top:12px;">
-    <h3 style="margin-top:0;">Submissions</h3>
-    <div class="small muted" id="adminStatus" style="margin-top:6px;"></div>
-    <div style="overflow:auto; margin-top:10px;">
-      <table id="adminTable">
-        <tr>
-          <th>receivedAt</th>
-          <th>source</th>
-          <th>eventId</th>
-          <th>type</th>
-          <th>moduleMode</th>
-          <th>sessionId</th>
-          <th>caseId</th>
-          <th>caseTitle</th>
-          <th>submittedAt</th>
-          <th>totalCost</th>
-          <th>costType</th>
-          <th>orders</th>
-        </tr>
-      </table>
-    </div>
-  </div>
-
-  <div class="tiny" style="margin-top:10px;">
-    Note: This is a lightweight admin view. For true security, restrict access to the Apps Script endpoint and require authentication on the server side.
-  </div>
-</div>
 
 <div id="app" class="hidden">
 
@@ -1614,15 +1564,23 @@ const orderCatalog = [
    - Captures per-case student selections + total cost.
    - Stores locally (localStorage) and optionally POSTs to a backend endpoint.
    ========================= */
-const ANALYTICS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwdAsKk0bwlTIgMsdgDw_K9zw2kJrDhsKKINdNDxWOR2ukjKsb32iyPJFcNy6re6lxrEg/exec"; // <-- Set to your Google Apps Script Web App URL (ending in /exec)
-// Optional shared key if your endpoint requires it (recommended)
-const ANALYTICS_KEY = "12345"; // e.g., "myLongRandomKey"
-// Admin passcode (client-side only; not secure). Prefer server-side keying above.
-const ADMIN_PASSCODE = "12345";
-const SITE_USERNAME = "capstone";
-const SITE_PASSWORD = "highvalue";
-// Optional: link to the underlying Google Sheet for faculty review (admin panel button)
-const GOOGLE_SHEET_URL = ""; // set if you want a simple prompt gate, e.g. "admin123"
+/* Submissions go to this site's own /api/collect, which forwards them to the
+   Google Apps Script endpoint. The Apps Script URL and its shared key live in
+   Vercel environment variables and never reach the browser.
+
+   This replaces a setup where the endpoint URL and the key "12345" were both
+   sitting in this file, which made the dataset readable and writable by anyone
+   who opened view-source. Nothing here is a secret any more, because there is
+   no secret here to leak. */
+const ANALYTICS_ENDPOINT = "/api/collect";
+
+/* The shared site credential. Be clear-eyed about what this is: it lives in a
+   file the browser downloads, so it is a speed bump, not access control. It
+   keeps the module off search engines and out of casual hands. Anyone who reads
+   the page source has it. Real gating needs Vercel Password Protection or
+   delivery through an authenticated LMS. */
+const SITE_USERNAME = "hvc2026";
+const SITE_PASSWORD = "value-over-volume";
 
 const ANALYTICS_TIMEOUT_MS = 4000;
 
@@ -1630,8 +1588,12 @@ const ANALYTICS_TIMEOUT_MS = 4000;
 // Build / version info (helps auditing in Google Sheets)
 // Bumped whenever the instrument or the rubric changes, so cohorts are separable.
 // 2026-09: added objective knowledge items, anonymous linking code, session
-// resume, redundancy scoring, Case 4 management decisions, scored Wells step.
-const APP_VERSION = "HVC_SIM_V30_2026_09_15_6_CASES_KNOWLEDGE_ITEMS";
+// resume, redundancy scoring, Case 4 management decisions.
+// 2026-10: Wells moved into the Case 1 explanation; Case 6a chest X-ray
+// reclassified to intermediate; commit-before-reveal on the 6b fluid decision;
+// intermediate tiers removed from the antibiotic, source control, lab, insulin
+// and duration decisions; Case 5 sizing, feedback labelling and submit state.
+const APP_VERSION = "HVC_SIM_V31_2026_10_01";
 const ANALYTICS_FETCH_MODE = "no-cors"; // "no-cors" is most compatible (e.g., Google Apps Script)
 
 function getFetchMode(){
@@ -1721,12 +1683,16 @@ function resolveSessionId(forceNew){
 }
 
 function getContextMeta(){
+  // pageUrl, referrer, userAgent, language and timezone used to ride along on
+  // every record. None of them answer a research question, and together with a
+  // free-text institution and free-text feedback they made a dataset described
+  // as anonymous more re-identifiable than that word implies. Only a coarse
+  // device class is kept, which is the one thing worth knowing about how
+  // students actually take this.
   const meta = { appVersion: APP_VERSION };
-  try { meta.pageUrl = location.href || ""; } catch(e){ meta.pageUrl = ""; }
-  try { meta.referrer = document.referrer || ""; } catch(e){ meta.referrer = ""; }
-  try { meta.ua = navigator.userAgent || ""; } catch(e){ meta.ua = ""; }
-  try { meta.lang = navigator.language || ""; } catch(e){ meta.lang = ""; }
-  try { meta.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch(e){ meta.timezone = ""; }
+  try {
+    meta.deviceClass = window.matchMedia("(hover: none)").matches ? "touch" : "desktop";
+  } catch(e){ meta.deviceClass = ""; }
   meta.seq = nextSeq();
   meta.linkCode = LINK_CODE || "";
   meta.participantId = PARTICIPANT_ID || "";
@@ -1860,16 +1826,8 @@ async function postToBackend(payload){
   // Attach lightweight context for auditability
   const fullPayload = Object.assign({}, payload || {}, getContextMeta());
 
-  // Build URL with key/query params
   let url = ANALYTICS_ENDPOINT;
-  try{
-    if (typeof buildAnalyticsUrl === "function"){
-      url = buildAnalyticsUrl("collect");
-    } else if (typeof ANALYTICS_KEY !== "undefined" && ANALYTICS_KEY){
-      const sep = url.includes("?") ? "&" : "?";
-      url = url + sep + "key=" + encodeURIComponent(ANALYTICS_KEY);
-    }
-  }catch(e){}
+  try { url = buildAnalyticsUrl("collect"); } catch(e){}
 
   const mode = getFetchMode();
 
@@ -1910,23 +1868,14 @@ async function postToBackend(payload){
 
 function buildAnalyticsUrl(action){
   if (!ANALYTICS_ENDPOINT) return "";
+  // Same-origin now, with no key and no user agent in the query string.
+  // Query strings end up in server logs; they are the wrong place for anything
+  // about a participant.
   const params = new URLSearchParams();
   if (action) params.set("action", action);
-  if (ANALYTICS_KEY) params.set("key", ANALYTICS_KEY);
-  try { params.set("ua", navigator.userAgent || ""); } catch(e){}
   const sep = ANALYTICS_ENDPOINT.includes("?") ? "&" : "?";
-  return ANALYTICS_ENDPOINT + sep + params.toString();
-}
-
-function setAdminStatus(msg){
-  if (adminStatusEl) adminStatusEl.textContent = msg || "";
-}
-
-function clearAdminTable(){
-  if (!adminTableEl) return;
-  while (adminTableEl.rows.length > 1){
-    adminTableEl.deleteRow(1);
-  }
+  const qs = params.toString();
+  return qs ? (ANALYTICS_ENDPOINT + sep + qs) : ANALYTICS_ENDPOINT;
 }
 
 function escapeHtml(s){
@@ -2022,101 +1971,6 @@ function normalizeAdminRow(r){
 }
 
 
-function mergeAdminRows(endpointRows, localRows){
-  // De-dupe by eventId when possible (preferred: endpoint copy).
-  const out = [];
-  const seen = new Set();
-
-  const add = (r)=>{
-    const id = r && r.eventId ? String(r.eventId) : "";
-    if (id){
-      if (seen.has(id)) return;
-      seen.add(id);
-    }
-    out.push(r);
-  };
-
-  (endpointRows || []).forEach(add);
-  (localRows || []).forEach(add);
-
-  // Most recent first (ISO timestamps sort lexicographically)
-  out.sort((a,b)=> String(b.receivedAt || "").localeCompare(String(a.receivedAt || "")));
-  return out;
-}
-
-
-
-
-async function fetchAdminData(){
-  clearAdminTable();
-
-  // Always show local rows in admin mode (device/browser-specific), even if an endpoint is configured.
-  const local = getLocalAttempts()
-    .map(r => normalizeAdminRow(Object.assign({_source: "local"}, r)));
-
-  if (!ANALYTICS_ENDPOINT){
-    setAdminStatus(`Showing ${local.length} local row(s) from this browser (ANALYTICS_ENDPOINT not set).`);
-    renderAdminRows(local);
-    return local;
-  }
-
-  const url = buildAnalyticsUrl("export");
-  setAdminStatus("Loading…");
-  try{
-    const res = await fetch(url, { method:"GET", mode: "cors" });
-    const data = await res.json();
-    const endpoint = (Array.isArray(data.rows) ? data.rows : [])
-      .map(r => normalizeAdminRow(Object.assign({_source: "endpoint"}, r)));
-
-    const merged = mergeAdminRows(endpoint, local);
-    setAdminStatus(`Loaded ${endpoint.length} endpoint row(s) + ${local.length} local row(s) (merged to ${merged.length}).`);
-    renderAdminRows(merged);
-    return merged;
-  }catch(e){
-    // Fallback to local so faculty can still export something
-    setAdminStatus("Failed to load from endpoint (CORS or endpoint error). Showing local browser data instead.");
-    renderAdminRows(local);
-    return local;
-  }
-}
-
-function renderAdminRows(rows){
-  if (!adminTableEl) return;
-  clearAdminTable();
-
-  for (const raw of (rows || [])){
-    const r = normalizeAdminRow(raw);
-    const tr = adminTableEl.insertRow(-1);
-
-    const ordersText = toTextList(
-      Array.isArray(r.orderNames) && r.orderNames.length ? r.orderNames
-      : (Array.isArray(r.orders) && r.orders.length ? r.orders
-      : (r.orders || r.ordersText || r.ordersJson || "")),
-      ", "
-    );
-
-    const cells = [
-      r.receivedAt,
-      r.source || "",
-      r.eventId || "",
-      r.type,
-      r.moduleMode,
-      r.sessionId,
-      r.caseId,
-      r.caseTitle,
-      r.submittedAt || r.completedAt || r.startedAt || "",
-      r.totalCost,
-      r.costType || "",
-      ordersText
-    ];
-
-    for (const c of cells){
-      const td = tr.insertCell(-1);
-      td.innerHTML = escapeHtml(c);
-    }
-  }
-}
-
 /* =========================
    CSV export (rewritten 2026-09)
 
@@ -2148,6 +2002,8 @@ const CSV_CORE_COLUMNS = [
   "knowledgeTotal","pretestKnowledgeScore","posttestKnowledgeScore","knowledgeDelta",
   "pretestKnowledgeDetail","posttestKnowledgeDetail",
   // attitude scale outcome
+  // time on task
+  "elapsedMs","pretestElapsedMs","posttestElapsedMs",
   "attitudeItems","pretestAttitudeMean","posttestAttitudeMean","attitudeMeanDelta",
   "pretestAttitudeSum","posttestAttitudeSum","attitudeDeltaDetail",
   // baseline covariates (pre-test only)
@@ -2185,12 +2041,19 @@ function flattenForCsv(r){
   return out;
 }
 
+/* No longer wired to a button: the admin panel was removed, and the canonical
+   export is the Responses sheet (File > Download > CSV), which the Apps Script
+   now populates with every column. Kept because it documents the expected column
+   contract and because it can be run from the console against local test data:
+     copy(rowsToCsv(getLocalAttempts().map(normalizeAdminRow)))  */
 function rowsToCsv(rows){
   const flat = (rows || []).map(raw => flattenForCsv(normalizeAdminRow(raw)));
 
   // Core columns first, then anything else that actually appeared, alphabetically.
   const seen = new Set(CSV_CORE_COLUMNS);
   const extras = [];
+  // ua/referrer/pageUrl are no longer collected at all; kept here so any rows
+  // captured before that change still export cleanly.
   const NOISY = new Set(["payloadJson","medrecRaw","cases","ua","referrer","pageUrl"]);
   flat.forEach(r=>{
     Object.keys(r).forEach(k=>{
@@ -4053,15 +3916,6 @@ const startFunBtn = document.getElementById("startFun");
 const startTeachingBtn = document.getElementById("startTeaching");
 const backForMoreBtn = document.getElementById("backForMore");
 const continueBtnEl = document.getElementById("continueBtn");
-const adminPanelEl = document.getElementById("adminPanel");
-const adminLoginBtnEl = document.getElementById("adminLoginBtn");
-const adminBackBtnEl = document.getElementById("adminBackBtn");
-const adminRefreshBtnEl = document.getElementById("adminRefreshBtn");
-const adminTestBtnEl = document.getElementById("adminTestBtn");
-const adminOpenExportBtnEl = document.getElementById("adminOpenExportBtn");
-const adminDownloadCsvBtnEl = document.getElementById("adminDownloadCsvBtn");
-const adminStatusEl = document.getElementById("adminStatus");
-const adminTableEl = document.getElementById("adminTable");
 
 
 const matchListEl = document.getElementById("matchList");
@@ -5614,7 +5468,6 @@ function restoreSession(){
 
     try {
       if (landingEl) { landingEl.classList.add("hidden"); landingEl.style.display = "none"; landingEl.style.pointerEvents = "none"; }
-      if (adminPanelEl) { adminPanelEl.classList.add("hidden"); }
       if (appEl) { appEl.classList.remove("hidden"); appEl.style.display = "block"; }
     } catch(e) {}
 
@@ -5706,7 +5559,6 @@ function startModule(mode){
   // Enter module view (hard hide landing to prevent overlay/click issues)
   try {
     if (landingEl) { landingEl.classList.add("hidden"); landingEl.style.display = "none"; landingEl.style.pointerEvents = "none"; }
-    if (adminPanelEl) { adminPanelEl.classList.add("hidden"); }
     if (appEl) { appEl.classList.remove("hidden"); appEl.style.display = "block"; }
   } catch(e) {}
 
@@ -5777,90 +5629,6 @@ if (trainingLevelOtherInputEl) trainingLevelOtherInputEl.classList.add("hidden")
 
 
 /* =========================
-   Admin panel events
-   ========================= */
-function showAdminPanel(){
-  try{
-    if (landingEl){ landingEl.classList.add("hidden"); landingEl.style.display = "none"; landingEl.style.pointerEvents = "none"; }
-    if (appEl){ appEl.classList.add("hidden"); appEl.style.display = "none"; }
-    if (adminPanelEl){ adminPanelEl.classList.remove("hidden"); adminPanelEl.style.display = "block"; }
-  }catch(e){}
-}
-
-function showLanding(){
-  try{
-    if (adminPanelEl){ adminPanelEl.classList.add("hidden"); adminPanelEl.style.display = "none"; }
-    if (appEl){ appEl.classList.add("hidden"); appEl.style.display = "none"; }
-    if (landingEl){ landingEl.classList.remove("hidden"); landingEl.style.display = "block"; landingEl.style.pointerEvents = "auto"; }
-  }catch(e){}
-}
-
-if (adminLoginBtnEl){
-  adminLoginBtnEl.addEventListener("click", async ()=>{
-    if (ADMIN_PASSCODE){
-      const entered = prompt("Enter admin passcode:");
-      if (entered !== ADMIN_PASSCODE){
-        alert("Incorrect passcode.");
-        return;
-      }
-    }
-    showAdminPanel();
-    await fetchAdminData();
-    window.scrollTo({top:0, behavior:"smooth"});
-  });
-}
-
-// Note: adminOpenSheetBtnEl was referenced in older builds but no corresponding button exists in this HTML.
-// Keeping this block removed prevents a runtime ReferenceError.
-
-if (adminBackBtnEl){
-  adminBackBtnEl.addEventListener("click", ()=>{
-    showLanding();
-    window.scrollTo({top:0, behavior:"smooth"});
-  });
-}
-
-if (adminRefreshBtnEl){
-  adminRefreshBtnEl.addEventListener("click", ()=>fetchAdminData());
-}
-
-if (adminTestBtnEl){
-  adminTestBtnEl.addEventListener("click", async ()=>{
-    if (!ANALYTICS_ENDPOINT){
-      setAdminStatus("ANALYTICS_ENDPOINT is not set. Data will be local-only.");
-      return;
-    }
-    const url = buildAnalyticsUrl("ping");
-    setAdminStatus("Pinging endpoint…");
-    try{
-      const res = await fetch(url, { method:"GET", mode:"cors" });
-      // Endpoint might not return JSON; handle gracefully
-      let ok = false;
-      try{
-        const j = await res.json();
-        ok = !!(j && (j.ok || j.status === "ok"));
-      }catch(e){
-        ok = res.ok;
-      }
-      setAdminStatus(ok ? "Endpoint reachable." : "Endpoint responded but did not confirm OK.");
-    }catch(e){
-      setAdminStatus("Failed to reach endpoint (CORS/network). Consider testing after deploying on GitHub Pages.");
-    }
-  });
-}
-
-
-if (adminOpenExportBtnEl){
-  adminOpenExportBtnEl.addEventListener("click", ()=>{
-    if (!ANALYTICS_ENDPOINT){
-      alert("ANALYTICS_ENDPOINT is not set. There is no export URL to open.");
-      return;
-    }
-    window.open(buildAnalyticsUrl("export"), "_blank", "noopener");
-  });
-}
-
-/* =========================
    Boot + unload guard
    ========================= */
 window.addEventListener("beforeunload", (e)=>{
@@ -5902,20 +5670,6 @@ buildSurveys();
 logLandingView();
 try { flushOutbox(); } catch(e){}
 try { restoreSession(); } catch(e){ /* a corrupt saved state must never block the module */ }
-
-if (adminDownloadCsvBtnEl){
-  adminDownloadCsvBtnEl.addEventListener("click", async ()=>{
-    // Prefer whatever is in the table; if empty, fetch
-    let rows = [];
-    try{
-      rows = await fetchAdminData();
-    }catch(e){
-      rows = getLocalAttempts().map(normalizeAdminRow);
-    }
-    const csv = rowsToCsv(rows);
-    downloadTextFile("hvc_simulator_submissions.csv", csv);
-  });
-}
 
 
 </script>
