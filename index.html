@@ -656,12 +656,14 @@ textarea{min-height:96px;resize:vertical}
     <div class="card">
       <h3 style="margin-top:0;">Pre-test</h3>
       <p class="small">
-        Two short parts: eight clinical questions, then five statements about your own practice.
-        You will answer all thirteen again at the end of the module, so answers are not shown now.
+        Three short parts: five statements about your own practice, eight clinical questions, and
+        two questions about your background. You will see the statements and the clinical
+        questions again at the end of the module, so answers are not shown now.
       </p>
       <form id="pretestForm">
-        <div id="preKnowledgeMount"></div>
         <div id="preAttitudeMount"></div>
+        <div id="preKnowledgeMount"></div>
+        <div id="preBaselineMount"></div>
         <div id="pretestValidationError" class="launch-error hidden" role="alert"></div>
         <button class="primary" type="submit">Submit Pre-test</button>
       </form>
@@ -672,13 +674,13 @@ textarea{min-height:96px;resize:vertical}
     <div class="card">
       <h3 style="margin-top:0;">Post-test</h3>
       <p class="small">
-        The same eight clinical questions and five statements you saw at the start, then a few
-        questions about the session itself. Your score and the reasoning for each clinical
-        question are shown after you submit.
+        The same five statements and eight clinical questions you saw at the start, in the same
+        order, then a few questions about the session itself. Your score and the reasoning for
+        each clinical question are shown after you submit.
       </p>
       <form id="posttestForm">
-        <div id="postKnowledgeMount"></div>
         <div id="postAttitudeMount"></div>
+        <div id="postKnowledgeMount"></div>
         <div id="postProgramMount"></div>
         <label class="field-label" for="postFeedbackText">Do you have any additional feedback or suggestions for these modules?</label>
         <textarea id="postFeedbackText" name="post_feedback" placeholder="Optional free response"></textarea>
@@ -2109,6 +2111,8 @@ const CSV_CORE_COLUMNS = [
   // attitude scale outcome
   "attitudeItems","pretestAttitudeMean","posttestAttitudeMean","attitudeMeanDelta",
   "pretestAttitudeSum","posttestAttitudeSum","attitudeDeltaDetail",
+  // baseline covariates (pre-test only)
+  "pre_a1","pre_a2",
   // med rec
   "medrecMonthlyTotal","medrecAnnualTotal","medrecAnonId",
   // free text last, because it is the column most likely to be long
@@ -2224,10 +2228,12 @@ function validateLaunchFields(){
                       both times. No feedback at pre-test, so the pre-test does
                       not teach the post-test.
    REPEATED_ITEMS   - the 5-item attitude scale, worded identically in both.
-                      This is the entire Likert instrument and the only set a
+                      This is the change measure, and the only Likert set a
                       paired pre/post comparison should use.
+   BASELINE_ITEMS   - pre-test only. Prior exposure, which cannot be re-asked
+                      afterwards. Baseline covariates, not a change measure.
    PROGRAM_ITEMS    - post-test only (satisfaction / program evaluation). These
-                      have no baseline and are not a change measure.
+                      have no baseline and are not a change measure either.
 
    The vignettes deliberately use different patients from the ones in the cases,
    so the post-test measures transfer rather than recall of a specific case.
@@ -2360,6 +2366,15 @@ const REPEATED_ITEMS = [
   { id:"r5", stem:"I have a reasonable sense of what common tests and imaging studies cost." }
 ];
 
+/* Pre-test only. These cannot be re-asked after the module, so they are NOT part
+   of the five-item scale above and must be kept out of any paired comparison.
+   They are baseline covariates: they describe what the cohort arrived with, and
+   they let change on the scale be examined against prior exposure. */
+const BASELINE_ITEMS = [
+  { id:"a1", stem:"Prior to this course, I had exposure to formal teaching on high-value care principles." },
+  { id:"a2", stem:"Prior to this course, I encountered high-value care concepts during clinical rotations." }
+];
+
 // Post-test only: program evaluation.
 const PROGRAM_ITEMS = [
   { id:"p1", stem:"The session improved my understanding of high-value care principles." },
@@ -2410,10 +2425,15 @@ function renderLikertItems(mountId, prefix, items, heading){
 }
 
 function buildSurveys(){
-  renderKnowledgeItems("preKnowledgeMount", "pre");
-  renderKnowledgeItems("postKnowledgeMount", "post");
+  // Shared block first and identical in both: the 5-item scale, then the 8 clinical
+  // questions. Administration-specific blocks come after, where they cannot prime
+  // anything that feeds the paired comparison.
   renderLikertItems("preAttitudeMount", "pre", REPEATED_ITEMS, "About your own practice");
+  renderKnowledgeItems("preKnowledgeMount", "pre");
+  renderLikertItems("preBaselineMount", "pre", BASELINE_ITEMS, "Your background before this module");
+
   renderLikertItems("postAttitudeMount", "post", REPEATED_ITEMS, "About your own practice");
+  renderKnowledgeItems("postKnowledgeMount", "post");
   renderLikertItems("postProgramMount", "post", PROGRAM_ITEMS, "About this session");
 }
 
@@ -2465,10 +2485,21 @@ function renderKnowledgeResults(graded){
 }
 
 function surveyItemIds(prefix){
-  // Knowledge items and the attitude scale are identical in both administrations.
-  // Only the post-test adds the program-evaluation block.
-  const ids = KNOWLEDGE_ITEMS.map(x=>x.id).concat(REPEATED_ITEMS.map(x=>x.id));
-  return prefix === "pre" ? ids : ids.concat(PROGRAM_ITEMS.map(x=>x.id));
+  // Order matches what the learner sees, so "the first unanswered question" in a
+  // validation message is the first one down the page.
+  //
+  // The attitude scale comes FIRST, before the knowledge items, in both
+  // administrations. Answering eight clinical questions and then rating your own
+  // comfort contaminates the rating with how the test just felt -- and it does so
+  // by a different amount at pre-test than at post-test, which would show up as an
+  // attitude gain the module did not produce. Priming in the other direction (the
+  // scale nudging HVC thinking before the questions) applies equally both times and
+  // inflates the baseline, so it attenuates the measured effect rather than creating
+  // one. Do not reorder these without re-reading that argument.
+  const ids = REPEATED_ITEMS.map(x=>x.id).concat(KNOWLEDGE_ITEMS.map(x=>x.id));
+  return prefix === "pre"
+    ? ids.concat(BASELINE_ITEMS.map(x=>x.id))
+    : ids.concat(PROGRAM_ITEMS.map(x=>x.id));
 }
 
 function getSurveyResponses(prefix){
@@ -2530,6 +2561,7 @@ function surveyFlatFields(){
     out["pre_"  + it.id] = pre["pre_"  + it.id] || "";
     out["post_" + it.id] = post["post_" + it.id] || "";
   });
+  BASELINE_ITEMS.forEach(it=>{ out["pre_" + it.id] = pre["pre_" + it.id] || ""; });
   PROGRAM_ITEMS.forEach(it=>{ out["post_" + it.id] = post["post_" + it.id] || ""; });
 
   const preG  = PRETEST_RESPONSES  ? scoreKnowledge(pre,  "pre")  : null;
