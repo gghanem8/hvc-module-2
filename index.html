@@ -1568,7 +1568,7 @@ const orderCatalog = [
    Google Apps Script endpoint. The Apps Script URL and its shared key live in
    Vercel environment variables and never reach the browser.
 
-   This replaces a setup where the endpoint URL and the key "12345" were both
+   This replaces a setup where the endpoint URL and a trivial shared key were both
    sitting in this file, which made the dataset readable and writable by anyone
    who opened view-source. Nothing here is a secret any more, because there is
    no secret here to leak. */
@@ -1693,7 +1693,6 @@ function getContextMeta(){
   try {
     meta.deviceClass = window.matchMedia("(hover: none)").matches ? "touch" : "desktop";
   } catch(e){ meta.deviceClass = ""; }
-  meta.seq = nextSeq();
   meta.linkCode = LINK_CODE || "";
   meta.participantId = PARTICIPANT_ID || "";
   meta.storageOk = STORAGE_OK ? "yes" : "no";
@@ -1823,8 +1822,17 @@ window.addEventListener("online", ()=>{ flushOutbox(); });
 async function postToBackend(payload){
   if (!ANALYTICS_ENDPOINT) return;
 
-  // Attach lightweight context for auditability
+  // Attach lightweight context for auditability.
   const fullPayload = Object.assign({}, payload || {}, getContextMeta());
+
+  /* Stamp the sequence number HERE and nowhere else, once per transmitted
+     payload. It used to live in getContextMeta(), which every logger calls and
+     then postToBackend called again — so each event consumed two numbers and the
+     sequence ran 2, 4, 6. That defeats the point of having it: gaps are how a
+     lost submission is detected, and a sequence with built-in gaps detects
+     nothing. A payload already carrying a seq is a retry from the outbox and
+     keeps the number it was first given. */
+  if (fullPayload.seq == null || fullPayload.seq === "") fullPayload.seq = nextSeq();
 
   let url = ANALYTICS_ENDPOINT;
   try { url = buildAnalyticsUrl("collect"); } catch(e){}
