@@ -92,6 +92,17 @@ ul.plain{list-style:none;margin:0;padding:0}
 ul.plain>li{margin:0 0 9px}
 .fs-none{color:var(--muted);font-style:italic;font-weight:500}
 tr.fs-unordered .fs-lab{color:var(--muted)}
+.wells-worked{border-left:3px solid var(--accent);padding-left:14px;margin:14px 0}
+.decision-commit{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.dec-submit{
+  font:inherit;font-size:.88rem;font-weight:600;
+  background:var(--accent);color:var(--on-accent);
+  border:none;border-radius:var(--radius-sm);
+  padding:9px 18px;min-height:40px;cursor:pointer;
+}
+.dec-submit:disabled{background:var(--chip);color:var(--muted);cursor:default}
+.dec-submit.committed{background:var(--ok-soft);color:var(--ok)}
+.dec-commit-note{flex:1 1 180px;min-width:0}
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;min-width:0}
 .table-wrap table{min-width:20rem}
 .fs-wrap{min-width:0}
@@ -637,7 +648,7 @@ textarea{min-height:96px;resize:vertical}
 
   <!-- Case 5 uses its own embedded UI to preserve module integrity -->
   <div id="case5MedRec" class="hidden" style="margin-top:12px;">
-    <iframe id="medRecFrame" title="Medication reconciliation case" style="width:100%; border:0; border-radius:12px; min-height:420px; background:transparent;"></iframe>
+    <iframe id="medRecFrame" title="Medication reconciliation case" scrolling="no" style="width:100%; border:0; border-radius:12px; min-height:320px; background:transparent; overflow:hidden; display:block;"></iframe>
     <div class="tiny" id="case5Status" role="status" style="margin-top:10px;"></div>
     <div id="case5Fallback" class="hidden" style="margin-top:12px;">
       <div class="missed-block">
@@ -712,36 +723,6 @@ textarea{min-height:96px;resize:vertical}
     </div>
 
     
-    <div id="wellsContainer" class="wells-box hidden">
-      <h4 style="margin-top:0;">Step 1 &mdash; Score his pre-test probability</h4>
-      <div class="small muted">
-        Work out the Wells score for this patient before you order anything. Age is <strong>not</strong> part of Wells.
-      </div>
-      <div style="margin-top:10px;">
-        <label><input type="checkbox" class="wells" data-points="3"> Clinical signs/symptoms of DVT (leg swelling, pain with palpation)</label>
-        <label><input type="checkbox" class="wells" data-points="3"> PE is the most likely diagnosis (no better alternative)</label>
-        <label><input type="checkbox" class="wells" data-points="1.5"> HR &gt; 100 bpm</label>
-        <label><input type="checkbox" class="wells" data-points="1.5"> Immobilization &ge;3 days or surgery in previous 4 weeks</label>
-        <label><input type="checkbox" class="wells" data-points="1.5"> Previous DVT/PE</label>
-        <label><input type="checkbox" class="wells" data-points="1"> Hemoptysis</label>
-        <label><input type="checkbox" class="wells" data-points="1"> Malignancy (treatment within 6 months or palliative)</label>
-      </div>
-      <div style="margin-top:10px;" class="small">
-        <strong>Your Wells score:</strong> <span id="wellsScore">0.0</span>
-        <span class="muted"> &mdash; <span id="wellsInterp">PE unlikely</span></span>
-      </div>
-      <fieldset class="kn-item" id="wellsCommit_block" style="margin-top:12px;">
-        <legend class="kn-legend">Commit to an interpretation</legend>
-        <p class="kn-stem">On that score, how would you classify him?</p>
-        <div class="kn-options">
-          <label class="kn-option"><input type="radio" name="wellsCommit" value="unlikely">
-            <span>PE unlikely (Wells &le; 4) &mdash; a D-dimer can rule it out</span></label>
-          <label class="kn-option"><input type="radio" name="wellsCommit" value="likely">
-            <span>PE likely (Wells &gt; 4) &mdash; go to definitive imaging</span></label>
-        </div>
-      </fieldset>
-    </div>
-
     <div id="decisionBlock" class="hidden"></div>
 
     <div id="orderFormError" class="launch-error hidden" role="alert"></div>
@@ -766,6 +747,25 @@ textarea{min-height:96px;resize:vertical}
         <div class="summary" id="recommendedPathwayBox"></div>
 
         <div id="wellsFeedback"></div>
+        <div id="wellsContainer" class="wells-box hidden">
+          <h4 style="margin-top:0;">Try it yourself</h4>
+          <div class="small muted">
+            Tick the criteria you would have scored. Age is <strong>not</strong> part of Wells.
+          </div>
+          <div style="margin-top:10px;">
+            <label><input type="checkbox" class="wells" data-points="3"> Clinical signs/symptoms of DVT (leg swelling, pain with palpation)</label>
+            <label><input type="checkbox" class="wells" data-points="3"> PE is the most likely diagnosis (no better alternative)</label>
+            <label><input type="checkbox" class="wells" data-points="1.5"> HR &gt; 100 bpm</label>
+            <label><input type="checkbox" class="wells" data-points="1.5"> Immobilization &ge;3 days or surgery in previous 4 weeks</label>
+            <label><input type="checkbox" class="wells" data-points="1.5"> Previous DVT/PE</label>
+            <label><input type="checkbox" class="wells" data-points="1"> Hemoptysis</label>
+            <label><input type="checkbox" class="wells" data-points="1"> Malignancy (treatment within 6 months or palliative)</label>
+          </div>
+          <div style="margin-top:10px;" class="small">
+            <strong>Your total:</strong> <span id="wellsScore">0.0</span>
+            <span class="muted"> &mdash; <span id="wellsInterp">PE unlikely (&le; 4)</span></span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -947,9 +947,22 @@ label{font-size:.88rem}
 
 /* Per-medication value feedback — same semantics as the parent module */
 .hvcRow td{border-bottom:1px solid var(--hairline)}
-.hvcTag{font-weight:700;font-size:.82rem;margin-bottom:5px}
+.hvcHead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px;
+  padding-bottom:6px;border-bottom:1px solid var(--hairline)}
+.hvcMed{font-weight:700;font-size:.95rem;color:var(--heading)}
+.hvcTag{font-weight:700;font-size:.82rem;white-space:nowrap}
+.btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+#submit:disabled{opacity:.55;cursor:default}
 .hvcTag-green{color:var(--ok)} .hvcTag-orange{color:var(--mid)} .hvcTag-red{color:var(--no)}
 tr.medrow.rowUnanswered td{background:var(--no-soft);box-shadow:inset 3px 0 0 var(--no)}
+
+/* Each medication is a two-row unit: the drug and its decision, then its feedback.
+   A rule above the drug row separates one medication from the next, so a verdict
+   is unambiguously attached to the drug directly above it. */
+tr.medrow td{border-top:2px solid var(--border);padding-top:14px}
+tr.medrow:first-of-type td{border-top:none}
+.hvcRow td{padding-top:0}
+
 .tableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 @media(max-width:640px){
   .options{grid-template-columns:1fr}
@@ -1068,10 +1081,12 @@ Next to each medication below, decide whether to <b>continue the home medication
 </div>
 </div>
 
-<div class="card">
-<div id="saveStatus" class="status small">Not submitted yet.</div>
-<button id="submit">Submit & Reveal Costs</button>
-<button id="reset" class="secondary">Reset</button>
+<div class="card" id="submitCard">
+<div id="saveStatus" class="status small">Choose Home, Hospital or Discontinue for every medication, then submit.</div>
+<div class="btnRow">
+  <button id="submit">Submit & Reveal Costs</button>
+  <button id="reset" class="secondary">Start over</button>
+</div>
 </div>
 
 </div>
@@ -1089,22 +1104,33 @@ function postToParent(msg){
 
 function postHeight(){
   try{
+    const b = document.body;
     const h = Math.max(
-      document.body ? document.body.scrollHeight : 0,
+      b ? b.scrollHeight : 0,
+      b ? b.offsetHeight : 0,
       document.documentElement ? document.documentElement.scrollHeight : 0
     );
-    postToParent({ kind: "case5_medrec_height", height: h });
+    // A few pixels of slack: a frame sized to the exact content height still shows
+    // a scrollbar once a sub-pixel rounds the wrong way.
+    postToParent({ kind: "case5_medrec_height", height: h + 8 });
   }catch(e){}
 }
 
 try{
   // Best-effort auto-resize
   if (window.ResizeObserver){
+    // Observe the BODY, not documentElement: inside a fixed-height iframe the root
+    // element's height tracks the frame, so the observer was effectively measuring
+    // itself and never saw the content grow. That is what produced a scrollbar
+    // inside the page's scrollbar.
     const ro = new ResizeObserver(()=>postHeight());
-    ro.observe(document.documentElement);
+    if (document.body) ro.observe(document.body);
   }
   window.addEventListener("load", ()=>{ postHeight(); postToParent({ kind: "case5_medrec_ready" }); });
   window.addEventListener("resize", ()=>postHeight());
+  // Fonts and late layout settle after load; re-measure a couple of times rather
+  // than leaving the frame an inch too short.
+  [120, 400, 1200].forEach(t => setTimeout(postHeight, t));
 }catch(e){}
 
 
@@ -1142,7 +1168,10 @@ function setStatus(msg, level){
 
 function postToGoogleSheet(payload){
   if(!GOOGLE_SHEETS_WEBAPP_URL){
-    setStatus("Response capture is not configured (no Google Sheet link set).", "warn");
+    // Not an error. This case reports its submission to the parent module over
+    // postMessage, and the parent is what records it. The old warning told students
+    // their work had not been captured when it had, which is a good way to produce
+    // duplicate submissions.
     return;
   }
   try{
@@ -1254,9 +1283,15 @@ ROWS.forEach(r=>{
   let hvc=document.createElement("tr");
   hvc.className="hvcRow hide hvcGreen";
   hvc.id="hvc_"+r.id;
+  // The feedback row used to carry a verdict and a paragraph with no indication of
+  // which medication it belonged to.
+  const medName = (r.home && r.home.l) || (r.hosp && r.hosp.l) || r.id;
   hvc.innerHTML = `<td colspan="3">
       <div class="hvcBox">
-        <div class="hvcTag" id="hvcTag_${r.id}"></div>
+        <div class="hvcHead">
+          <span class="hvcMed">${medName}</span>
+          <span class="hvcTag" id="hvcTag_${r.id}"></span>
+        </div>
         <div id="hvcText_${r.id}"></div>
       </div>
     </td>`;
@@ -1351,7 +1386,7 @@ document.getElementById("submit").onclick=()=>{
       // A text tier, so the judgement does not depend on seeing the row colour.
       const tagEl = document.getElementById("hvcTag_"+r.id);
       if (tagEl){
-        tagEl.textContent = status==="green" ? "\u2705 Reasonable choice"
+        tagEl.textContent = status==="green" ? "\u2705 Correct choice"
                           : status==="orange" ? "\u26a0\ufe0f Higher-cost choice"
                           : "\u274c Low-value choice";
         tagEl.className = "hvcTag hvcTag-" + status;
@@ -1394,8 +1429,13 @@ document.getElementById("submit").onclick=()=>{
   });
   postHeight();
 
-  setStatus("Submitting anonymous response...", "warn");
+  // Submitted: the choices are locked and the feedback is above. Leaving a live
+  // Submit button below the results invited a second submission.
+  setStatus("Submitted. Your costs and the feedback for each medication are shown above.", "ok");
+  const sb = document.getElementById("submit");
+  if (sb){ sb.disabled = true; sb.textContent = "Submitted"; }
   postToGoogleSheet(payload);
+  postHeight();
 };
 
 document.getElementById("reset").onclick=()=>{
@@ -2103,8 +2143,7 @@ const CSV_CORE_COLUMNS = [
   "orders","orderedAppropriateText","orderedIntermediateText","orderedLowValueText",
   "missedRecommendedText","missedRecommendedCount","unlistedLowValueCount",
   "redundantPairsText","redundantPairCount","redundantExtraCost",
-  "decisionsText","decisionHighCount","decisionIntermediateCount","decisionLowCount",
-  "wellsScore","wellsCommitted","wellsScoreCorrect","wellsClassificationCorrect",
+  "decisionsText","decisionsChangedAfterCommit","decisionHighCount","decisionIntermediateCount","decisionLowCount",
   // knowledge outcome
   "knowledgeTotal","pretestKnowledgeScore","posttestKnowledgeScore","knowledgeDelta",
   "pretestKnowledgeDetail","posttestKnowledgeDetail",
@@ -3520,18 +3559,18 @@ lowValueReasons: new Map([
         </div>
       </div>
     `,
-    highValueIds: new Set(["LACTATE","BLOOD_CX","CBC","BMP","CMP","CXR","XR_FOOT","PDF_4569728"]),
+    highValueIds: new Set(["LACTATE","BLOOD_CX","CBC","BMP","CMP","XR_FOOT","PDF_4569728"]),
     highValueReasons: new Map([
       ["LACTATE","High Value – Tells you whether he is hypoperfusing when his blood pressure alone might not. Anything above 2 has to be rechecked."],
       ["BLOOD_CX","High Value – Draw them before antibiotics if you can do it without delay. Worth contrasting with simple cellulitis, where blood cultures are a waste; the systemic signs are what change that here."],
       ["CBC","High Value – The white count and platelets both feed into how sick you decide he is."],
       ["BMP","High Value – Creatinine and bicarbonate tell you about organ dysfunction, and you need the renal function before you dose vancomycin. His glucose is 358."],
       ["CMP","High Value – Fine instead of a BMP if you also want liver function."],
-      ["CXR","High Value – Standard part of looking for the source in sepsis. An obvious foot does not rule out a second site, and he is breathing 26."],
       ["XR_FOOT","High Value – Looks for gas, a foreign body and bony changes for $490. It is also what lets you say you thought about deeper imaging and decided against it."],
       ["PDF_4569728","High Value – Taken from the wound bed at debridement. Everything you do with antibiotics on day two depends on getting this specimen today."]
     ]),
     intermediateIds: new Map([
+      ["CXR","Intermediate – He has no respiratory symptoms and the foot explains his sepsis, so a chest film is not part of the core workup here. It becomes reasonable if there is any concern for a respiratory source, or for an aspiration event given his altered mental status."],
       ["PDF_4569806","Intermediate – Will not change anything tonight. It will change what you send him home on, so it is reasonable to add it now."],
       ["PDF_4633968","Intermediate – His posterior tibial pulse is absent, and perfusion decides whether this wound can heal. Get it during the admission rather than tonight."],
       ["ESR","Intermediate – Reasonable as a baseline. With no bone involvement suspected, it is not going to change what you do."],
@@ -3554,11 +3593,10 @@ lowValueReasons: new Map([
       ["BLOOD_CX","Your best shot at an organism if the wound cultures are unhelpful, and the yield drops off quickly once antibiotics are in."],
       ["CBC","The white count and platelets are part of how sick you decide he is, and everything on day two gets compared back to this."],
       ["BMP","You need the creatinine before you dose vancomycin, and the bicarbonate is part of the organ-dysfunction picture."],
-      ["CXR","Part of looking for the source in sepsis. The foot is obvious, but he is breathing 26 and you have not looked at his chest."],
       ["XR_FOOT","$490 and quick. Looks for gas and bony change, and it is what justifies not going straight to an MRI."],
       ["PDF_4569728","Without a deep specimen he stays on vancomycin and piperacillin-tazobactam for the whole admission, because you never find out what you are treating."]
     ]),
-    recommendedIds: ["LACTATE","BLOOD_CX","CBC","BMP","CXR","XR_FOOT","PDF_4569728"],
+    recommendedIds: ["LACTATE","BLOOD_CX","CBC","BMP","XR_FOOT","PDF_4569728"],
     pathwayHtml: `
 <strong>What this presentation calls for</strong>
 <p class="small">
@@ -3572,14 +3610,14 @@ lowValueReasons: new Map([
   <li><strong>Lactate</strong> &ndash; identifies occult hypoperfusion and sets the resuscitation target.</li>
   <li><strong>Blood cultures</strong> &ndash; drawn before antibiotics, provided that does not delay them.</li>
   <li><strong>CBC and BMP</strong> &ndash; organ-dysfunction assessment, and renal function for antibiotic dosing.</li>
-  <li><strong>Foot X-ray and chest X-ray</strong> &ndash; the foot for gas and bony destruction, the chest as part of the sepsis source evaluation.</li>
+  <li><strong>Foot X-ray</strong> &ndash; gas, foreign body and bony destruction, for $490.</li>
   <li><strong>Deep tissue culture at debridement</strong> &ndash; the specimen that lets you narrow therapy in 48 hours.</li>
 </ul>
 
 <strong>Imaging</strong>
 <ul class="small">
   <li><strong>Foot X-ray ($490)</strong> &ndash; first-line: gas, foreign body, bony destruction.</li>
-  <li><strong>Chest X-ray ($420)</strong> &ndash; part of the standard source evaluation in sepsis. An obvious source does not exclude a second one.</li>
+  <li><strong>Chest X-ray ($420)</strong> &ndash; not part of the core workup here. He has no respiratory symptoms and the foot explains his sepsis. It becomes reasonable if you are worried about a respiratory source, or about an aspiration event given how altered he is.</li>
   <li><strong>MRI of the foot ($5,470&ndash;$7,670)</strong> &ndash; the probe does not reach bone, so MRI can be considered <em>after</em> evaluation by a subspecialist. It is not part of the initial emergency department workup, and it is the most expensive order available in this case. The same applies to bone biopsy.</li>
 </ul>
 
@@ -3684,14 +3722,14 @@ lowValueReasons: new Map([
       { id:"abxchoice", question:"Empiric antibiotic choice", hint:"",
         options:[
           {id:"vpt", label:"Vancomycin plus piperacillin-tazobactam", tier:"high", why:"Covers MRSA, streptococci, gram-negatives and anaerobes. That is the right breadth for a severe diabetic foot infection with systemic signs."},
-          {id:"vanc", label:"Vancomycin alone", tier:"intermediate", why:"Covers the gram-positive organisms. Diabetic foot infections are frequently polymicrobial, and this leaves gram-negative and anaerobic organisms uncovered."},
-          {id:"keflex", label:"Oral cephalexin", tier:"low", why:"Oral therapy in a hypotensive patient with unreliable gut perfusion, and without MRSA or gram-negative coverage."},
-          {id:"cfz", label:"Cefazolin alone", tier:"low", why:"Too narrow for empiric therapy in this setting. It may well prove to be the correct drug in 48 hours, once the organism is identified."}
+          {id:"vanc", label:"Vancomycin alone", tier:"low", why:"Inadequate initial coverage. It handles the gram-positives, but diabetic foot infections are frequently polymicrobial and this leaves gram-negatives and anaerobes untreated in a patient who is already hypotensive."},
+          {id:"keflex", label:"Oral cephalexin", tier:"low", why:"Inadequate initial coverage, by two separate routes: no MRSA and no gram-negative cover, given orally to a hypotensive patient whose gut perfusion cannot be relied on."},
+          {id:"cfz", label:"Cefazolin alone", tier:"low", why:"Inadequate initial coverage. It may well turn out to be the right drug in 48 hours once the organism is known \u2014 that is exactly the narrowing you will do on day two \u2014 but choosing it empirically in septic shock gambles on an organism you have not identified yet."}
         ]},
       { id:"source", question:"Source control", hint:"",
         options:[
           {id:"urgent", label:"Urgent surgery or podiatry consult for debridement and deep tissue culture", tier:"high", why:"Antibiotics alone will not sterilize undrained purulence. Surgical or podiatric debridement is the definitive treatment here, and the deep specimen obtained during that procedure is what allows therapy to be narrowed in 48 hours. Source control is also the element of sepsis management most often omitted."},
-          {id:"48h", label:"Consult if he is not improving in 48 hours", tier:"intermediate", why:"Waiting 48 hours to drain a septic patient's purulent wound is too slow, and it delays the culture that will guide therapy."},
+          {id:"48h", label:"Consult if he is not improving in 48 hours", tier:"low", why:"Inadequate source control. Forty-eight hours is far too long to leave undrained purulence in a patient who presented in septic shock, and it also delays the deep culture that every antibiotic decision on day two depends on."},
           {id:"none", label:"No consult; antibiotics alone", tier:"low", why:"He is unlikely to clear this infection on antibiotics alone, and without a deep specimen the organism remains unknown for the rest of the admission."}
         ]},
       { id:"pressors", question:"If the MAP stays below 65 after the fluid bolus", hint:"",
@@ -3827,7 +3865,7 @@ lowValueReasons: new Map([
       { id:"labs", question:"Laboratory monitoring", hint:"",
         options:[
           {id:"stoplabs", label:"Stop the daily labs; recheck if the clinical course changes", tier:"high", why:"His clinical examination is improving and his labs have normalized. Daily phlebotomy in a stable patient contributes to iatrogenic anemia, interrupts sleep, and produces borderline results that prompt further testing without changing management."},
-          {id:"qod", label:"Every-other-day CBC only", tier:"intermediate", why:"Reasonable if you would like one more data point before stopping altogether."},
+          {id:"qod", label:"Every-other-day CBC only", tier:"low", why:"A schedule, not an indication. His count has already normalised and his examination is improving, so there is no question an every-other-day CBC would answer. Reduced-frequency routine labs are still routine labs."},
           {id:"daily", label:"Continue daily CBC, BMP and CRP", tier:"low", why:"Three tests daily in a patient whose examination already demonstrates that he is improving."}
         ]},
       { id:"abx6b", question:"Antibiotics, with clusters on the Gram stain and susceptibilities pending", hint:"",
@@ -3840,7 +3878,7 @@ lowValueReasons: new Map([
       { id:"insulin", question:"Insulin, in a patient eating normally who has missed 24 hours of basal", hint:"Home regimen: glargine 25 units daily. Eating a normal diet.",
         options:[
           {id:"basalcorr", label:"Restart home glargine 25 units daily plus correction-scale insulin", tier:"high", why:"He takes basal insulin at home and he is eating, so his basal goes back, with a correction scale on top of it for what the basal does not cover. Worth noticing that this costs more than sliding scale alone, in insulin, fingersticks and nursing time, and is still the better care."},
-          {id:"basalonly", label:"Restart home glargine 25 units daily alone", tier:"intermediate", why:"The important part is right: his basal insulin goes back. Without a correction scale, however, you have no way to address hyperglycemia that the basal dose does not cover."},
+          {id:"basalonly", label:"Restart home glargine 25 units daily alone", tier:"low", why:"Half the answer. Restarting his basal is right, but his glucose was 358 on arrival and his inpatient requirements are not yet known. Without a correction scale you have no way to treat hyperglycemia the basal dose does not cover, and nothing to learn his requirements from."},
           {id:"ssionly", label:"Correction-scale (sliding scale) insulin only", tier:"low", why:"Both the Endocrine Society and the ADA recommend against sliding scale insulin as sole therapy. It is purely reactive, addressing hyperglycemia only after it occurs, and it leaves a patient who takes 25 units of glargine at home without any basal insulin."},
           {id:"half", label:"Half the glargine dose while inpatient", tier:"low", why:"The reasoning behind this is sound in many inpatients, who often have poor oral intake. It does not apply here: he is eating a normal diet with a normal appetite, so halving his basal dose produces avoidable hyperglycemia."},
           {id:"increase", label:"Increase glargine to 40 units because acutely ill patients need more insulin", tier:"low", why:"Home glargine is not increased on admission. His inpatient insulin requirements are not yet known, and raising his basal dose empirically puts him at risk of hypoglycemia. The correct approach is to restart his home regimen and add sliding scale insulin, then use what he requires over the next day or two to decide whether the basal dose needs adjusting."}
@@ -3952,7 +3990,7 @@ lowValueReasons: new Map([
       { id:"duration", question:"Duration, for a debrided soft-tissue infection without bone involvement", hint:"",
         options:[
           {id:"short", label:"A 5 day course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and once source control has been achieved short courses perform as well as longer ones. The clock starts at the debridement, not at admission. Additional weeks of therapy add adverse effects and resistance without improving cure."},
-          {id:"twowk", label:"2–3 weeks from initial presentation", tier:"intermediate", why:"Defensible given his impaired perfusion, and within the range guidelines permit, although longer than his clinical response requires. Note also that it counts from presentation rather than from source control, which is not how duration is usually anchored for a debrided soft tissue infection."},
+          {id:"twowk", label:"2–3 weeks from initial presentation", tier:"low", why:"Two errors in one answer. It is longer than a debrided soft tissue infection without bone involvement requires, and it counts from presentation rather than from source control — the clock starts when the wound was debrided, not when he walked in."},
           {id:"sixwk", label:"Six weeks, as though this were osteomyelitis", tier:"low", why:"Six weeks is the duration for osteomyelitis. The probe did not reach bone, the X-ray showed no bony destruction, and podiatry documented no concern for bone involvement."},
           {id:"indef", label:"Indefinite suppression", tier:"low", why:"Suppressive therapy is reserved for retained hardware or infection that cannot be cleared. Neither applies to a debrided soft tissue ulcer."}
         ]},
@@ -4236,7 +4274,9 @@ function setSurveyVisible(which){
 
 function setMedRecFrameHeight(px){
   if (!medRecFrameEl) return;
-  const h = Math.max(900, Math.min(5000, Number(px || 0)));
+  // The old floor of 900px was taller than a phone screen and forced dead scroll;
+  // the frame now follows its content, with a floor only to cover a failed measure.
+  const h = Math.max(320, Math.min(9000, Number(px || 0)));
   medRecFrameEl.style.height = h + "px";
 }
 
@@ -4573,6 +4613,15 @@ function gradeOrder(orderId){
    ========================= */
 const DECISION_ANSWERS = new Map();   // decisionId -> optionId, for the active case
 
+/* Decisions that hand back new clinical information (the repeat lactate after the
+   fluid choice) now require a deliberate submit before the result appears, and the
+   answer standing at that moment is the one that gets graded. Without this a
+   learner could click each option in turn, read all four lactates, and then leave
+   the best one selected -- which grades their reading comprehension, not their
+   judgement. They may still change the answer afterwards to explore what the other
+   choices would have produced; the grade is already locked. */
+const DECISION_FIRST = new Map();     // decisionId -> optionId at the moment of commit
+
 function escAttr(s){ return String(s).replace(/"/g, "&quot;"); }
 
 function renderDecisions(cfg){
@@ -4595,12 +4644,44 @@ function renderDecisions(cfg){
       html += '<label><input type="radio" name="dec_' + escAttr(d.id) + '" value="' + escAttr(o.id) + '">' +
               '<span>' + escapeHtml(o.label) + '</span></label>';
     }
-    html += '</div><div class="decision-reveal hidden" id="rv_' + escapeHtml(d.id) + '">' +
+    html += '</div>';
+    if (d.options.some(o => o.reveal)){
+      html += '<div class="decision-commit">' +
+                '<button type="button" class="dec-submit" data-dec="' + escAttr(d.id) + '" disabled>' +
+                  'Submit answer' +
+                '</button>' +
+                '<span class="dec-commit-note small muted">Your answer is recorded when you submit.</span>' +
+              '</div>';
+    }
+    html += '<div class="decision-reveal hidden" id="rv_' + escapeHtml(d.id) + '">' +
               '<div class="rv-title"></div><div class="rv-body"></div></div></div>';
   }
   html += '</div>';
   decisionBlockEl.innerHTML = html;
   decisionBlockEl.classList.remove("hidden");
+  DECISION_FIRST.clear();
+}
+
+function decisionNeedsCommit(cfg, id){
+  const ds = (cfg && Array.isArray(cfg.decisions)) ? cfg.decisions : [];
+  const d = ds.find(x => x.id === id);
+  return !!(d && d.options.some(o => o.reveal));
+}
+
+function paintReveal(did, optId){
+  const cfg = CASES[ACTIVE_CASE];
+  const dec = cfg && Array.isArray(cfg.decisions) ? cfg.decisions.find(x => x.id === did) : null;
+  const opt = dec ? dec.options.find(o => o.id === optId) : null;
+  const slot = document.getElementById("rv_" + did);
+  if (!slot) return;
+  if (opt && opt.reveal){
+    slot.querySelector(".rv-title").textContent = dec.revealTitle || "Result";
+    slot.querySelector(".rv-body").innerHTML = opt.reveal;
+    slot.classList.remove("hidden");
+  } else {
+    slot.classList.add("hidden");
+    slot.querySelector(".rv-body").innerHTML = "";
+  }
 }
 
 function decisionsAllAnswered(cfg){
@@ -4625,9 +4706,13 @@ function gradeDecisions(cfg){
   const ds = (cfg && Array.isArray(cfg.decisions)) ? cfg.decisions : [];
   const out = [];
   for (const d of ds){
-    const chosenId = DECISION_ANSWERS.get(d.id) || "";
+    // Where a decision was committed, that first answer is the graded one.
+    const committedId = DECISION_FIRST.get(d.id) || "";
+    const currentId = DECISION_ANSWERS.get(d.id) || "";
+    const chosenId = committedId || currentId;
     const chosen = d.options.find(o => o.id === chosenId) || null;
     const best = d.options.find(o => o.tier === "high") || null;
+    const changedAfter = !!(committedId && currentId && currentId !== committedId);
     out.push({
       id: d.id,
       question: d.question,
@@ -4635,7 +4720,10 @@ function gradeDecisions(cfg){
       chosenLabel: chosen ? chosen.label:"",
       tier: chosen ? chosen.tier : "",
       why: chosen ? (chosen.why || "") : "",
-      bestLabel: best ? best.label:""
+      bestLabel: best ? best.label:"",
+      committed: !!committedId,
+      changedAfter: changedAfter,
+      currentId: currentId
     });
   }
   return out;
@@ -4825,12 +4913,10 @@ const WELLS_EXPECTED_SCORE = 6.0;
 function wellsInterpretation(score){ return score > 4 ? "likely" : "unlikely"; }
 
 function resetWellsUI(){
+  if (!wellsContainerEl) return;
   wellsScoreEl.textContent = "0.0";
   wellsInterpEl.textContent = "PE unlikely (\u2264 4)";
   wellsContainerEl.querySelectorAll("input.wells").forEach(cb => { cb.checked = false; });
-  wellsContainerEl.querySelectorAll('input[name="wellsCommit"]').forEach(r => { r.checked = false; });
-  const blk = document.getElementById("wellsCommit_block");
-  if (blk) blk.classList.remove("survey-unanswered");
 }
 
 function currentWellsScore(){
@@ -4847,25 +4933,10 @@ function computeWells(){
   wellsInterpEl.textContent = score > 4 ? "PE likely (> 4)" : "PE unlikely (\u2264 4)";
 }
 
-function gradeWells(){
-  const score = currentWellsScore();
-  const committed = document.querySelector('input[name="wellsCommit"]:checked')?.value || "";
-  return {
-    score,
-    expected: WELLS_EXPECTED_SCORE,
-    scoreCorrect: Math.abs(score - WELLS_EXPECTED_SCORE) < 0.01,
-    committed,
-    // Did they read their own number correctly?
-    internallyConsistent: committed === wellsInterpretation(score),
-    // Does the final classification match the vignette?
-    classificationCorrect: committed === wellsInterpretation(WELLS_EXPECTED_SCORE)
-  };
-}
-
-function renderWellsFeedback(w){
+function renderWellsFeedback(show){
   const el = document.getElementById("wellsFeedback");
   if (!el) return;
-  if (!w){ el.innerHTML = ""; return; }
+  if (!show){ el.innerHTML = ""; return; }
 
   const rows = WELLS_EXPECTED.map(c => `
     <li class="small">
@@ -4873,37 +4944,20 @@ function renderWellsFeedback(w){
       <span class="muted">&mdash; ${escapeHtml(c.why)}</span>
     </li>`).join("");
 
-  const cls = w.classificationCorrect ? "good" : "bad";
-  const tag = w.classificationCorrect ? "\u2705 Correct" : "\u274c Incorrect";
-
-  let note = "";
-  if (!w.scoreCorrect && w.internallyConsistent && w.classificationCorrect){
-    note = "<p class=\"small\">Your total came out at " + w.score.toFixed(1) + " rather than 6.0, but it landed on the "
-         + "right side of the threshold, so the decision it drives is the same.</p>";
-  } else if (!w.internallyConsistent){
-    note = "<p class=\"small\">Your checkboxes totalled " + w.score.toFixed(1) + ", which is \u201cPE "
-         + escapeHtml(wellsInterpretation(w.score)) + "\u201d on the two-tier cut-off, but you classified him as \u201cPE "
-         + escapeHtml(w.committed || "\u2014") + ".\u201d Worth re-reading the threshold.</p>";
-  }
-
   el.innerHTML = `
-    <div class="dfb-item ${cls}" style="margin-top:12px;">
-      <div class="dfb-head"><strong>Wells score</strong> <span class="pill">${tag}</span></div>
-      <div class="small">You scored him <strong>${w.score.toFixed(1)}</strong> and called him
-        <strong>PE ${escapeHtml(w.committed || "\u2014")}</strong>. The expected score is
-        <strong>${WELLS_EXPECTED_SCORE.toFixed(1)}</strong>, which is <strong>PE likely</strong>.</div>
-      ${note}
-      <ul class="plain" style="margin-top:8px;">${rows}</ul>
+    <div class="wells-worked">
+      <strong>Wells score for this patient: ${WELLS_EXPECTED_SCORE.toFixed(1)} &mdash; PE likely</strong>
+      <ul class="plain" style="margin:8px 0;">${rows}</ul>
       <p class="small" style="margin-bottom:0;">
-        This is the number that decides whether a D-dimer is worth ordering. Above the threshold,
-        a negative D-dimer does not lower the probability enough to stop, so it buys delay and cost
-        and you image anyway. Below it, the D-dimer is the whole point.
+        Two-tier Wells splits at 4, and that split is what decides whether a D-dimer is worth
+        ordering. Above it, a negative D-dimer does not lower the probability enough to stop,
+        so it buys delay and cost and you image anyway. Below it, the D-dimer is the whole point.
+        Three-tier scoring would call 6.0 &ldquo;moderate,&rdquo; which reads as less urgent than
+        this patient is.
       </p>
     </div>`;
 }
 
-/* Blank out results the learner never ordered. Rows carry data-req with a
-   pipe-separated list of order ids, any one of which produces that result. */
 function applyOrderedResultsFilter(){
   if (ACTIVE_CASE !== 7) return;
   if (!CASE6A_ORDERS) return;           // 6a not done; don't punish a tab jump
@@ -4967,14 +5021,11 @@ function setActiveCase(caseId){
   caseContentEl.innerHTML = cfg ? cfg.contentHtml : "";
   applyOrderedResultsFilter();
 
-  if (caseId === 1){
-    wellsContainerEl.classList.remove("hidden");
-    resetWellsUI();
-    computeWells();
-  } else {
-    wellsContainerEl.classList.add("hidden");
-  }
-  renderWellsFeedback(null);
+  // Case 1's Wells tool is part of the explanation, not the workup: showing the
+  // criteria before the learner orders names the diagnosis for them.
+  wellsContainerEl.classList.add("hidden");
+  resetWellsUI();
+  renderWellsFeedback(false);
 
   resultsEl.classList.add("hidden");
   if (continueBtnEl) continueBtnEl.classList.add("hidden");
@@ -5061,23 +5112,35 @@ if (decisionBlockEl){
       const box = document.getElementById("dec_" + did);
       if (box) box.classList.remove("decision-unanswered");
 
-      // Some choices return new clinical information immediately — for example a
-      // repeat lactate after the fluid decision. The result follows the choice.
       const cfg = CASES[ACTIVE_CASE];
-      const dec = cfg && Array.isArray(cfg.decisions) ? cfg.decisions.find(x => x.id === did) : null;
-      const opt = dec ? dec.options.find(o => o.id === t.value) : null;
-      const slot = document.getElementById("rv_" + did);
-      if (slot){
-        if (opt && opt.reveal){
-          slot.querySelector(".rv-title").textContent = dec.revealTitle || "Result";
-          slot.querySelector(".rv-body").innerHTML = opt.reveal;
-          slot.classList.remove("hidden");
-        } else {
-          slot.classList.add("hidden");
-          slot.querySelector(".rv-body").innerHTML = "";
-        }
+      if (decisionNeedsCommit(cfg, did)){
+        const btn = decisionBlockEl.querySelector('.dec-submit[data-dec="' + did + '"]');
+        if (btn) btn.disabled = false;
+        // Already committed: they are exploring the alternatives, so show the
+        // result for whatever they pick now. The graded answer does not move.
+        if (DECISION_FIRST.has(did)) paintReveal(did, t.value);
+      } else {
+        paintReveal(did, t.value);
       }
     }
+  });
+
+  decisionBlockEl.addEventListener("click", (e)=>{
+    const btn = e.target && e.target.closest ? e.target.closest(".dec-submit") : null;
+    if (!btn) return;
+    const did = btn.getAttribute("data-dec");
+    const chosen = DECISION_ANSWERS.get(did);
+    if (!chosen) return;
+    if (!DECISION_FIRST.has(did)){
+      DECISION_FIRST.set(did, chosen);
+      const note = btn.parentElement.querySelector(".dec-commit-note");
+      if (note) note.textContent = "Answer recorded. You can keep changing it to see what else would have happened.";
+      btn.textContent = "Answer recorded";
+      btn.classList.add("committed");
+      btn.disabled = true;
+      saveState();
+    }
+    paintReveal(did, chosen);
   });
 }
 
@@ -5120,15 +5183,12 @@ selectedOrdersBoxEl.addEventListener("click", (e)=>{
   saveState();
 });
 
+// The Wells tool now lives inside the post-submit explanation, so ticking its
+// boxes is exploration after the fact and must not mark the case dirty.
 wellsContainerEl.addEventListener("change", (e)=>{
   if (e.target && e.target.classList && e.target.classList.contains("wells")){
     computeWells();
   }
-  if (e.target && e.target.name === "wellsCommit"){
-    const blk = document.getElementById("wellsCommit_block");
-    if (blk) blk.classList.remove("survey-unanswered");
-  }
-  CASE_DIRTY = true;
 });
 
 orderFormEl.addEventListener("submit", (e)=>{
@@ -5140,21 +5200,11 @@ orderFormEl.addEventListener("submit", (e)=>{
     return;
   }
 
-  if (ACTIVE_CASE === 1 && !document.querySelector('input[name="wellsCommit"]:checked')){
-    const blk = document.getElementById("wellsCommit_block");
-    if (blk){
-      blk.classList.add("survey-unanswered");
-      try { blk.scrollIntoView({behavior:"smooth", block:"center"}); } catch(e){}
-    }
-    showFormError("Score the Wells criteria and commit to an interpretation before ordering.");
-    return;
-  }
-
   const cfg = CASES[ACTIVE_CASE];
   if (!decisionsAllAnswered(cfg)){
     // An alert() here used to fire immediately and freeze the smooth scroll that
     // decisionsAllAnswered() had just started.
-    showFormError("Answer every management decision before submitting. The unanswered ones are highlighted.");
+    showFormError("Answer every management decision before submitting, including pressing Submit answer where a decision has one. The incomplete ones are highlighted.");
     return;
   }
   const gradedDecisions = gradeDecisions(cfg);
@@ -5165,8 +5215,6 @@ orderFormEl.addEventListener("submit", (e)=>{
   let studentTotal = 0;
   let feedbackHtml = "<ul>";
   const chosen = Array.from(selectedIds).map(id => idToOrder.get(id)).filter(Boolean);
-
-  const wellsGraded = (ACTIVE_CASE === 1) ? gradeWells() : null;
 
   let fallbackCount = 0;
   for (const o of chosen){
@@ -5234,10 +5282,6 @@ orderFormEl.addEventListener("submit", (e)=>{
     redundantPairCount: redundancies.length,
     redundantExtraCost: redundancies.reduce((a,r)=>a + r.extraCost, 0),
     unlistedLowValueCount: fallbackGraded,
-    wellsScore: wellsGraded ? wellsGraded.score : "",
-    wellsCommitted: wellsGraded ? wellsGraded.committed : "",
-    wellsScoreCorrect: wellsGraded ? (wellsGraded.scoreCorrect ? "yes" : "no") : "",
-    wellsClassificationCorrect: wellsGraded ? (wellsGraded.classificationCorrect ? "yes" : "no") : "",
     recommendedIds: recIdsForLog,
     recommendedCost: Number(recTotalForLog || 0),
     deltaCost: Number((studentTotal - recTotalForLog) || 0),
@@ -5251,6 +5295,11 @@ orderFormEl.addEventListener("submit", (e)=>{
     missedRecommendedCount: missedForLog.length,
     decisions: gradedDecisions.map(g => ({ id:g.id, chosen:g.chosenId, label:g.chosenLabel, tier:g.tier })),
     decisionsText: toTextList(gradedDecisions.map(g => g.id + ": " + g.chosenLabel + " (" + g.tier + ")"), " | "),
+    // Where a decision had a commit button, decisionsText above already carries the
+    // committed answer. This records any that were changed afterwards, so exploring
+    // the alternatives is visible in the data and distinguishable from indecision.
+    decisionsChangedAfterCommit: gradedDecisions.filter(g=>g.changedAfter)
+      .map(g=>(g.id + ":" + g.chosenId + "->" + g.currentId)).join(" | "),
     decisionHighCount: decisionCounts.high,
     decisionIntermediateCount: decisionCounts.intermediate,
     decisionLowCount: decisionCounts.low
@@ -5342,16 +5391,15 @@ orderFormEl.addEventListener("submit", (e)=>{
     const hasBloodCx = selectedIds.has("BLOOD_CX");
     const hasCBC = selectedIds.has("CBC");
     const hasBMPorCMP = selectedIds.has("BMP") || selectedIds.has("CMP");
-    const hasCXR = selectedIds.has("CXR");
     const hasFootXR = selectedIds.has("XR_FOOT");
     const hasDeepCx = selectedIds.has("PDF_4569728");
-    const bundle = [hasLactate, hasBloodCx, hasCBC, hasBMPorCMP, hasCXR].filter(Boolean).length;
+    const bundle = [hasLactate, hasBloodCx, hasCBC, hasBMPorCMP].filter(Boolean).length;
 
     pathRow1LabelEl.textContent = "Sepsis evaluation";
-    pathRow1StudentEl.textContent = (bundle === 5)
-      ? "Complete (lactate, blood cultures, CBC, BMP, CXR)"
-      : (bundle + " of 5 obtained" + (hasLactate ? "" : " \u2014 no lactate") + (hasBloodCx ? "" : (hasLactate ? " \u2014 no blood cultures" : ", no blood cultures")));
-    pathRow1RecEl.textContent = "Lactate + blood cultures before antibiotics, CBC, BMP, CXR";
+    pathRow1StudentEl.textContent = (bundle === 4)
+      ? "Complete (lactate, blood cultures, CBC, BMP)"
+      : (bundle + " of 4 obtained" + (hasLactate ? "" : " \u2014 no lactate") + (hasBloodCx ? "" : (hasLactate ? " \u2014 no blood cultures" : ", no blood cultures")));
+    pathRow1RecEl.textContent = "Lactate + blood cultures before antibiotics, CBC, BMP";
 
     pathRow2LabelEl.textContent = "Source evaluation";
     pathRow2StudentEl.textContent = (hasFootXR && hasDeepCx)
@@ -5391,7 +5439,12 @@ orderFormEl.addEventListener("submit", (e)=>{
                       && !(cfgNow && cfgNow.ordersDisabled);
   if (pc) pc.style.display = showPathway ? "block" : "none";
   if (ACTIVE_CASE === 6) CASE6A_ORDERS = Array.from(selectedIds);
-  renderWellsFeedback(ACTIVE_CASE === 1 ? wellsGraded : null);
+  if (ACTIVE_CASE === 1){
+    renderWellsFeedback(true);
+    wellsContainerEl.classList.remove("hidden");
+    resetWellsUI();
+    computeWells();
+  }
 
   // Initialize any post-submit interactive elements (e.g., sepsis checklist)
   initSepsisChecklist();
@@ -5498,6 +5551,8 @@ function saveState(){
   try {
     const decisions = {};
     DECISION_ANSWERS.forEach((v,k)=>{ decisions[k] = v; });
+    const decisionsFirst = {};
+    DECISION_FIRST.forEach((v,k)=>{ decisionsFirst[k] = v; });
     lsSet(LS_STATE, JSON.stringify({
       savedAt: Date.now(),
       sessionId: SESSION_ID,
@@ -5507,6 +5562,7 @@ function saveState(){
       completed: Array.from(COMPLETED_CASES),
       selected: Array.from(selectedIds),
       decisions,
+      decisionsFirst,
       pretest: PRETEST_RESPONSES,
       posttest: POSTTEST_RESPONSES,
       case5Submitted: CASE5_SUBMITTED,
@@ -5576,6 +5632,20 @@ function restoreSession(){
         DECISION_ANSWERS.set(k, val);
         const el = document.querySelector('input[name="dec_' + k + '"][value="' + val + '"]');
         if (el) el.checked = true;
+      });
+    }
+    if (st.decisionsFirst){
+      Object.keys(st.decisionsFirst).forEach(k=>{
+        DECISION_FIRST.set(k, st.decisionsFirst[k]);
+        const btn = decisionBlockEl && decisionBlockEl.querySelector('.dec-submit[data-dec="' + k + '"]');
+        if (btn){
+          btn.textContent = "Answer recorded";
+          btn.classList.add("committed");
+          btn.disabled = true;
+          const note = btn.parentElement.querySelector(".dec-commit-note");
+          if (note) note.textContent = "Answer recorded. You can keep changing it to see what else would have happened.";
+        }
+        paintReveal(k, DECISION_ANSWERS.get(k) || st.decisionsFirst[k]);
       });
     }
     restoreSurveyInputs("pre", PRETEST_RESPONSES);
