@@ -93,6 +93,11 @@ ul.plain>li{margin:0 0 9px}
 .fs-none{color:var(--muted);font-style:italic;font-weight:500}
 tr.fs-unordered .fs-lab{color:var(--muted)}
 .wells-worked{border-left:3px solid var(--accent);padding-left:14px;margin:14px 0}
+table.tele-tbl{min-width:34rem}
+table.tele-tbl th{background:var(--chip);font-weight:600;color:var(--heading);text-align:left}
+table.tele-tbl td{vertical-align:top;width:50%}
+ol.refs{margin:10px 0 0;padding-left:20px;color:var(--muted)}
+ol.refs li{margin:5px 0;line-height:1.45}
 .decision-commit{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
 .dec-submit{
   font:inherit;font-size:.88rem;font-weight:600;
@@ -700,7 +705,7 @@ textarea{min-height:96px;resize:vertical}
         <div id="wellsContainer" class="wells-box hidden">
           <h4 style="margin-top:0;">Try it yourself</h4>
           <div class="small muted">
-            Tick the criteria you would have scored. Age is <strong>not</strong> part of Wells.
+            Tick the criteria you would have scored.
           </div>
           <div style="margin-top:10px;">
             <label><input type="checkbox" class="wells" data-points="3"> Clinical signs/symptoms of DVT (leg swelling, pain with palpation)</label>
@@ -1028,6 +1033,11 @@ Next to each medication below, decide whether to <b>continue the home medication
   <div><b>Home baseline annual total</b><br><span id="annualHomeTotal" class="money">$0</span></div>
   <div><b>Change in annual price of medications</b><br><span id="annualDelta" class="money">$0</span></div>
 </div>
+
+<div class="small muted" style="margin-top:10px;">
+  Monthly totals are the price of one month of therapy. Medications priced <i>for the course</i>
+  are finite, so they are counted once in the monthly total and are not multiplied into the annual projection.
+</div>
 </div>
 </div>
 
@@ -1166,7 +1176,7 @@ const ROWS=[
 {id:"ppi",home:null,hosp:{l:"Nexium (esomeprazole) 20 mg daily",c:7.45}},
 
 {id:"hep",home:null,hosp:{l:"Subcutaneous heparin (generic) 5000 units BID",c:48.32}},
-{id:"abx",home:null,hosp:{l:"Cefpodoxime (generic) 100 mg q12h (prophylaxis)",c:34.00}},
+{id:"abx",home:null,hosp:{l:"Cefazolin IV (generic), surgical prophylaxis \u2014 discontinued 24 hours post-operatively",c:27.00,once:true}},
 
 {id:"tyl",home:null,hosp:{l:"Acetaminophen (generic) 650 mg q6h PRN",c:3.74}},
 {id:"ibu",home:null,hosp:{l:"Ibuprofen (generic) 500 mg q6h PRN",c:2.48}},
@@ -1189,7 +1199,7 @@ const HVC = {
   statin: `Name brand medications are often more expensive than their generic alternatives. Consider a lower-cost statin option when clinically appropriate.`,
   ppi: `No indication for a proton pump inhibitor inpatient or outpatient for stress ulcer prophylaxis. PPIs are commonly overprescribed and are primarily indicated for critically ill patients (e.g., intubated) or those on high-dose steroids. Inappropriate PPI use increases risk for C. difficile infection, community-acquired pneumonia, bone fracture, nutritional deficiencies, and drug interactions (including interference with antiplatelet metabolism). <br><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3388523/" target="_blank" rel="noopener">Citation</a>`,
   hep: `While it is reasonable to prescribe DVT prophylaxis inpatient and post-operatively, this should be discontinued outpatient if the patient is ambulatory and has lower risk of developing a DVT such as in someone with ankle surgery but who is still able to walk or participate with physical therapy. Strategies to prevent blood clots may be necessary in patients who are expected to have prolonged immobility.`,
-  abx: `Some patients will receive a one-time peri-operative antibiotic to reduce infection risk. There is little utility to continuing post-operative prophylactic antibiotics. <br><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10823856/" target="_blank" rel="noopener">Citation</a>`,
+  abx: `Surgical prophylaxis is given peri-operatively and stopped within 24 hours of the operation. It has already served its purpose by discharge, and continuing it adds <em>C. difficile</em> risk, resistance and cost without reducing surgical site infection. This is one of the most common things to find still active on a discharge medication list. <br><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10823856/" target="_blank" rel="noopener">Citation</a>`,
   tyl: `Reasonable to continue.`,
   ibu: `Reasonable to continue in moderation (consider renal function, GI risk, and bleeding risk).`,
   oxy: `The patient has not needed opioid medications after her surgery, and she has stated she would like to avoid opioids at this time.`,
@@ -1208,6 +1218,15 @@ if(r.home){let s=document.createElement("span");s.className="chip";s.textContent
 if(r.hosp){let s=document.createElement("span");s.className="chip";s.textContent=r.hosp.l;hospList.appendChild(s)}
 });
 
+// Most rows are a recurring monthly price. A row flagged once:true is a one-time
+// course cost (e.g. a finite antibiotic course), so it is labelled "for the course",
+// counted once in the current-month total, and NOT multiplied into the annual figure.
+function costHtml(e){
+  if(!e) return "";
+  const amt = "$"+(Math.round(e.c*100)/100).toFixed(2);
+  const unit = e.once ? " for the course" : " per month";
+  return '<div class="medcost hide">'+amt+unit+'</div>';
+}
 const tbl=document.getElementById("tbl");
 tbl.innerHTML="<tr><th>Home</th><th>Hospital</th><th>Decision</th></tr>";
 
@@ -1218,8 +1237,8 @@ ROWS.forEach(r=>{
   tr.id = "row_"+r.id;
   tr.className = "medrow";
   tr.innerHTML=`
-  <td>${r.home?'<div class="medbox">'+r.home.l+'<div class="medcost hide">$'+(Math.round(r.home.c*100)/100).toFixed(2)+' per month</div></div>':'—'}</td>
-  <td>${r.hosp?'<div class="medbox">'+r.hosp.l+'<div class="medcost hide">$'+(Math.round(r.hosp.c*100)/100).toFixed(2)+' per month</div></div>':'—'}</td>
+  <td>${r.home?'<div class="medbox">'+r.home.l+costHtml(r.home)+'</div>':'—'}</td>
+  <td>${r.hosp?'<div class="medbox">'+r.hosp.l+costHtml(r.hosp)+'</div>':'—'}</td>
   <td>
     <div class="options">
       ${r.home ? '<label class="option"><input type="radio" name="'+r.id+'" value="home"> Home</label>' : '<div class="option mutedBox">—</div>'}
@@ -1281,7 +1300,8 @@ document.getElementById("submit").onclick=()=>{
   document.querySelectorAll(".medcost").forEach(e=>e.classList.remove("hide"));
   document.querySelectorAll(".hvcRow").forEach(e=>e.classList.remove("hide"));
 
-  let total=0, homeTotal=0;
+  let total=0, homeTotal=0;            // current-month cost, including any one-time course costs
+  let totalRecur=0, homeTotalRecur=0;  // recurring component only, used for the annual projection
 
   // If these are selected as HOSPITAL meds, they represent low-value care -> RED.
   const lowValueHosp = new Set(["ppi","oxy","oxycont","hep","abx","hydral","quet","loraz"]);
@@ -1304,15 +1324,15 @@ document.getElementById("submit").onclick=()=>{
   const hvcSummary = [];
 
   ROWS.forEach(r=>{
-    if(r.home) homeTotal += r.home.c;
+    if(r.home){ homeTotal += r.home.c; if(!r.home.once) homeTotalRecur += r.home.c; }
 
     const sel = document.querySelector('input[name="'+r.id+'"]:checked');
     const choice = sel ? sel.value : "";
     payload["choice_"+r.id] = choice;
     choicesSummary.push(r.id + ":" + (choice || ""));
 
-    if(choice==="home" && r.home) total += r.home.c;
-    if(choice==="hosp" && r.hosp) total += r.hosp.c;
+    if(choice==="home" && r.home){ total += r.home.c; if(!r.home.once) totalRecur += r.home.c; }
+    if(choice==="hosp" && r.hosp){ total += r.hosp.c; if(!r.hosp.once) totalRecur += r.hosp.c; }
 
     // Apply color to the HVC row based on student choice
     const hvcContainer = document.getElementById("hvc_"+r.id);
@@ -1349,8 +1369,9 @@ document.getElementById("submit").onclick=()=>{
   payload["choices_summary"] = choicesSummary.join("|");
   payload["hvc_summary"] = hvcSummary.join("|");
 
-  const annualTotal = total * 12;
-  const annualHomeTotal = homeTotal * 12;
+  // One-time course costs are incurred once, not twelve times.
+  const annualTotal = totalRecur * 12 + (total - totalRecur);
+  const annualHomeTotal = homeTotalRecur * 12 + (homeTotal - homeTotalRecur);
 
   document.getElementById("results").classList.remove("hide");
 
@@ -1367,6 +1388,9 @@ document.getElementById("submit").onclick=()=>{
   payload["selected_monthly_total"] = (Math.round(total*100)/100).toFixed(2);
   payload["home_monthly_total"] = (Math.round(homeTotal*100)/100).toFixed(2);
   payload["monthly_change"] = (Math.round((total-homeTotal)*100)/100).toFixed(2);
+
+  payload["selected_monthly_recurring"] = (Math.round(totalRecur*100)/100).toFixed(2);
+  payload["selected_onetime_total"] = (Math.round((total-totalRecur)*100)/100).toFixed(2);
 
   payload["selected_annual_total"] = (Math.round(annualTotal*100)/100).toFixed(2);
   payload["home_annual_total"] = (Math.round(annualHomeTotal*100)/100).toFixed(2);
@@ -1525,7 +1549,7 @@ const orderCatalog = [
   { id:"URINE_CX", name:"Urine culture", cost:170.00, synonyms:["urine cx", "ucx"] },
   { id:"PDF_4569705", name:"hCG, urine (quantitative)", cost:260.00, synonyms:["urine hcg manual quantitative"] },
   { id:"PDF_4720655", name:"Venous blood gas (VBG)", cost:270.00, synonyms:["venous ph blood gas"] },
-  { id:"PDF_4569728", name:"Wound culture", cost:210.00, synonyms:["wound culture", "aerobic culture", "anaerobic culture", "gram stain", "tissue culture"] },
+  { id:"PDF_4569728", name:"Wound culture, deep (deep sample / surgical / debrided tissue)", cost:210.00, synonyms:["wound culture", "deep wound culture", "deep tissue culture", "aerobic culture", "anaerobic culture", "gram stain", "tissue culture", "operative culture", "debrided tissue"] },
   { id:"MRI_L_SPINE", name:"MRI lumbar spine without contrast", cost:5570.00, synonyms:["mri lumbar", "mri l spine", "mri back", "lumbar mri"] },
   { id:"MRI_L_SPINE_WWO", name:"MRI lumbar spine with and without contrast", cost:9200.00, synonyms:["mri lumbar contrast"] },
   { id:"MRI_T_SPINE", name:"MRI thoracic spine without contrast", cost:5570.00, synonyms:["mri thoracic spine"] },
@@ -1574,13 +1598,37 @@ const orderCatalog = [
    no secret here to leak. */
 const ANALYTICS_ENDPOINT = "/api/collect";
 
-/* The shared site credential. Be clear-eyed about what this is: it lives in a
-   file the browser downloads, so it is a speed bump, not access control. It
-   keeps the module off search engines and out of casual hands. Anyone who reads
-   the page source has it. Real gating needs Vercel Password Protection or
-   delivery through an authenticated LMS. */
-const SITE_USERNAME = "hvc2026";
-const SITE_PASSWORD = "value-over-volume";
+/* The shared site credential. Be clear-eyed about what it is: it lives in a file
+   the browser downloads, so anyone who opens view-source has both values. It is
+   a speed bump that keeps the module off search engines and out of casual hands,
+   not access control. Real gating means Vercel Password Protection or delivery
+   through an authenticated LMS.
+
+   Rotated 2026-09 from the round-1 pair, which had been public for months.
+   To change these, edit both lines and tell the cohort the new values. */
+/* Accounts. Add a line per cohort, course or site; the username used at launch is
+   stamped on every record as siteAccount, so submissions can be grouped by it.
+
+   IMPORTANT: these are SHARED credentials. Several people log in under the same
+   username, so siteAccount is a GROUP TAG, not a participant identifier, and must
+   never be used as one. The anonymous linking code is what identifies a
+   participant across pre-test and post-test.
+
+   Usernames are matched case-insensitively and trimmed; passwords are matched
+   exactly, after trimming surrounding whitespace. */
+const SITE_ACCOUNTS = [
+  { username:"ttr2026",  password:"highvalue",         label:"TTR 2026" },
+  { username:"hvc2026",  password:"value-over-volume", label:"General" }
+];
+
+let SITE_ACCOUNT = "";        // username actually used at launch
+let SITE_ACCOUNT_LABEL = "";
+
+function matchSiteAccount(username, password){
+  const u = String(username || "").trim().toLowerCase();
+  const pw = String(password || "").trim();
+  return SITE_ACCOUNTS.find(a => a.username.toLowerCase() === u && a.password === pw) || null;
+}
 
 const ANALYTICS_TIMEOUT_MS = 4000;
 
@@ -1693,6 +1741,8 @@ function getContextMeta(){
   try {
     meta.deviceClass = window.matchMedia("(hover: none)").matches ? "touch" : "desktop";
   } catch(e){ meta.deviceClass = ""; }
+  meta.siteAccount = SITE_ACCOUNT || "";
+  meta.siteAccountLabel = SITE_ACCOUNT_LABEL || "";
   meta.linkCode = LINK_CODE || "";
   meta.participantId = PARTICIPANT_ID || "";
   meta.storageOk = STORAGE_OK ? "yes" : "no";
@@ -1994,7 +2044,7 @@ function normalizeAdminRow(r){
 const CSV_CORE_COLUMNS = [
   // identity + provenance
   "receivedAt","source","seq","eventId","type","appVersion","moduleMode",
-  "sessionId","participantId","linkCode","learnerId","storageOk","retried",
+  "sessionId","participantId","linkCode","learnerId","siteAccount","siteAccountLabel","storageOk","retried",
   "institution","trainingLevel","trainingLevelRaw","trainingLevelOther",
   // timing
   "eventAt","startedAt","submittedAt","completedAt",
@@ -2120,7 +2170,7 @@ function validateLaunchFields(){
   else if (info.trainingLevel === "Other" && !info.trainingLevelOther) msg = "Please specify your level of training.";
   else if (!username) msg = "Please enter the username before starting the module.";
   else if (!password) msg = "Please enter the password before starting the module.";
-  else if (username !== SITE_USERNAME || password !== SITE_PASSWORD) msg = "Incorrect username or password.";
+  else if (!matchSiteAccount(username, password)) msg = "Incorrect username or password.";
   if (errEl){
     errEl.textContent = msg;
     errEl.classList.toggle("hidden", !msg);
@@ -3037,6 +3087,12 @@ lowValueReasons: new Map([
     ["NO_TESTING","High Value – Her modified Centor (McIsaac) score is 1. At a score of 0–1, neither rapid antigen testing, throat culture, nor antibiotics are recommended. The presence of a cough argues against group A strep and for a viral cause. Symptomatic management with clear return precautions is the high-value plan."]
   ]),
   lowValueReasons: new Map([
+    ["CBC","Low Value – She is well-appearing with normal vitals apart from a low-grade fever, and nothing on examination points to bacterial infection. A white count will not change what you do for her. Were she more unwell — toxic-appearing, dehydrated, persistently high fever — it would be reasonable to obtain."],
+    ["BMP","Low Value – She is tolerating oral intake with normal vitals, so electrolytes and renal function are not in question. With vomiting, poor intake or clinical dehydration it would be reasonable to obtain."],
+    ["CMP","Low Value – Everything that applies to the BMP applies here, with liver tests added that nothing in her presentation calls for. Reasonable if she were systemically unwell or you had a specific hepatic concern."],
+    ["CXR","Low Value – Her lungs are clear, she is not hypoxic and her work of breathing is normal. A dry cough in a viral syndrome does not warrant a chest film. Focal findings, hypoxia, or a worsening or persistent course would make it reasonable."],
+    ["BLOOD_CX","Low Value – Blood cultures are for suspected bacteraemia. She is well-appearing with stable vitals and no systemic signs, so the yield here is close to zero, and a contaminant costs far more than the culture in repeat testing and unnecessary antibiotics. Reasonable were she febrile and ill-appearing."],
+    ["SPUTUM_CX","Low Value – There is no pneumonia to culture, and a well adolescent with a dry cough will not produce a usable specimen. Reasonable with a productive cough and radiographic pneumonia, particularly if she were sick enough to admit."],
     ["PDF_4566588","Low Value – Her modified Centor (McIsaac) score is 1, and guidelines recommend against testing at 0–1. The pre-test probability of group A strep is low, and a positive result in this setting is more likely to reflect chronic carriage than acute infection — which leads to antibiotics that do not help her and carry real harms."],
     ["PDF_4567060","Low Value – Throat culture has the same problem as rapid antigen testing at a score of 1, and adds a 24–48 hour delay. Culture is reserved for patients who warrant testing and have a negative rapid antigen test, which does not apply here."],
     ["UA","Low Value – In nonpregnant patients there is no indication to screen for or treat asymptomatic bacteriuria. Testing urine without urinary symptoms leads to unnecessary antibiotics."],
@@ -3048,13 +3104,7 @@ lowValueReasons: new Map([
   ]),
   intermediateIds: new Map([
     ["COVID_PCR","Intermediate – Reasonable but not required. She is well-appearing and low-risk, so the result would not change her treatment, though it may inform isolation and return-to-school counseling."],
-    ["FLU_PCR","Intermediate – Reasonable but not required. At three days of symptoms she is past the window where antivirals clearly benefit a healthy adolescent, though a result may still guide counseling and household precautions."],
-    ["CBC","Intermediate (conditional) – may be reasonable if there is concern for bacterial infection or more severe illness."],
-    ["BMP","Intermediate (conditional) – consider with dehydration, poor oral intake, or concern for systemic illness."],
-    ["CMP","Intermediate (conditional) – acceptable alternative to BMP if a broader metabolic or hepatic assessment is needed."],
-    ["CXR","Intermediate (conditional) – consider if there is clinical concern for pneumonia (focal findings, worsening symptoms, hypoxia)."],
-    ["BLOOD_CX","Intermediate – consider only if the patient is toxic-appearing, immunocompromised, or there is concern for sepsis."],
-    ["SPUTUM_CX","Intermediate – usually reserved for severe or hospitalized pneumonia, or concern for a resistant pathogen."]
+    ["FLU_PCR","Intermediate – Reasonable but not required. At three days of symptoms she is past the window where antivirals clearly benefit a healthy adolescent, though a result may still guide counseling and household precautions. Had she presented within 48 hours of symptom onset the yield would be higher, because a positive result could lead to oseltamivir."]
   ]),
   missedSeverity: "neutral",
   missedReasons: new Map([
@@ -3407,7 +3457,7 @@ lowValueReasons: new Map([
         A <strong>58-year-old man with type 2 diabetes</strong> on insulin (glargine 25 units daily), with known
         peripheral neuropathy, presents to the emergency department with <strong>6 days of worsening right foot
         pain and redness</strong> after he noticed drainage on his sock. He has not been able to bear weight for
-        two days and reports subjective fevers and chills. His A1c was 9.8% six months ago.
+        two days and reports subjective fevers and chills. His A1c was 9.8% one month ago.
       </p>
       <div class="grid2">
         <div class="summary">
@@ -3442,7 +3492,6 @@ lowValueReasons: new Map([
     ]),
     intermediateIds: new Map([
       ["CXR","Intermediate – He has no respiratory symptoms and the foot explains his sepsis, so a chest film is not part of the core workup here. It becomes reasonable if there is any concern for a respiratory source, or for an aspiration event given his altered mental status."],
-      ["PDF_4569806","Intermediate – Will not change anything tonight. It will change what you send him home on, so it is reasonable to add it now."],
       ["PDF_4633968","Intermediate – His posterior tibial pulse is absent, and perfusion decides whether this wound can heal. Get it during the admission rather than tonight."],
       ["ESR","Intermediate – Reasonable as a baseline. With no bone involvement suspected, it is not going to change what you do."],
       ["CRP","Intermediate – Same as the ESR: worth having to follow, not worth waiting on."],
@@ -3450,6 +3499,7 @@ lowValueReasons: new Map([
       ["DVT_US","Intermediate – A hot swollen leg is a fair thought, but the infection explains everything you are looking at. Worth it only if the calf findings go beyond the cellulitis."]
     ]),
     lowValueReasons: new Map([
+      ["PDF_4569806","Low Value – His A1c was 9.8% one month ago. The A1c reflects roughly three months of glycaemic control, so repeating it this soon cannot show a meaningful change — you would be paying $65 to re-measure a number you already have. It is also not a test that changes anything tonight. Worth repeating at about three months, when it can actually tell you whether the plan is working."],
       ["SWAB_SUPERFICIAL","Low Value – Swabbing the surface grows whatever is colonising the ulcer, which is rarely what is infecting the tissue underneath. It bills at the same $210 as the deep culture and will send you after the wrong organism."],
       ["MRI_LE_NONJOINT","Low Value – In a patient without a probe to bone, MRI of the foot can be considered after evaluation by a subspecialist. It is not part of the initial emergency department workup, and at $5,470 to $7,670 it is the most expensive order available in this case."],
       ["MRI_LE_NONJOINT_WWO","Low Value – In a patient without a probe to bone, MRI of the foot can be considered after evaluation by a subspecialist. Adding contrast raises the cost further without changing that."],
@@ -3620,8 +3670,8 @@ lowValueReasons: new Map([
 <strong>What the labs tell you</strong>
 <ul class="small">
   <li><strong>Neutrophil-predominant leukocytosis</strong> &ndash; fits bacterial infection, and counts toward how sick you call him.</li>
-  <li><strong>Lactate 2.9 mmol/L</strong> &ndash; over 2, so it has to be rechecked. Under 4, so it is not what triggers the 30 mL/kg; his blood pressure is.</li>
-  <li><strong>Creatinine 1.25, BUN 30</strong> &ndash; a ratio of 24. That is a dry kidney, not an intrinsically injured one.</li>
+  <li><strong>Lactate 2.9 mmol/L</strong> &ndash; over 2, so it needs to be trended until it normalizes to ensure that the patient has adequate tissue perfusion. An elevated level suggests that additional fluids and/or vasopressors should be administered to improve tissue hypoxia.</li>
+  <li><strong>Creatinine 1.25, BUN 30</strong> &ndash; a ratio of 24. This suggests poor renal perfusion as opposed to intrinsic injury.</li>
 </ul>
 
 <strong>The hour-one bundle</strong>
@@ -3644,8 +3694,9 @@ lowValueReasons: new Map([
 
 <strong>About the creatinine</strong>
 <p class="small">
-  A creatinine that has crept up often makes people cautious with fluids. With a BUN-to-creatinine ratio of 24
-  in a hypotensive patient, the kidney is telling you he is dry. Give the fluids.
+  With a BUN-to-creatinine ratio of 24 in a hypotensive patient, the kidneys appear to be in a prerenal
+  state, requiring fluids. A creatinine that has crept up often makes people cautious with fluids, which is
+  exactly backwards here: withholding volume is what would injure this kidney.
 </p>
 `
   },
@@ -3771,6 +3822,44 @@ lowValueReasons: new Map([
   improved since that time. Similarly, now that his labs have normalized, there is limited indication to
   continuously trend them.
 </p>
+
+<strong>When telemetry <em>is</em> indicated</strong>
+<p class="small">
+  The decision to stop is easier to defend when you know what the indications actually are. Condensed
+  from the 2017 AHA practice standards:
+</p>
+<div class="table-wrap">
+<table class="small tele-tbl">
+  <thead>
+    <tr><th>Class I &mdash; monitoring should be performed</th><th>Class II &mdash; reasonable (IIa) / may consider (IIb)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Acute coronary syndrome / STEMI</td><td>Chest pain / known CAD (IIa)</td></tr>
+    <tr><td>MI with revascularization (PCI/thrombolysis)</td><td>Post-PCI with complications (IIa)</td></tr>
+    <tr><td>MI without reperfusion</td><td>Infective endocarditis until stable (IIa)</td></tr>
+    <tr><td>Critical left main stenosis awaiting revascularization</td><td>Major noncardiac thoracic surgery (IIa)</td></tr>
+    <tr><td>Vasospastic angina</td><td>TAVR &gt;72 h postprocedure (IIa)</td></tr>
+    <tr><td>Symptomatic 2&deg;/3&deg; AV block; all 3&deg; block</td><td>Chronic AF with recurrent rapid ventricular rate (IIa)</td></tr>
+    <tr><td>Symptomatic bradycardia</td><td>Initiation of negative chronotropes with baseline sinus bradycardia (IIa)</td></tr>
+    <tr><td>Syncope of suspected cardiac origin (&ge;24 h)</td><td>Nonsustained VT (IIb)</td></tr>
+    <tr><td>Unstable congenital long QT syndrome</td><td>Post-pacemaker/ICD in non&ndash;pacer-dependent patients (IIb)</td></tr>
+    <tr><td>QT-prolonging drugs with TdP risk</td><td>Generator change; post&ndash;conscious sedation; hemodialysis (IIb)</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="small muted" style="margin-top:8px;">
+  He meets none of these today. He met none of them yesterday either &mdash; the monitored bed was for
+  haemodynamic instability in septic shock, which is a different and now resolved reason.
+</p>
+<ol class="small refs">
+  <li>Sandau KE, Funk M, Auerbach A, et al. Update to Practice Standards for Electrocardiographic
+      Monitoring in Hospital Settings: A Scientific Statement From the American Heart Association.
+      <em>Circulation.</em> 2017;136(19):e273&ndash;e344. doi:10.1161/CIR.0000000000000527</li>
+  <li>Yeow RY, Strohbehn GW, Kagan CM, et al. Eliminating Inappropriate Telemetry Monitoring: An
+      Evidence-Based Implementation Guide. <em>JAMA Internal Medicine.</em> 2018;178(7):971&ndash;978.
+      doi:10.1001/jamainternmed.2018.2409</li>
+</ol>
+
 <p class="small">
   Antibiotics follow a different timeline. Monitoring can be de-escalated as soon as the patient is stable,
   but antimicrobial therapy can only be narrowed once the microbiology allows it, and his susceptibilities
@@ -3845,25 +3934,20 @@ lowValueReasons: new Map([
     missedReasons: new Map([]),
     recommendedIds: [],
     decisions: [
-      { id:"narrow", question:"Antibiotic therapy now that susceptibilities are back", hint:"Deep tissue culture: MSSA.",
+      { id:"narrow", question:"Antibiotic therapy now that susceptibilities are back", hint:"Deep tissue culture: MSSA. He is eating, his gut works, and the wound has been debrided.",
         options:[
-          {id:"cfz", label:"Narrow to cefazolin", tier:"high", why:"Cefazolin is more effective than vancomycin against methicillin-susceptible S. aureus. This is worth emphasizing, because narrowing here is not a trade of safety for stewardship: the narrower drug is also the better treatment."},
-          {id:"lzd", label:"Change to linezolid", tier:"low", why:"Linezolid is an MRSA agent, and this organism is methicillin-susceptible. Beta-lactams outperform it for MSSA, and it carries real costs: myelosuppression with prolonged use, peripheral and optic neuropathy, serotonergic interactions, and a price well above cefazolin. Its oral bioavailability is attractive, but that is not a reason to reach for it when a better oral option exists."},
-          {id:"vanc", label:"Continue vancomycin alone", tier:"low", why:"Vancomycin performs less well than cefazolin against MSSA. Continuing it also commits him to trough monitoring, renal surveillance and intravenous access he no longer requires."},
-          {id:"both", label:"Continue vancomycin plus piperacillin-tazobactam", tier:"low", why:"The organism is identified and susceptible. Neither agent is contributing anything at this point beyond cost and selection pressure."}
-        ]},
-      { id:"route", question:"Route of therapy at discharge", hint:"",
-        options:[
-          {id:"po", label:"Transition to oral therapy with a highly bioavailable agent", tier:"high", why:"He has a susceptible organism, an adequately debrided soft tissue infection and normal gastrointestinal function. Oral therapy allows discharge without central access, the associated infection risk, or the cost of home infusion."},
-          {id:"picc", label:"PICC line for prolonged IV therapy", tier:"low", why:"Placing a PICC in a patient who could take the same agent orally introduces the risk of line infection and upper extremity thrombosis, along with the cost of home infusion, without improving cure rates."},
-          {id:"stop", label:"Stop antibiotics at discharge", tier:"low", why:"He has received two days of therapy for an infection that presented with septic shock. Stopping now carries a substantial risk of relapse."}
+          {id:"augmentin", label:"Change to oral amoxicillin-clavulanate BID", tier:"high", why:"An oral beta-lactam with reliable absorption, active against MSSA, and it covers the streptococci and anaerobes a diabetic foot wound may also carry. He is eating with normal gut function and an adequately debrided wound, so there is nothing an intravenous route would add. This is what lets him leave without a line."},
+          {id:"picc", label:"PICC line for prolonged IV therapy with cefazolin", tier:"low", why:"Cefazolin is the right drug class, but the route is the problem. Placing a central line in a patient who can swallow buys line infection, upper extremity thrombosis and the cost of home infusion, and it does not improve cure rates for a debrided soft tissue infection. The question on day two is not only which antibiotic, but whether he needs a vein for it."},
+          {id:"lzd", label:"Change to linezolid", tier:"low", why:"Linezolid is an MRSA agent and this organism is methicillin-susceptible. Beta-lactams outperform it for MSSA, and it brings myelosuppression with prolonged use, peripheral and optic neuropathy, serotonergic interactions and a price far above an oral beta-lactam. Good oral bioavailability is not a reason to use a drug when a better oral option exists."},
+          {id:"povanc", label:"Change to oral vancomycin alone", tier:"low", why:"Oral vancomycin is not absorbed from the gut. It stays in the lumen, which is precisely why it treats C. difficile colitis and why it achieves no tissue levels anywhere else. This patient would be discharged on what is effectively no antibiotic at all for his foot."},
+          {id:"stop", label:"Discontinue antibiotics at discharge", tier:"low", why:"He has had two days of therapy for an infection that presented as septic shock, and the course is counted from the debridement, not from the day he happens to feel well. Looking better is the expected response to treatment, not evidence that the infection is cleared. Stopping now carries a substantial risk of relapse in a foot with impaired perfusion, and a relapse costs far more than finishing the course."}
         ]},
       { id:"duration", question:"Duration, for a debrided soft-tissue infection without bone involvement", hint:"",
         options:[
-          {id:"short", label:"A 5 day course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and once source control has been achieved short courses perform as well as longer ones. The clock starts at the debridement, not at admission. Additional weeks of therapy add adverse effects and resistance without improving cure."},
-          {id:"twowk", label:"2–3 weeks from initial presentation", tier:"low", why:"Two errors in one answer. It is longer than a debrided soft tissue infection without bone involvement requires, and it counts from presentation rather than from source control — the clock starts when the wound was debrided, not when he walked in."},
-          {id:"sixwk", label:"Six weeks, as though this were osteomyelitis", tier:"low", why:"Six weeks is the duration for osteomyelitis. The probe did not reach bone, the X-ray showed no bony destruction, and podiatry documented no concern for bone involvement."},
-          {id:"indef", label:"Indefinite suppression", tier:"low", why:"Suppressive therapy is reserved for retained hardware or infection that cannot be cleared. Neither applies to a debrided soft tissue ulcer."}
+          {id:"short", label:"A 1–2 week course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and once source control has been achieved a one-to-two week course performs as well as a longer one. Two details carry the answer: the absence of bone involvement is what rules out a six-week course, and the clock starts at the debridement rather than at admission. The upper end of the range is the reasonable choice here given his impaired perfusion."},
+          {id:"none", label:"No antibiotics are indicated", tier:"low", why:"Debridement is source control, not treatment. He presented in septic shock with a deep soft tissue infection and a deep culture growing S. aureus, and removing devitalised tissue does not sterilise what remains. This is the opposite error to the six-week answer and it is the more dangerous one."},
+          {id:"sixwk", label:"Six weeks, given risk of osteomyelitis", tier:"low", why:"Six weeks is the duration for osteomyelitis, and the question is whether he has it. The probe did not reach bone, the X-ray showed no bony destruction, and podiatry examined the wound and documented no concern for bone involvement. Treating a risk rather than a diagnosis commits him to six weeks of therapy, its adverse effects, and in most hands a line to deliver it."},
+          {id:"indef", label:"Indefinite suppression", tier:"low", why:"Suppressive therapy is reserved for retained hardware or an infection that cannot be cleared. Neither applies to a debrided soft tissue ulcer in a patient who has already responded."}
         ]},
       { id:"offload", question:"Offloading", hint:"",
         options:[
@@ -3878,17 +3962,30 @@ lowValueReasons: new Map([
   and discharge planning.
 </p>
 
-<strong>Cefazolin beats vancomycin here</strong>
+<strong>Narrower is also better</strong>
 <p class="small">
-  Not just narrower &mdash; better. Cefazolin outperforms vancomycin against MSSA. Staying on vancomycin
-  because it covers more organisms means choosing the broader drug, the more expensive pathway and the less
-  effective treatment at the same time.
+  A beta-lactam outperforms vancomycin against MSSA, so narrowing here is not trading effectiveness for
+  stewardship &mdash; the narrower drug is the better treatment. Staying broad means choosing the more
+  expensive pathway and the less effective one at the same time.
+</p>
+
+<strong>Two decisions, not one</strong>
+<p class="small">
+  Day two asks which drug <em>and</em> which route. Cefazolin is a reasonable answer to the first question
+  and a trap on the second: it is intravenous, so choosing it commits him to a PICC line for a wound that
+  has been debrided in a patient who is eating normally. Oral amoxicillin-clavulanate covers the organism,
+  reaches the tissue, and lets him leave without a line.
+</p>
+<p class="small">
+  Oral vancomycin is the distractor worth dwelling on. It is not absorbed from the gut &mdash; that is why
+  it works for <em>C. difficile</em> and why it reaches no tissue anywhere else. A patient discharged on it
+  for a foot infection has effectively been discharged on nothing.
 </p>
 
 <strong>Discharge plan</strong>
 <ul class="small">
-  <li><strong>Oral therapy</strong> with a highly bioavailable agent &ndash; no line, no home infusion.</li>
-  <li><strong>A 5 day course</strong>, counted from the debridement &ndash; not from admission. This is soft tissue, not bone.</li>
+  <li><strong>Oral therapy</strong> with an absorbed agent &ndash; no line, no home infusion.</li>
+  <li><strong>A 1&ndash;2 week course</strong>, counted from the debridement &ndash; not from admission. This is soft tissue, not bone.</li>
   <li><strong>Offloading</strong> &ndash; the single highest-yield intervention for healing and recurrence.</li>
   <li><strong>Podiatry, vascular and diabetes follow-up</strong> &ndash; the wound, the perfusion and the cause.</li>
 </ul>
@@ -5419,6 +5516,8 @@ function saveState(){
       savedAt: Date.now(),
       sessionId: SESSION_ID,
       linkCode: LINK_CODE,
+      siteAccount: SITE_ACCOUNT,
+      siteAccountLabel: SITE_ACCOUNT_LABEL,
       participantInfo: PARTICIPANT_INFO,
       activeCase: ACTIVE_CASE,
       completed: Array.from(COMPLETED_CASES),
@@ -5458,6 +5557,8 @@ function restoreSession(){
     MODULE_MODE = "teaching";
     SESSION_ID = st.sessionId || resolveSessionId(false);
     LINK_CODE = st.linkCode || "";
+    SITE_ACCOUNT = st.siteAccount || "";
+    SITE_ACCOUNT_LABEL = st.siteAccountLabel || "";
     PARTICIPANT_ID = getParticipantId();
     PARTICIPANT_INFO = st.participantInfo || PARTICIPANT_INFO;
     CASE_LOG = Array.isArray(st.caseLog) ? st.caseLog : [];
@@ -5540,6 +5641,12 @@ function restoreSurveyInputs(prefix, responses){
 // Landing page start controls
 function startModule(mode){
   if (!validateLaunchFields()) return;
+  const acct = matchSiteAccount(
+    document.getElementById("siteUsernameInput")?.value,
+    document.getElementById("sitePasswordInput")?.value
+  );
+  SITE_ACCOUNT = acct ? acct.username : "";
+  SITE_ACCOUNT_LABEL = acct ? (acct.label || "") : "";
   PARTICIPANT_INFO = getParticipantInfo();
   LINK_CODE = computeLinkCode();
   PARTICIPANT_ID = getParticipantId();
