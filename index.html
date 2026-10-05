@@ -5504,9 +5504,14 @@ const LS_STATE = "hvc_module_state_v1";
 const STATE_TTL_MS = 24*60*60*1000;
 let RESTORING = false;          // suppresses saves while we replay state
 let CASE_DIRTY = false;         // unsubmitted work in the current case
+/* Set once a deliberate reset is underway. location.reload() fires beforeunload
+   and pagehide, both of which call saveState(), so without this flag a reset
+   clears the saved state and then immediately writes it straight back, and the
+   student lands back in the session they just asked to abandon. */
+let RESETTING = false;
 
 function saveState(){
-  if (RESTORING || MODULE_MODE !== "teaching") return;
+  if (RESETTING || RESTORING || MODULE_MODE !== "teaching") return;
   try {
     const decisions = {};
     DECISION_ANSWERS.forEach((v,k)=>{ decisions[k] = v; });
@@ -5747,6 +5752,7 @@ if (trainingLevelOtherInputEl) trainingLevelOtherInputEl.classList.add("hidden")
    Boot + unload guard
    ========================= */
 window.addEventListener("beforeunload", (e)=>{
+  if (RESETTING) return;   // a reset is a deliberate discard: do not save, do not warn
   saveState();
   if (MODULE_MODE === "teaching" && CASE_DIRTY){
     e.preventDefault();
@@ -5766,6 +5772,8 @@ if (resumeDismissEl) resumeDismissEl.addEventListener("click", ()=>{
 });
 if (resumeRestartEl) resumeRestartEl.addEventListener("click", ()=>{
   if (!confirm("Start over? Everything you have done so far will be cleared.")) return;
+  RESETTING = true;
+  CASE_DIRTY = false;
   clearState();
   location.reload();
 });
