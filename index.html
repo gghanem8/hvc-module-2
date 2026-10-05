@@ -3653,12 +3653,6 @@ lowValueReasons: new Map([
           {id:"48h", label:"Consult if he is not improving in 48 hours", tier:"low", why:"Inadequate source control. Forty-eight hours is far too long to leave undrained purulence in a patient who presented in septic shock, and it also delays the deep culture that every antibiotic decision on day two depends on."},
           {id:"none", label:"No consult; antibiotics alone", tier:"low", why:"He is unlikely to clear this infection on antibiotics alone, and without a deep specimen the organism remains unknown for the rest of the admission."}
         ]},
-      { id:"pressors", question:"If the MAP stays below 65 after the fluid bolus", hint:"",
-        options:[
-          {id:"ne", label:"Start norepinephrine and escalate the level of care", tier:"high", why:"Hypotension persisting after adequate fluid resuscitation defines septic shock. Norepinephrine is first-line, and he will require a setting that can administer and titrate it."},
-          {id:"morefluid", label:"Give a further fluid bolus and reassess", tier:"intermediate", why:"A further bolus is defensible once. Repeated boluses in a patient who is not responding delay the vasopressor he needs and risk fluid overload."},
-          {id:"observe", label:"Continue fluids alone and observe on the ward", tier:"low", why:"Established septic shock requires an environment that can initiate and titrate vasopressors. A general ward without that capability is not a safe place to observe him."}
-        ]},
       { id:"dispo", question:"Disposition", hint:"",
         options:[
           {id:"mon", label:"Monitored bed with sepsis protocol; ICU if vasopressors are required", tier:"high", why:"He requires frequent monitoring and a location that can escalate care quickly if he does not respond to fluids."},
