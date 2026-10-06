@@ -3195,7 +3195,7 @@ lowValueReasons: new Map([
     ["CXR","High Value – Worsening cough + focal crackles: imaging is appropriate to evaluate pneumonia."],
     ["LACTATE","High Value – Assesses for tissue hypoperfusion in suspected sepsis and guides resuscitation."],
     ["BLOOD_CX","High Value – In suspected sepsis, blood cultures are indicated prior to antibiotics when feasible."],
-    ["SPUTUM_CX","High Value – If sputum can be obtained (or severe disease), culture can help tailor therapy."]
+    ["SPUTUM_CX","High Value – If sputum can be obtained (or severe disease), culture can help tailor therapy. Recommended to order if the patient is able to provide a sputum sample. Per IDSA guidelines, sputum samples for culture and Gram stain should be obtained in hospitalised children who can produce sputum (weak recommendation; low-quality evidence). However, these tests are infrequently performed in children with CAP, because children cannot always provide adequate specimens for testing. Gram stain and culture of expectorated sputum should be attempted in older children and adolescents with more severe disease, including inpatients, or in those in whom outpatient therapy has failed."]
   ]),
   intermediateIds: new Map([
     ["COVID_PCR","Intermediate – Her prior visit was a clinically diagnosed viral pharyngitis and no pathogen was identified, so testing is more defensible now than it was then. It still will not change the immediate management of her sepsis physiology, which is the priority."],
@@ -3227,14 +3227,14 @@ lowValueReasons: new Map([
   ]),
   recommendedIds: ["CBC","BMP","CXR","LACTATE","BLOOD_CX","SPUTUM_CX"],
   decisions: [
-    { id:"dispo3", question:"Disposition", hint:"Her results are back. She is saturating 89% on room air, febrile and tachycardic, with a left lower lobe consolidation.",
+    { id:"dispo3", question:"Disposition", hint:"",
       options:[
         {id:"dc_abx", label:"Discharge with oral antibiotics and close follow-up", tier:"low",
          why:"This is the answer that would have been right earlier in the illness, and it is wrong now. A sustained saturation below 90% on room air is the finding that moves a child with community-acquired pneumonia from outpatient to inpatient care under the IDSA and PIDS guideline. Discharging her means sending home a hypoxic child with sepsis physiology, with no way to deliver oxygen and no one to detect deterioration overnight."},
         {id:"admit_abx", label:"Admit for inpatient antibiotics", tier:"high",
          why:"She meets the guideline threshold for hospitalisation: moderate to severe community-acquired pneumonia with respiratory distress and a sustained saturation below 90% on room air. Admission buys three things she cannot get at home &mdash; supplemental oxygen, serial reassessment of a child whose trajectory is still worsening, and reliable delivery of antibiotics. This is what high-value care looks like when the patient is genuinely sick: the expensive option is the correct one, because the cheaper one does not meet the need."},
         {id:"admit_obs", label:"Admit for observation without antibiotics", tier:"low",
-         why:"Low value. Admitting her is only half of what she needs, and the half that is missing is the one that treats the disease. She has a lobar consolidation, a neutrophil-predominant leukocytosis and sepsis physiology; antibiotics are the intervention that changes her outcome, and every hour they are withheld in sepsis is an hour of avoidable risk. Occupying a bed while deferring treatment incurs the full cost of admission and delivers none of its benefit. Observation is something you add to treatment, never something you substitute for it."},
+         why:"Low value. Admitting her is only half of what she needs, and the half that is missing is the one that treats the disease. She has focal consolidation on examination and sepsis physiology; antibiotics are the intervention that changes her outcome, and every hour they are withheld in sepsis is an hour of avoidable risk. Occupying a bed while deferring treatment incurs the full cost of admission and delivers none of its benefit. Observation is something you add to treatment, never something you substitute for it."},
         {id:"dc_noabx", label:"Discharge without antibiotics", tier:"low",
          why:"The most dangerous answer. She has a bacterial pneumonia following a viral illness, she is hypoxic, and she meets sepsis criteria. Withholding both admission and treatment is the mirror image of over-prescribing at her first visit, and restraint applied to the wrong patient is not high-value care, it is undertreatment."}
       ]}
@@ -3291,20 +3291,6 @@ lowValueReasons: new Map([
   patients with suspected sepsis should receive <strong>guideline-directed fluids</strong> (if no contraindications) and <strong>timely antibiotics</strong>.
 </p>
 
-<strong>Her results</strong>
-<ul class="small">
-  <li><strong>CBC:</strong> WBC 16.8 &times; 10<sup>9</sup>/L with 88% neutrophils. Haemoglobin 12.9 g/dL, platelets 265.</li>
-  <li><strong>BMP:</strong> sodium 138 mmol/L, potassium 3.9, bicarbonate 23, BUN 12 mg/dL, creatinine 0.7, glucose 95 mg/dL.</li>
-  <li><strong>Lactate:</strong> 1.4 mmol/L (normal &mdash; consistent with sepsis, and reassuring against septic shock).</li>
-  <li><strong>Chest X-ray:</strong> left lower lobe consolidation. No pleural effusion.</li>
-  <li><strong>Blood and sputum cultures:</strong> sent.</li>
-  <li><strong>SpO&#8322; 89% on room air</strong>, sustained on repeat measurement. She is alert and oriented.</li>
-</ul>
-<p class="small">
-  The white cell count tells you she has a bacterial process. It does not tell you how sick she is, and it is not
-  what decides her disposition. The saturation is.
-</p>
-
 <strong>Why she needs to be admitted</strong>
 <p class="small">
   The 2011 IDSA and PIDS guideline on community-acquired pneumonia in infants and children is explicit on this point:
@@ -3336,12 +3322,6 @@ lowValueReasons: new Map([
   the paediatric guideline above uses explicit criteria instead &mdash; but they are the tools you will reach for on an
   adult service, and the underlying discipline is identical: measure severity rather than estimating it from how unwell
   someone looks.
-</p>
-
-<p class="small">
-  This is also the case that keeps the module honest. Three of the four cases before this one reward restraint. Here,
-  restraint is the wrong answer: she is hypoxic and septic, and the high-value decision is the one that costs the most.
-  High-value care means matching the intensity of care to the severity of illness, in both directions.
 </p>
 
 <strong>High-value care is dynamic</strong>
