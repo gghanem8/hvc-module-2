@@ -3159,12 +3159,12 @@ lowValueReasons: new Map([
 
 3: {
   title: "Case 3 – Return visit",
-  diagnosis: "Sepsis from superimposed pneumonia after viral respiratory infection",
+  diagnosis: "Secondary bacterial community-acquired pneumonia complicating the preceding viral illness, now with sepsis physiology",
   attribution: "",
   contentHtml: `
 <p>
   Your otherwise healthy <strong>15-year-old woman</strong> returns to the emergency department <strong>5 days</strong> after being seen in your clinic for a clinically diagnosed viral pharyngitis.
-  Her fevers initially improved, but she now has <strong>persistent fevers again</strong>, a <strong>worsening cough</strong>, and feels significantly more malaised.
+  Her fevers initially improved, but she now has <strong>persistent fevers again</strong>, a <strong>worsening, now productive cough</strong>, and feels significantly more malaised.
   She notes that she has been feeling a lot more tired.
 </p>
     <div class="grid2">
@@ -3234,7 +3234,7 @@ lowValueReasons: new Map([
         {id:"admit_abx", label:"Admit for inpatient antibiotics", tier:"high",
          why:"She meets the guideline threshold for hospitalisation: moderate to severe community-acquired pneumonia with respiratory distress and a sustained saturation below 90% on room air. Admission buys three things she cannot get at home &mdash; supplemental oxygen, serial reassessment of a child whose trajectory is still worsening, and reliable delivery of antibiotics. This is what high-value care looks like when the patient is genuinely sick: the expensive option is the correct one, because the cheaper one does not meet the need."},
         {id:"admit_obs", label:"Admit for observation without antibiotics", tier:"low",
-         why:"Low value. Admitting her is only half of what she needs, and the half that is missing is the one that treats the disease. She has focal consolidation on examination and sepsis physiology; antibiotics are the intervention that changes her outcome, and every hour they are withheld in sepsis is an hour of avoidable risk. Occupying a bed while deferring treatment incurs the full cost of admission and delivers none of its benefit. Observation is something you add to treatment, never something you substitute for it."},
+         why:"Low value. Admitting her is recommended at this time, but she also needs antibiotics to treat the underlying infection. She currently meets sepsis criteria and requires fluid resuscitation and intervention on her bacterial infection."},
         {id:"dc_noabx", label:"Discharge without antibiotics", tier:"low",
          why:"The most dangerous answer. She has a bacterial pneumonia following a viral illness, she is hypoxic, and she meets sepsis criteria. Withholding both admission and treatment is the mirror image of over-prescribing at her first visit, and restraint applied to the wrong patient is not high-value care, it is undertreatment."}
       ]}
@@ -3245,6 +3245,39 @@ lowValueReasons: new Map([
   This return visit is <strong>not</strong> the same as the initial outpatient URI. She now has recurrent fever, worsening cough,
   tachycardia/tachypnea, borderline blood pressure, lower oxygen saturation, and focal lung findings (LLL crackles).
   In this setting, a broader evaluation is <strong>high value</strong> because it quickly changes management (fluids, antibiotics, disposition).
+</p>
+
+<strong>What is actually going on</strong>
+<p class="small">
+  <strong>Secondary bacterial community-acquired pneumonia (CAP) complicating the preceding viral illness, now with
+  sepsis physiology.</strong> The biphasic course &mdash; initial defervescence, then recrudescent fever &mdash; together
+  with new focal left lower lobe crackles, a productive cough and an ill appearance is the classic pattern of post-viral
+  secondary bacterial pneumonia. The usual organism is <em>Streptococcus pneumoniae</em>, with
+  <em>Staphylococcus aureus</em> (including MRSA) and <em>Streptococcus pyogenes</em> as the feared causes, because
+  after a viral prodrome they produce necrotising disease and empyema.
+</p>
+
+<strong>She already meets criteria for severe illness with sepsis</strong>
+<ul class="small">
+  <li><strong>Hypoxaemia</strong> &mdash; SpO&#8322; 89% on room air</li>
+  <li><strong>Tachypnoea</strong> &mdash; respiratory rate 24/min</li>
+  <li><strong>Relative hypotension</strong> &mdash; 98/60</li>
+  <li><strong>Tachycardia</strong> &mdash; 118 bpm</li>
+</ul>
+<p class="small">
+  She falls under the <strong>paediatric sepsis pathway</strong>, which applies under 18 years of age. Because she shows
+  organ dysfunction, <strong>begin the sepsis bundle while obtaining diagnostics</strong> &mdash; the workup and the
+  treatment run in parallel, not in sequence.
+</p>
+<p class="small">
+  Paediatric patients also have a separate scoring system for septic shock criteria, the
+  <strong>Phoenix sepsis score</strong>
+  (<a href="https://www.mdcalc.com/calc/10509/phoenix-sepsis-score" target="_blank" rel="noopener noreferrer">open the calculator on MDCalc</a>).
+</p>
+<p class="small muted">
+  Pediatric Sepsis: Diagnosis, Management, and Sub-phenotypes.
+  <em>Pediatrics.</em> 2024;153(1):e2023062967.
+  <a href="https://publications.aap.org/pediatrics/article/153/1/e2023062967/196195/Pediatric-Sepsis-Diagnosis-Management-and-Sub" target="_blank" rel="noopener noreferrer">publications.aap.org</a>
 </p>
 
 <div class="summary" id="sepsisChecklist" style="margin-top:12px;">
