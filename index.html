@@ -1193,7 +1193,7 @@ const HVC = {
   hctz: `Reasonable to continue this medication.`,
   bb: `Name brand medications are often more expensive than their generic alternatives. This patient should be maintained on generic metoprolol or carvedilol, but name brand medications should be avoided.`,
   hydral: `It is best to avoid prescribing “as needed” medications to patients, as this raises the risk for medication mismanagement and mistakes. Her blood pressure has been stable inpatient and does not require PRNs.`,
-  ins: `Name brand insulin remains very expensive. Many states and companies offer patient assistance programs for insulin (including glargine). Consider affordability and access at discharge.`,
+  ins: `Name brand insulin remains very expensive. Many states and companies offer patient assistance programs for insulin (including glargine). Consider affordability and access at discharge. It is also reasonable for him to return to his previous home dose of glargine (20 units) rather than the inpatient 30 units, since he will be resuming his home metformin at the same time.`,
   met: `Reasonable to restart on discharge. Metformin is sometimes held peri-operatively due to concern for lactic acidosis in patients with renal impairment or after extensive surgery.`,
   asp: `Should continue for history of coronary artery disease unless contraindicated.`,
   statin: `Name brand medications are often more expensive than their generic alternatives. Consider a lower-cost statin option when clinically appropriate.`,
@@ -2970,7 +2970,7 @@ highValueReasons: new Map([
   ["LACTATE","High Value – Lactate can help risk-stratify patients with pulmonary emboli and act as a surrogate of heart strain. Since this patient is showing signs of hemodynamic changes such as tachycardia and tachypnea, a lactate would be reasonable in this situation."]
 ]),
     intermediateIds: new Map([
-  ["CXR","Intermediate (conditional) – Useful to evaluate alternate causes (pneumonia, pneumothorax); may be optional if CTA already obtained."],
+  ["CXR","Intermediate (conditional) – Useful to evaluate alternate causes (pneumonia, pneumothorax, aortic dissection); may be optional if CTA already obtained. In many settings a chest X-ray is faster to obtain than a CT, so it is reasonable to order one if there is any delay in obtaining the CTA."],
   ["DDIMER_QUANT","Intermediate – In high pre-test probability patients, D-dimer is not required prior to definitive imaging."],
   ["ECHO","Intermediate – May be obtained later in hospitalization; not required in initial ED evaluation without signs of heart failure."],
   ["DVT_US","Intermediate – May be helpful if DVT suspected; not necessary if proceeding directly to CTA."],
@@ -3024,7 +3024,7 @@ lowValueReasons: new Map([
 </p>
 <ul class="small">
   <li><strong>CTA Chest – PE protocol (CTPA)</strong> – evaluates the pulmonary arteries directly; this is the definitive test in many ED settings.</li>
-  <li class="muted">A <strong>Chest X-ray (CXR)</strong> can be helpful for alternate diagnoses (pneumothorax, pneumonia) and for interpreting V/Q scans, but if you are already obtaining CTPA it may be reasonable to omit CXR depending on local practice and timing.</li>
+  <li class="muted">A <strong>Chest X-ray (CXR)</strong> can be helpful for alternate diagnoses (pneumonia, pneumothorax, aortic dissection) and for interpreting V/Q scans, and it may be reasonable to omit it if CTPA is already under way. The practical caveat is timing: in many settings a chest film is available far sooner than a CT, so if the CTPA is delayed &mdash; scanner occupied, contrast allergy being worked through, patient needing stabilisation first &mdash; obtaining a CXR in the interval is reasonable and may change what you do while you wait.</li>
 </ul>
 
 <strong>Intermediate-yield (context-dependent)</strong>
@@ -3174,7 +3174,7 @@ lowValueReasons: new Map([
           <li><strong>Temp:</strong> 39.2°C (102.6°F)</li>
           <li><strong>HR:</strong> 118 bpm</li>
           <li><strong>RR:</strong> 24 / min</li>
-          <li><strong>SpO₂:</strong> 93% on room air</li>
+          <li><strong>SpO₂:</strong> <strong>89% on room air</strong></li>
           <li><strong>BP:</strong> 98/60</li>
         </ul>
       </div>
@@ -3226,6 +3226,19 @@ lowValueReasons: new Map([
     ["BMP","Creatinine and bicarbonate identify acute kidney injury and metabolic acidosis, both organ-dysfunction criteria in sepsis."]
   ]),
   recommendedIds: ["CBC","BMP","CXR","LACTATE","BLOOD_CX","SPUTUM_CX"],
+  decisions: [
+    { id:"dispo3", question:"Disposition", hint:"Her results are back. She is saturating 89% on room air, febrile and tachycardic, with a left lower lobe consolidation.",
+      options:[
+        {id:"dc_abx", label:"Discharge with oral antibiotics and close follow-up", tier:"low",
+         why:"This is the answer that would have been right earlier in the illness, and it is wrong now. A sustained saturation below 90% on room air is the finding that moves a child with community-acquired pneumonia from outpatient to inpatient care under the IDSA and PIDS guideline. Discharging her means sending home a hypoxic child with sepsis physiology, with no way to deliver oxygen and no one to detect deterioration overnight."},
+        {id:"admit_abx", label:"Admit for inpatient antibiotics", tier:"high",
+         why:"She meets the guideline threshold for hospitalisation: moderate to severe community-acquired pneumonia with respiratory distress and a sustained saturation below 90% on room air. Admission buys three things she cannot get at home &mdash; supplemental oxygen, serial reassessment of a child whose trajectory is still worsening, and reliable delivery of antibiotics. This is what high-value care looks like when the patient is genuinely sick: the expensive option is the correct one, because the cheaper one does not meet the need."},
+        {id:"admit_obs", label:"Admit for observation without antibiotics", tier:"low",
+         why:"Low value. Admitting her is only half of what she needs, and the half that is missing is the one that treats the disease. She has a lobar consolidation, a neutrophil-predominant leukocytosis and sepsis physiology; antibiotics are the intervention that changes her outcome, and every hour they are withheld in sepsis is an hour of avoidable risk. Occupying a bed while deferring treatment incurs the full cost of admission and delivers none of its benefit. Observation is something you add to treatment, never something you substitute for it."},
+        {id:"dc_noabx", label:"Discharge without antibiotics", tier:"low",
+         why:"The most dangerous answer. She has a bacterial pneumonia following a viral illness, she is hypoxic, and she meets sepsis criteria. Withholding both admission and treatment is the mirror image of over-prescribing at her first visit, and restraint applied to the wrong patient is not high-value care, it is undertreatment."}
+      ]}
+  ],
   pathwayHtml: `
 <strong>Answer</strong>
 <p class="small">
@@ -3276,6 +3289,59 @@ lowValueReasons: new Map([
   The SSC emphasizes that sepsis is a medical emergency and recommends early evaluation including <strong>measuring lactate</strong>,
   <strong>obtaining blood cultures</strong> before antibiotics when feasible, and prompt initiation of treatment. Although not part of this module,
   patients with suspected sepsis should receive <strong>guideline-directed fluids</strong> (if no contraindications) and <strong>timely antibiotics</strong>.
+</p>
+
+<strong>Her results</strong>
+<ul class="small">
+  <li><strong>CBC:</strong> WBC 16.8 &times; 10<sup>9</sup>/L with 88% neutrophils. Haemoglobin 12.9 g/dL, platelets 265.</li>
+  <li><strong>BMP:</strong> sodium 138 mmol/L, potassium 3.9, bicarbonate 23, BUN 12 mg/dL, creatinine 0.7, glucose 95 mg/dL.</li>
+  <li><strong>Lactate:</strong> 1.4 mmol/L (normal &mdash; consistent with sepsis, and reassuring against septic shock).</li>
+  <li><strong>Chest X-ray:</strong> left lower lobe consolidation. No pleural effusion.</li>
+  <li><strong>Blood and sputum cultures:</strong> sent.</li>
+  <li><strong>SpO&#8322; 89% on room air</strong>, sustained on repeat measurement. She is alert and oriented.</li>
+</ul>
+<p class="small">
+  The white cell count tells you she has a bacterial process. It does not tell you how sick she is, and it is not
+  what decides her disposition. The saturation is.
+</p>
+
+<strong>Why she needs to be admitted</strong>
+<p class="small">
+  The 2011 IDSA and PIDS guideline on community-acquired pneumonia in infants and children is explicit on this point:
+  children and infants with moderate to severe CAP &mdash; defined by several factors including respiratory distress and
+  hypoxaemia, a <strong>sustained SpO&#8322; below 90% on room air at sea level</strong> &mdash; should be hospitalised.
+  At 89% on room air with increased work of breathing, she meets that threshold, and no amount of close follow-up
+  substitutes for oxygen she cannot get at home.
+</p>
+<p class="small">The same guideline lists other circumstances that warrant admission:</p>
+<ul class="small">
+  <li>Infants <strong>under 3 to 6 months</strong> with suspected bacterial CAP are likely to benefit from hospitalisation.</li>
+  <li>Suspected or documented CAP caused by a <strong>pathogen of increased virulence</strong>, such as community-associated
+      methicillin-resistant <em>Staphylococcus aureus</em>.</li>
+  <li>Concern about <strong>careful observation at home</strong>, or inability to comply with therapy or to be followed up.</li>
+</ul>
+<p class="small muted">
+  Bradley JS, Byington CL, Shah SS, et al. The management of community-acquired pneumonia in infants and children older
+  than 3 months of age: clinical practice guidelines by the Pediatric Infectious Diseases Society and the Infectious
+  Diseases Society of America. <em>Clin Infect Dis.</em> 2011;53(7):e25&ndash;e76. doi:10.1093/cid/cir531
+</p>
+
+<strong>The adult equivalent</strong>
+<p class="small">
+  In adult patients the same question &mdash; does this person with community-acquired pneumonia need a hospital bed
+  &mdash; is answered with a validated severity score rather than a list of criteria. The <strong>PSI / PORT score</strong>
+  stratifies adults with CAP into five risk classes using age, comorbid illness, vital signs and a handful of laboratory
+  values, and the class maps onto a recommended site of care: outpatient treatment for the lowest classes, admission for
+  the highest. CURB-65 does the same job with fewer variables. These scores are not validated in children, which is why
+  the paediatric guideline above uses explicit criteria instead &mdash; but they are the tools you will reach for on an
+  adult service, and the underlying discipline is identical: measure severity rather than estimating it from how unwell
+  someone looks.
+</p>
+
+<p class="small">
+  This is also the case that keeps the module honest. Three of the four cases before this one reward restraint. Here,
+  restraint is the wrong answer: she is hypoxic and septic, and the high-value decision is the one that costs the most.
+  High-value care means matching the intensity of care to the severity of illness, in both directions.
 </p>
 
 <strong>High-value care is dynamic</strong>
@@ -3618,14 +3684,14 @@ lowValueReasons: new Map([
     lowValueReasons: new Map([]),
     recommendedIds: [],
     decisions: [
-      { id:"fluids", question:"Fluid resuscitation", hint:"He is hypotensive with a MAP of 62.",
+      { id:"fluids", question:"Fluid resuscitation", hint:"He is hypotensive with a MAP of 62. An echocardiogram one month ago was normal, with an ejection fraction of 65%.",
         revealTitle:"Three hours later — repeat lactate",
         options:[
           {id:"f30", label:"30 mL/kg crystalloid, started now", tier:"high",
            why:"30 mL/kg is the target for septic hypotension. At 92 kg that is about 2.8 litres. Nothing here argues for holding back: no heart failure, no dialysis.",
            reveal:"After 2.8 litres: <strong>repeat lactate 14 mg/dL (1.6 mmol/L), normal.</strong> MAP 74, heart rate 98, and he is more alert. You only know the fluids worked because you rechecked."},
-          {id:"f500", label:"500 mL bolus, then reassess", tier:"intermediate",
-           why:"A reasonable first step, but 500 mL will not adequately resuscitate a septic patient with a MAP of 62. He will need the remainder of the volume shortly.",
+          {id:"f500", label:"500 mL bolus over 2 hours, then reassess", tier:"intermediate",
+           why:"Giving a smaller test dose before full repletion is reasonable, but not over two hours. He is hypotensive and not adequately perfusing, so a test dose belongs over 30 to 60 minutes. The instinct behind the slower rate is sound &mdash; he is an older man with uncontrolled diabetes, so the pre-test probability of heart failure is not trivial &mdash; but his echocardiogram one month ago was normal with an ejection fraction of 65%, which is the piece of information that should settle it.",
            reveal:"<strong>Repeat lactate 22 mg/dL (2.4 mmol/L), better but still up.</strong> MAP 66, heart rate 112. He is part way there and needs the remaining volume."},
           {id:"fmaint", label:"Maintenance fluids only", tier:"low",
            why:"Maintenance fluid replaces ongoing losses; it does not resuscitate. He is hypotensive with a MAP of 62 and an elevated lactate.",
