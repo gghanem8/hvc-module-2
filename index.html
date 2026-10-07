@@ -684,6 +684,7 @@ textarea{min-height:96px;resize:vertical}
   <div id="results" class="hidden" role="region" aria-live="polite" aria-label="Results">
     <h2>Results</h2>
     <p><strong>Final Diagnosis:</strong> <span id="finalDx"></span></p>
+    <p id="dxNote" class="small hidden"></p>
 
     <div class="grid2">
       <div class="card">
@@ -3056,8 +3057,10 @@ lowValueReasons: new Map([
       <em>&ldquo;a strep test and antibiotics&rdquo;</em> before she can return to school.
     </p>
     <p>
-      She additionally notes <strong>murky urine</strong> but denies <strong>dysuria</strong>,
+      She additionally notes <strong>darker urine</strong> but denies <strong>dysuria</strong>,
       <strong>urgency</strong>, <strong>frequency</strong>, or <strong>hematuria</strong>.
+      She reports she has <strong>never been sexually active</strong>, and a
+      <strong>urine pregnancy test was negative on presentation</strong>.
     </p>
     <div class="grid2">
       <div class="summary">
@@ -3097,8 +3100,8 @@ lowValueReasons: new Map([
     ["URINE_CX","Low Value – Urine culture is not indicated without urinary symptoms; positives most often reflect asymptomatic bacteriuria and drive unnecessary antibiotics."],
     ["RPP","Low Value – Broad and costly, and would not change outpatient management in an otherwise healthy, immunocompetent adolescent. Consider only where the result would change management in high-risk or severe illness."],
     ["LACTATE","Low Value – She is well-appearing with stable vitals and no evidence of severe infection or hypoperfusion. Lactate has no role in this presentation."],
-    ["PDF_4564703","Low Value – Before obtaining this test, it would be prudent to ask the patient about her sexual and menstrual history."],
-    ["PDF_4569705","Low Value – Before obtaining this test, it would be prudent to ask the patient about her sexual and menstrual history."]
+    ["PDF_4564703","Low Value – A urine pregnancy test was already negative on presentation, and she reports never having been sexually active. Repeating the question with a serum assay adds cost without adding information. The history is the test that comes first here, and it has already been taken."],
+    ["PDF_4569705","Low Value – A qualitative urine pregnancy test was already negative on presentation. A quantitative level answers a question nobody is asking: quantitative hCG is for tracking a known pregnancy or a molar or ectopic workup, not for screening."]
   ]),
   intermediateIds: new Map([
     ["COVID_PCR","Intermediate – Reasonable but not required. She is well-appearing and low-risk, so the result would not change her treatment, though it may inform isolation and return-to-school counseling."],
@@ -3141,7 +3144,7 @@ lowValueReasons: new Map([
 <strong>Common pitfalls (low-value care)</strong>
 <ul class="small">
   <li><strong>Testing for strep anyway, because the throat hurts and the family expects it.</strong> At a score of 0&ndash;1 a positive result is more likely carriage than infection, so testing converts a self-limited illness into an antibiotic prescription.</li>
-  <li><strong>UA or urine culture for &ldquo;murky urine&rdquo; without urinary symptoms</strong> &rarr; usually asymptomatic bacteriuria; avoid unnecessary antibiotics.</li>
+  <li><strong>UA or urine culture for &ldquo;darker urine&rdquo; without urinary symptoms</strong> &rarr; usually asymptomatic bacteriuria; avoid unnecessary antibiotics. Darker urine in a febrile adolescent with reduced oral intake is far more often concentration than infection.</li>
   <li><strong>Broad respiratory pathogen panel by default</strong> &rarr; higher cost, and rarely changes outpatient management.</li>
   <li><strong>Blood cultures in a well-appearing outpatient</strong> &rarr; low yield; reserve for severe illness or sepsis risk.</li>
 </ul>
@@ -3156,7 +3159,8 @@ lowValueReasons: new Map([
 
 3: {
   title: "Case 3 – Return visit",
-  diagnosis: "Secondary bacterial community-acquired pneumonia complicating the preceding viral illness, now with sepsis physiology",
+  diagnosis: "Secondary bacterial community-acquired pneumonia complicating the preceding viral illness, now with septic shock",
+  dxNote: "Her <strong>lactate comes back elevated at 6 mmol/L (54.06 mg/dL)</strong>.",
   attribution: "",
   contentHtml: `
 <p>
@@ -3172,29 +3176,29 @@ lowValueReasons: new Map([
           <li><strong>HR:</strong> 118 bpm</li>
           <li><strong>RR:</strong> 24 / min</li>
           <li><strong>SpO₂:</strong> <strong>89% on room air</strong></li>
-          <li><strong>BP:</strong> 98/60</li>
+          <li><strong>BP:</strong> <strong>85/33</strong> (MAP 50) <span class="muted">&mdash; average for a 15-year-old is about 109/65</span></li>
         </ul>
       </div>
       <div class="summary">
         <h3 style="margin-top:0;">Physical Exam</h3>
-        <p class="small"><strong>General:</strong> Ill-appearing, uncomfortable, febrile.</p>
+        <p class="small"><strong>General:</strong> Ill-appearing, uncomfortable, febrile. <strong>Lethargic, intermittently falling asleep during the assessment.</strong></p>
         <p class="small"><strong>Respiratory:</strong> Increased cough; <strong>crackles in the left lower lobe</strong>; mild increased work of breathing.</p>
         <p class="small"><strong>CV:</strong> Tachycardic, regular rhythm.</p>
         <p class="small"><strong>Abd:</strong> Soft, non-tender.</p>
       </div>
     </div>
   `,
-  highValueIds: new Set(["CBC","BMP","CMP","CXR","LACTATE","BLOOD_CX","SPUTUM_CX"]),
+  highValueIds: new Set(["CBC","BMP","CMP","CXR","LACTATE","BLOOD_CX"]),
   highValueReasons: new Map([
     ["CBC","High Value – Concern for bacterial pneumonia/sepsis; helps assess leukocytosis and severity."],
     ["BMP","High Value – Sepsis workup includes renal/electrolyte evaluation; helps guide fluids/med dosing."],
     ["CMP","High Value – Acceptable alternative to BMP; adds hepatic function, which is worth having if you are worried about organ dysfunction."],
     ["CXR","High Value – Worsening cough + focal crackles: imaging is appropriate to evaluate pneumonia."],
     ["LACTATE","High Value – Assesses for tissue hypoperfusion in suspected sepsis and guides resuscitation."],
-    ["BLOOD_CX","High Value – In suspected sepsis, blood cultures are indicated prior to antibiotics when feasible."],
-    ["SPUTUM_CX","High Value – If sputum can be obtained (or severe disease), culture can help tailor therapy. Recommended to order if the patient is able to provide a sputum sample. Per IDSA guidelines, sputum samples for culture and Gram stain should be obtained in hospitalised children who can produce sputum (weak recommendation; low-quality evidence). However, these tests are infrequently performed in children with CAP, because children cannot always provide adequate specimens for testing. Gram stain and culture of expectorated sputum should be attempted in older children and adolescents with more severe disease, including inpatients, or in those in whom outpatient therapy has failed."]
+    ["BLOOD_CX","High Value – In suspected sepsis, blood cultures are indicated prior to antibiotics when feasible."]
   ]),
   intermediateIds: new Map([
+    ["SPUTUM_CX","Intermediate – Reasonable if she can produce a specimen, but the recommendation behind it is a weak one resting on low-quality evidence, which is why this sits at intermediate rather than high. Per IDSA guidelines, sputum for culture and Gram stain should be obtained in hospitalised children who can produce sputum (weak recommendation; low-quality evidence). In practice these tests are infrequently performed in children with CAP, because children cannot always provide an adequate specimen. Gram stain and culture of expectorated sputum should be attempted in older children and adolescents with more severe disease, including inpatients, or in those in whom outpatient therapy has failed."],
     ["PDF_4720655","Intermediate – Defensible given the hypoxia. A blood gas measures what the monitor can only estimate, and in a child who is hypoxic and working harder to breathe the useful numbers are the pH and the pCO\u2082: they tell you whether she is compensating or tiring, which is a ventilation question the saturation cannot answer. Know the limit of the venous sample, though. A VBG gives reliable pH, pCO\u2082 and bicarbonate, but venous pO\u2082 reflects tissue extraction rather than arterial oxygenation, so it does not quantify the hypoxaemia itself. If you want that number on blood testing it has to be an arterial sample \u2014 and in most cases the pulse oximeter has already answered the question."],
     ["COVID_PCR","Intermediate – Her prior visit was a clinically diagnosed viral pharyngitis and no pathogen was identified, so testing is more defensible now than it was then. It still will not change the immediate management of her sepsis physiology, which is the priority."],
     ["FLU_PCR","Intermediate – No pathogen was identified at her prior visit, so testing is reasonable. It will not change the immediate management of her sepsis physiology, which is the priority."],
@@ -3216,14 +3220,13 @@ lowValueReasons: new Map([
     ],
   missedSeverity: "error",
   missedReasons: new Map([
-    ["LACTATE","This patient meets sepsis criteria (T 39.2, HR 118, RR 24, SBP 98). Lactate identifies occult hypoperfusion, distinguishes sepsis from septic shock, and guides resuscitation."],
+    ["LACTATE","This patient meets sepsis criteria (T 39.2, HR 118, RR 24, BP 85/33 with a MAP of 50). Lactate identifies occult hypoperfusion and is what separates sepsis from septic shock \u2014 hers came back at 6 mmol/L, which together with the hypotension puts her in shock, and it is the number you trend to judge whether resuscitation is working."],
     ["BLOOD_CX","Blood cultures should be drawn before antibiotics whenever doing so does not delay them. After antibiotics the yield falls sharply and you lose the ability to narrow therapy."],
-    ["SPUTUM_CX","In severe or hospitalized pneumonia, sputum culture can identify the pathogen and allow de-escalation from broad empiric coverage."],
     ["CXR","First-line imaging to confirm pneumonia and assess its extent. The focal left lower lobe crackles make this essential."],
     ["CBC","Leukocytosis or leukopenia contributes to the sepsis assessment, and the platelet count is part of organ-dysfunction scoring."],
     ["BMP","Creatinine and bicarbonate identify acute kidney injury and metabolic acidosis, both organ-dysfunction criteria in sepsis."]
   ]),
-  recommendedIds: ["CBC","BMP","CXR","LACTATE","BLOOD_CX","SPUTUM_CX"],
+  recommendedIds: ["CBC","BMP","CXR","LACTATE","BLOOD_CX"],
   decisions: [
     { id:"dispo3", question:"Disposition", hint:"",
       options:[
@@ -3232,16 +3235,16 @@ lowValueReasons: new Map([
         {id:"admit_abx", label:"Admit for inpatient antibiotics", tier:"high",
          why:"She meets the guideline threshold for hospitalisation: moderate to severe community-acquired pneumonia with respiratory distress and a sustained saturation below 90% on room air. Admission buys three things she cannot get at home &mdash; supplemental oxygen, serial reassessment of a child whose trajectory is still worsening, and reliable delivery of antibiotics. This is what high-value care looks like when the patient is genuinely sick: the expensive option is the correct one, because the cheaper one does not meet the need."},
         {id:"admit_obs", label:"Admit for observation without antibiotics", tier:"low",
-         why:"Low value. Admitting her is recommended at this time, but she also needs antibiotics to treat the underlying infection. She currently meets sepsis criteria and requires fluid resuscitation and intervention on her bacterial infection."},
+         why:"Low value. Admitting her is recommended at this time, but she also needs antibiotics to treat the underlying infection. She is in septic shock and requires fluid resuscitation and intervention on her bacterial infection."},
         {id:"dc_noabx", label:"Discharge without antibiotics", tier:"low",
-         why:"The most dangerous answer. She has a bacterial pneumonia following a viral illness, she is hypoxic, and she meets sepsis criteria. Withholding both admission and treatment is the mirror image of over-prescribing at her first visit, and restraint applied to the wrong patient is not high-value care, it is undertreatment."}
+         why:"The most dangerous answer. She has a bacterial pneumonia following a viral illness, she is hypoxic, and she is in septic shock. Withholding both admission and treatment is the mirror image of over-prescribing at her first visit, and restraint applied to the wrong patient is not high-value care, it is undertreatment."}
       ]}
   ],
   pathwayHtml: `
 <strong>Answer</strong>
 <p class="small">
   This return visit is <strong>not</strong> the same as the initial outpatient URI. She now has recurrent fever, worsening cough,
-  tachycardia/tachypnea, borderline blood pressure, lower oxygen saturation, and focal lung findings (LLL crackles).
+  tachycardia/tachypnea, frank hypotension, hypoxaemia, lethargy, and focal lung findings (LLL crackles).
   In this setting, a broader evaluation is <strong>high value</strong> because it quickly changes management (fluids, antibiotics, disposition).
 </p>
 
@@ -3255,17 +3258,27 @@ lowValueReasons: new Map([
   after a viral prodrome they produce necrotising disease and empyema.
 </p>
 
-<strong>She already meets criteria for severe illness with sepsis</strong>
+<strong>She is in septic shock</strong>
+<p class="small">
+  She has a suspected infection with organ dysfunction, which is sepsis, and she is hypotensive with a raised lactate
+  despite that infection being the only explanation &mdash; which makes this <strong>septic shock</strong> rather than
+  sepsis alone. The distinction is not semantic: it sets the urgency, the resuscitation target and the level of care.
+  She meets it across more than one organ system:
+</p>
 <ul class="small">
   <li><strong>Hypoxaemia</strong> &mdash; SpO&#8322; 89% on room air</li>
   <li><strong>Tachypnoea</strong> &mdash; respiratory rate 24/min</li>
-  <li><strong>Relative hypotension</strong> &mdash; 98/60</li>
+  <li><strong>Hypotension</strong> &mdash; 85/33, a MAP of 50, against an expected 109/65 for her age</li>
+  <li><strong>Altered mental status</strong> &mdash; lethargic, intermittently falling asleep during the assessment</li>
+  <li><strong>Elevated lactate</strong> &mdash; 6 mmol/L (54.06 mg/dL)</li>
   <li><strong>Tachycardia</strong> &mdash; 118 bpm</li>
 </ul>
 <p class="small">
-  She falls under the <strong>paediatric sepsis pathway</strong>, which applies under 18 years of age. Because she shows
-  organ dysfunction, <strong>begin the sepsis bundle while obtaining diagnostics</strong> &mdash; the workup and the
-  treatment run in parallel, not in sequence.
+  A MAP of 50 against an expected 109/65, a lactate of 6 mmol/L and a child who is falling asleep mid-assessment are
+  perfusion failure, not a soft blood pressure. She falls under the <strong>paediatric sepsis pathway</strong>, which
+  applies under 18 years of age. Because she is in septic shock, <strong>begin the sepsis bundle while obtaining
+  diagnostics</strong> &mdash; the workup and the treatment run in parallel, not in sequence. Fluid resuscitation and
+  timely antibiotics start now; they do not wait on the chest film or the cultures.
 </p>
 <p class="small">
   Paediatric patients also have a separate scoring system for septic shock criteria, the
@@ -3329,6 +3342,18 @@ lowValueReasons: new Map([
   hypoxaemia, a <strong>sustained SpO&#8322; below 90% on room air at sea level</strong> &mdash; should be hospitalised.
   At 89% on room air with increased work of breathing, she meets that threshold, and no amount of close follow-up
   substitutes for oxygen she cannot get at home.
+</p>
+<p class="small">
+  <strong>She qualifies for admission on two independent grounds, and either one alone would be enough.</strong>
+</p>
+<ol class="small">
+  <li><strong>She is hypoxic, so this is severe CAP.</strong> A sustained SpO&#8322; below 90% on room air is the
+      guideline threshold on its own, irrespective of how she is perfusing.</li>
+  <li><strong>She is in septic shock.</strong> Hypotension with a MAP of 50, a lactate of 6 mmol/L and altered mental status are
+      organ dysfunction, and that mandates inpatient care with or without the hypoxaemia.</li>
+</ol>
+<p class="small">
+  A patient with either finding in isolation would be admitted. She has both, which is why this is not a close call.
 </p>
 <p class="small">The same guideline lists other circumstances that warrant admission:</p>
 <ul class="small">
@@ -4118,6 +4143,7 @@ const resultsEl = document.getElementById("results");
 const caseTitleEl = document.getElementById("caseTitle");
 const caseContentEl = document.getElementById("caseContent");
 const finalDxEl = document.getElementById("finalDx");
+const dxNoteEl  = document.getElementById("dxNote");
 
 const dxHeaderEl = document.getElementById("dxHeader");
 const dxHintEl = document.getElementById("dxHint");
@@ -5255,6 +5281,12 @@ orderFormEl.addEventListener("submit", (e)=>{
   }
   const gradedDecisions = gradeDecisions(cfg);
   finalDxEl.textContent = cfg.diagnosis;
+  // Optional one-line result that belongs with the diagnosis rather than in the pathway text.
+  if (dxNoteEl){
+    const note = cfg.dxNote || "";
+    dxNoteEl.innerHTML = note;
+    dxNoteEl.classList.toggle("hidden", !note);
+  }
   recommendedPathwayBoxEl.innerHTML = cfg.pathwayHtml || "";
   attributionEl.textContent = cfg.attribution || "";
 
