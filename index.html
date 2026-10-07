@@ -93,9 +93,6 @@ ul.plain>li{margin:0 0 9px}
 .fs-none{color:var(--muted);font-style:italic;font-weight:500}
 tr.fs-unordered .fs-lab{color:var(--muted)}
 .wells-worked{border-left:3px solid var(--accent);padding-left:14px;margin:14px 0}
-table.tele-tbl{min-width:34rem}
-table.tele-tbl th{background:var(--chip);font-weight:600;color:var(--heading);text-align:left}
-table.tele-tbl td{vertical-align:top;width:50%}
 ol.refs{margin:10px 0 0;padding-left:20px;color:var(--muted)}
 ol.refs li{margin:5px 0;line-height:1.45}
 .decision-commit{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
@@ -2950,7 +2947,7 @@ const CASES = {
           </ul>
         </div>
         <div class="summary">
-          <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+          <h3 style="margin-top:0;">Physical Exam</h3>
           <p class="small"><strong>General:</strong> Uncomfortable-appearing, mildly dyspneic, speaking in full sentences.</p>
           <p class="small"><strong>Cardiovascular:</strong> Tachycardic, regular rhythm. No murmurs, rubs, or gallops.</p>
           <p class="small"><strong>Respiratory:</strong> Slightly increased work of breathing. Lungs clear to auscultation bilaterally.</p>
@@ -3074,7 +3071,7 @@ lowValueReasons: new Map([
         </ul>
       </div>
       <div class="summary">
-        <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+        <h3 style="margin-top:0;">Physical Exam</h3>
         <p class="small"><strong>General:</strong> Well-appearing adolescent, non-toxic, no acute distress. Handling her secretions normally.</p>
         <p class="small"><strong>HEENT:</strong> Mild nasal congestion. Oropharynx mildly erythematous, <strong>without tonsillar exudate or tonsillar swelling</strong>.</p>
         <p class="small"><strong>Neck:</strong> <strong>No tender or enlarged anterior cervical lymph nodes.</strong> Supple, full range of motion.</p>
@@ -3179,7 +3176,7 @@ lowValueReasons: new Map([
         </ul>
       </div>
       <div class="summary">
-        <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+        <h3 style="margin-top:0;">Physical Exam</h3>
         <p class="small"><strong>General:</strong> Ill-appearing, uncomfortable, febrile.</p>
         <p class="small"><strong>Respiratory:</strong> Increased cough; <strong>crackles in the left lower lobe</strong>; mild increased work of breathing.</p>
         <p class="small"><strong>CV:</strong> Tachycardic, regular rhythm.</p>
@@ -3348,7 +3345,7 @@ lowValueReasons: new Map([
 <strong>The adult equivalent</strong>
 <p class="small">
   In adult patients the same question &mdash; does this person with community-acquired pneumonia need a hospital bed
-  &mdash; is answered with a validated severity score rather than a list of criteria. The <strong>PSI / PORT score</strong>
+  &mdash; is answered with a validated severity score rather than a list of criteria. The <strong><a href="https://www.mdcalc.com/calc/33/psi-port-score-pneumonia-severity-index-cap" target="_blank" rel="noopener noreferrer">PSI / PORT score</a></strong>
   stratifies adults with CAP into five risk classes using age, comorbid illness, vital signs and a handful of laboratory
   values, and the class maps onto a recommended site of care: outpatient treatment for the lowest classes, admission for
   the highest. CURB-65 does the same job with fewer variables. These scores are not validated in children, which is why
@@ -3399,7 +3396,7 @@ lowValueReasons: new Map([
           </ul>
         </div>
         <div class="summary">
-          <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+          <h3 style="margin-top:0;">Physical Exam</h3>
           <p class="small"><strong>General:</strong> Uncomfortable with movement but non-toxic.</p>
           <p class="small"><strong>Back:</strong> Paraspinal lumbar tenderness; no midline spinal tenderness or step-offs.</p>
           <p class="small"><strong>Neuro:</strong> Strength 5/5 BLE; sensation intact; reflexes symmetric; normal gait.</p>
@@ -3514,12 +3511,7 @@ lowValueReasons: new Map([
     title: "Case 5 – Medication reconciliation",
     diagnosis: "Medication reconciliation (discharge)",
     attribution: "",
-    contentHtml: `
-      <div class="hint small" style="margin-top:10px;">
-        Complete the embedded medication reconciliation case below. Costs and high-value feedback are revealed after you submit within Case 5.
-        After you submit, a <strong>Post-test</strong> button will appear.
-      </div>
-    `,
+    contentHtml: ``,
     // Placeholder fields to keep shared logic safe (diagnostic-testing UI is hidden for Case 5)
     highValueIds: new Set([]),
     highValueReasons: new Map([]),
@@ -3552,7 +3544,7 @@ lowValueReasons: new Map([
           </ul>
         </div>
         <div class="summary">
-          <h3 style="margin-top:0;">Physical Exam (Physician note style)</h3>
+          <h3 style="margin-top:0;">Physical Exam</h3>
           <p class="small"><strong>General:</strong> Ill-appearing, diaphoretic. <strong>Drowsy and slow to answer, oriented to person and place only</strong> &mdash; his wife says this is new this morning.</p>
           <p class="small"><strong>Right foot:</strong> 3 cm plantar ulcer over the first metatarsal head with purulent drainage; surrounding erythema extending 7 cm proximally onto the dorsum; warm, tender, moderate edema. <strong>A sterile probe does not reach bone.</strong> No crepitus, no bullae, no skin necrosis.</p>
           <p class="small"><strong>Vascular:</strong> Dorsalis pedis faintly palpable; posterior tibial not palpable; capillary refill 4 seconds.</p>
@@ -3899,39 +3891,59 @@ lowValueReasons: new Map([
 
 <strong>When telemetry <em>is</em> indicated</strong>
 <p class="small">
-  The decision to stop is easier to defend when you know what the indications actually are. Condensed
-  from the 2017 AHA practice standards:
+  Continuous telemetry should be ordered for patients with ICU indications. In non-ICU level of care patients, the AHA
+  recommends telemetry in a select few patients, which are detailed below. These are guidelines, but individual
+  circumstances should always be taken into account. Unnecessary inpatient telemetry exposes patients to harm without
+  offsetting benefit, including misdiagnosis and cascades of downstream testing triggered by artifact, immobility,
+  delirium, sleep disruption and anxiety.<sup>1&ndash;4</sup> Telemetry has been estimated to cost up to approximately
+  <strong>$1,400 per patient per day</strong>.<sup>2,3,5</sup> Critically, reducing inappropriate telemetry does not
+  increase life-threatening arrhythmias, rapid-response activations or mortality, confirming that these harms are
+  incurred with no corresponding safety gain.<sup>1,5</sup> It is important to note that telemetry does not entail pulse
+  oximetry use, as that can be done on a non-telemetry bed and is a separate decision. Now that our patient has
+  stabilised and is no longer in sepsis or septic shock, telemetry should be discontinued.
 </p>
-<div class="table-wrap">
-<table class="small tele-tbl">
-  <thead>
-    <tr><th>Class I &mdash; monitoring should be performed</th><th>Class II &mdash; reasonable (IIa) / may consider (IIb)</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Acute coronary syndrome / STEMI</td><td>Chest pain / known CAD (IIa)</td></tr>
-    <tr><td>MI with revascularization (PCI/thrombolysis)</td><td>Post-PCI with complications (IIa)</td></tr>
-    <tr><td>MI without reperfusion</td><td>Infective endocarditis until stable (IIa)</td></tr>
-    <tr><td>Critical left main stenosis awaiting revascularization</td><td>Major noncardiac thoracic surgery (IIa)</td></tr>
-    <tr><td>Vasospastic angina</td><td>TAVR &gt;72 h postprocedure (IIa)</td></tr>
-    <tr><td>Symptomatic 2&deg;/3&deg; AV block; all 3&deg; block</td><td>Chronic AF with recurrent rapid ventricular rate (IIa)</td></tr>
-    <tr><td>Symptomatic bradycardia</td><td>Initiation of negative chronotropes with baseline sinus bradycardia (IIa)</td></tr>
-    <tr><td>Syncope of suspected cardiac origin (&ge;24 h)</td><td>Nonsustained VT (IIb)</td></tr>
-    <tr><td>Unstable congenital long QT syndrome</td><td>Post-pacemaker/ICD in non&ndash;pacer-dependent patients (IIb)</td></tr>
-    <tr><td>QT-prolonging drugs with TdP risk</td><td>Generator change; post&ndash;conscious sedation; hemodialysis (IIb)</td></tr>
-  </tbody>
-</table>
-</div>
-<p class="small muted" style="margin-top:8px;">
-  He meets none of these today. He met none of them yesterday either &mdash; the monitored bed was for
-  haemodynamic instability in septic shock, which is a different and now resolved reason.
-</p>
+
+<p class="small"><strong>Abridged indications for telemetry, per AHA guidelines</strong></p>
+<ul class="small">
+  <li>Chest pain concerning for cardiac etiology</li>
+  <li>Acute coronary syndrome</li>
+  <li>Syncope with concern for cardiac origin</li>
+  <li>Stroke or transient ischemic attack</li>
+  <li>Drug overdose with agents of arrhythmogenic potential</li>
+  <li>Major electrolyte disturbances (K, Mg, Ca)</li>
+  <li>Cardiac procedures
+    <ul>
+      <li>Coronary stenting</li>
+      <li>Pacemaker / ICD</li>
+      <li>Transcatheter valve replacement</li>
+    </ul>
+  </li>
+  <li>Arrhythmias
+    <ul>
+      <li>Atrial fibrillation with rapid ventricular rate</li>
+      <li>Symptomatic bradycardia</li>
+      <li>Symptomatic second degree AV block</li>
+      <li>All third degree AV blocks</li>
+      <li>Nonsustained ventricular tachycardia</li>
+      <li>Unstable congenital long QT syndrome</li>
+      <li>QT prolongation with risk for torsades</li>
+    </ul>
+  </li>
+  <li>Major non-cardiac thoracic surgery</li>
+  <li>Infective endocarditis until stable</li>
+</ul>
+
 <ol class="small refs">
-  <li>Sandau KE, Funk M, Auerbach A, et al. Update to Practice Standards for Electrocardiographic
-      Monitoring in Hospital Settings: A Scientific Statement From the American Heart Association.
-      <em>Circulation.</em> 2017;136(19):e273&ndash;e344. doi:10.1161/CIR.0000000000000527</li>
-  <li>Yeow RY, Strohbehn GW, Kagan CM, et al. Eliminating Inappropriate Telemetry Monitoring: An
-      Evidence-Based Implementation Guide. <em>JAMA Internal Medicine.</em> 2018;178(7):971&ndash;978.
-      doi:10.1001/jamainternmed.2018.2409</li>
+  <li><a href="https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/10.1001/jamainternmed.2023.7632" target="_blank" rel="noopener noreferrer">&ldquo;4 E&rsquo;s&rdquo; Ways That Clinicians Can Reduce Low-Value Care on Medical Wards.</a>
+      <em>JAMA Internal Medicine.</em> 2024. Silverstein WK, Leis JA, Moriates C. Opinion.</li>
+  <li><a href="https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/10.1001/jamainternmed.2018.2409" target="_blank" rel="noopener noreferrer">Eliminating Inappropriate Telemetry Monitoring: An Evidence-Based Implementation Guide.</a>
+      <em>JAMA Internal Medicine.</em> 2018. Yeow RY, Strohbehn GW, Kagan CM, et al. Review.</li>
+  <li><a href="https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/10.1001/jamainternmed.2018.2400" target="_blank" rel="noopener noreferrer">Continuing to Improve Appropriateness of Continuous Electrocardiographic Monitoring (Telemetry).</a>
+      <em>JAMA Internal Medicine.</em> 2018. Dhruva SS. Opinion.</li>
+  <li><a href="https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/10.1001/jamainternmed.2018.4681" target="_blank" rel="noopener noreferrer">The Patient Experience and Use of Telemetry Monitoring.</a>
+      <em>JAMA Internal Medicine.</em> 2018. Bansal AK, Lacy ME, Tsega S. Opinion.</li>
+  <li><a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000000527" target="_blank" rel="noopener noreferrer">Update to Practice Standards for Electrocardiographic Monitoring in Hospital Settings: A Scientific Statement From the American Heart Association.</a>
+      <em>Circulation.</em> 2017. Sandau KE, Funk M, Auerbach A, et al. Guideline.</li>
 </ol>
 
 <p class="small">
