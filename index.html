@@ -5675,18 +5675,15 @@ document.querySelector(".tabs").addEventListener("keydown",(e)=>{
   goToCase(TAB_CASE[target.id]);
 });
 
-document.getElementById("tab0").addEventListener("click", ()=>goToCase(0));
-document.getElementById("tab1").addEventListener("click", ()=>goToCase(1));
-document.getElementById("tab2").addEventListener("click", ()=>goToCase(2));
-document.getElementById("tab3").addEventListener("click", ()=>goToCase(3));
-document.getElementById("tab4").addEventListener("click", ()=>goToCase(4));
-document.getElementById("tab5").addEventListener("click", ()=>goToCase(5));
-document.getElementById("tab6").addEventListener("click", ()=>goToCase(6));
-document.getElementById("tab7").addEventListener("click", ()=>goToCase(7));
-document.getElementById("tab8").addEventListener("click", ()=>goToCase(8));
-document.getElementById("tab9").addEventListener("click", ()=>goToCase(9));
-document.getElementById("tab6group").addEventListener("click", ()=>goToCase(6));
-document.getElementById("tab10").addEventListener("click", ()=>goToCase(10));
+/* Bind every tab from TAB_CASE rather than listing them one by one. The hand-written
+   list silently missed any tab added later -- the Tutorial tab rendered, took keyboard
+   focus and highlighted on hover, but clicking it did nothing, because no handler was
+   ever attached. Driving this from the same map the keyboard navigation uses means a
+   new tab is wired the moment it is added to TAB_CASE. */
+Object.keys(TAB_CASE).forEach(tabId => {
+  const el = document.getElementById(tabId);
+  if (el) el.addEventListener("click", () => goToCase(TAB_CASE[tabId]));
+});
 
 if (continueBtnEl){
   continueBtnEl.addEventListener("click", ()=>{
