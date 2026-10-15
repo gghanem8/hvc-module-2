@@ -286,6 +286,14 @@ button.primary:active{transform:translateY(1px)}
 .pill.good{background:var(--ok-soft);color:var(--ok)}
 .pill.warn{background:var(--mid-soft);color:var(--mid)}
 .pill.bad{background:var(--no-soft);color:var(--no)}
+.neutral{color:var(--muted)}
+.pill.neutral{background:var(--chip);color:var(--muted)}
+#orderFeedback li.neutral{background:var(--chip);border-left-color:var(--muted)}
+.tut-note{border-left:3px solid var(--accent);background:var(--chip);
+  border-radius:0 9px 9px 0;padding:10px 14px;margin:10px 0}
+.tut-arrow{display:flex;align-items:center;gap:10px;margin:14px 0 6px;
+  color:var(--no);font-weight:600}
+.tut-arrow .arrow{font-size:1.5rem;line-height:1}
 
 #orderFeedback ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
 #orderFeedback li{
@@ -580,6 +588,7 @@ textarea{min-height:96px;resize:vertical}
 
   <div class="tabs" role="tablist" aria-label="Module sections">
     <button class="tab active" id="tab0" type="button" role="tab" aria-selected="true">Pre-test</button>
+    <button class="tab" id="tab11" type="button" role="tab" aria-selected="false" tabindex="-1">Tutorial</button>
     <button class="tab" id="tab1" type="button" role="tab" aria-selected="false" tabindex="-1">Case 1: Chest pain</button>
     <button class="tab" id="tab2" type="button" role="tab" aria-selected="false" tabindex="-1">Case 2: Sore throat</button>
     <button class="tab" id="tab3" type="button" role="tab" aria-selected="false" tabindex="-1">Case 3: Return visit</button>
@@ -659,6 +668,12 @@ textarea{min-height:96px;resize:vertical}
     Tip: Search abbreviations like <strong>CXR</strong>, <strong>CTA</strong>, <strong>CTPA</strong>, <strong>UA</strong>, <strong>RPP</strong>, <strong>Echo</strong>.
     Costs stay hidden until you submit.
   </div>
+  <div class="tut-note small tutorial-only hidden" id="tutOrderNote">
+    This is where you will select your orders for this visit. Once you hit submit, your orders will be locked in.
+    Try searching for some common orders for an annual physical exam such as a <strong>CBC</strong>,
+    <strong>BMP</strong>, <strong>hemoglobin A1c</strong> and a <strong>lipid panel</strong>. You can also select
+    <strong>&ldquo;No diagnostic testing necessary&rdquo;</strong> if you do not think any orders are needed for this case.
+  </div>
 
   <label class="field-label" for="search">Search and add orders</label>
   <input type="text" id="search" aria-describedby="dxHint"
@@ -671,6 +686,9 @@ textarea{min-height:96px;resize:vertical}
     <div class="card" style="margin-top:12px;">
       <h3 style="margin:0 0 8px 0;">Selected orders</h3>
       <div class="small muted" style="margin-top:0;">This updates as you check/uncheck items above.</div>
+      <div class="tut-note small tutorial-only hidden" id="tutSelectedNote">
+        This is where the orders you place will populate. You can press <strong>Remove</strong> if you no longer want these orders.
+      </div>
       <div id="selectedOrdersBox" class="small" style="margin-top:10px;"></div>
     </div>
 
@@ -678,6 +696,10 @@ textarea{min-height:96px;resize:vertical}
     <div id="decisionBlock" class="hidden"></div>
 
     <div id="orderFormError" class="launch-error hidden" role="alert"></div>
+    <div class="tut-arrow tutorial-only hidden" id="tutSubmitNote">
+      <span class="arrow" aria-hidden="true">&#10549;</span>
+      <span>Press here to submit your orders</span>
+    </div>
     <button class="primary" type="submit">Submit Orders</button>
   </form>
 
@@ -2926,6 +2948,67 @@ const CASES = {
     recommendedIds: [],
     pathwayHtml: ``
   },
+  /* Tutorial. Sits between the pre-test and Case 1 and teaches the interface, not
+     medicine. Keyed 11 rather than inserted at 1 so every existing case keeps its
+     id and the round-1 data stays joinable. Nothing here is graded: see the
+     `tutorial` flag, which gradeOrder() honours. */
+  11: {
+    title: "Tutorial",
+    diagnosis: "Tutorial \u2014 nothing here is scored",
+    attribution: "",
+    tutorial: true,
+    contentHtml: `
+      <div class="tut-note small">You will see the patient aliquot here.</div>
+      <p>
+        A healthy <strong>40-year-old man</strong> comes in to your office for an annual physical exam.
+        He has no past medical history and takes no medications.
+      </p>
+      <div class="grid2">
+        <div class="summary">
+          <h3 style="margin-top:0;">Vitals</h3>
+          <div class="tut-note small">You will see your patient&rsquo;s vitals here.</div>
+          <ul>
+            <li><strong>Temp:</strong> 36.8&deg;C (98.2&deg;F)</li>
+            <li><strong>HR:</strong> 68 bpm</li>
+            <li><strong>RR:</strong> 14 / min</li>
+            <li><strong>SpO\u2082:</strong> 99% on room air</li>
+            <li><strong>BP:</strong> 118/74</li>
+          </ul>
+        </div>
+        <div class="summary">
+          <h3 style="margin-top:0;">Physical Exam</h3>
+          <div class="tut-note small">Here is your patient&rsquo;s physical exam at the time of this visit.</div>
+          <p class="small"><strong>General:</strong> Well-appearing, comfortable, in no distress.</p>
+          <p class="small"><strong>Cardiovascular:</strong> Regular rate and rhythm. No murmurs, rubs or gallops.</p>
+          <p class="small"><strong>Respiratory:</strong> Clear to auscultation bilaterally. Normal work of breathing.</p>
+          <p class="small"><strong>Abdomen:</strong> Soft, non-tender, no organomegaly.</p>
+          <p class="small"><strong>Extremities:</strong> No oedema. Pulses intact.</p>
+        </div>
+      </div>
+    `,
+    highValueIds: new Set([]),
+    highValueReasons: new Map([]),
+    intermediateIds: new Map([]),
+    lowValueReasons: new Map([]),
+    missedSeverity: "neutral",
+    missedReasons: new Map([]),
+    recommendedIds: [],
+    pathwayHtml: `
+<strong>Standard of care for an annual physical exam</strong>
+<p class="small">
+  For a healthy 40-year-old with no history and no medications, routine screening is short:
+  <strong>a lipid panel</strong>, <strong>blood pressure</strong>, and
+  <strong>diabetes screening with a haemoglobin A1c or fasting glucose</strong> where risk factors such as
+  overweight or obesity are present. A CBC and a BMP are not recommended as routine screening in an
+  asymptomatic adult.
+</p>
+<p class="small">
+  Nothing on this page is scored. The real cases that follow work exactly the same way, but there the orders
+  you choose are graded and the costs are compared against a recommended pathway.
+</p>
+`
+  },
+
   1: {
     title: "Case 1 – Chest pain",
     diagnosis: "Pulmonary Embolism",
@@ -2956,7 +3039,7 @@ const CASES = {
         </div>
       </div>
     `,
-    highValueIds: new Set(["EKG","TROP","CBC","BMP","CMP","CTPA","PDF_4569759","LACTATE"]),
+    highValueIds: new Set(["EKG","TROP","CBC","BMP","CMP","CXR","CTPA","PDF_4569759","LACTATE"]),
 highValueReasons: new Map([
   ["EKG","High Value – Initial chest pain evaluation should include EKG to assess for ischemia or arrhythmia."],
   ["TROP","High Value – Evaluates for myocardial injury in the setting of chest pain."],
@@ -2964,11 +3047,11 @@ highValueReasons: new Map([
   ["BMP","High Value – Evaluates electrolytes and renal function prior to contrast imaging."],
   ["CMP","High Value – Acceptable alternative to BMP; broader metabolic assessment."],
   ["CTPA","High Value – Definitive imaging for suspected pulmonary embolism in high pre-test probability."],
+  ["CXR","High Value – A chest X-ray can often be obtained faster than a CT pulmonary angiogram, and it helps rule out alternative causes of chest pain such as pneumothorax or aortic dissection. It is not required once the CTPA is in hand, so you are not penalised for leaving it out \u2014 but ordering it is a reasonable, low-cost move, particularly if there is any delay in getting the CT."],
   ["PDF_4569759","High Value – BNP can help risk-stratify pulmonary emboli and act as a surrogate of heart strain, however, it should not be used to confirm the diagnosis. Importantly, BNP lacks specificity; other conditions like heart failure or chronic kidney disease also cause elevations."],
   ["LACTATE","High Value – Lactate can help risk-stratify patients with pulmonary emboli and act as a surrogate of heart strain. Since this patient is showing signs of hemodynamic changes such as tachycardia and tachypnea, a lactate would be reasonable in this situation."]
 ]),
     intermediateIds: new Map([
-  ["CXR","Intermediate (conditional) – Useful to evaluate alternate causes (pneumonia, pneumothorax, aortic dissection); may be optional if CTA already obtained. In many settings a chest X-ray is faster to obtain than a CT, so it is reasonable to order one if there is any delay in obtaining the CTA."],
   ["DDIMER_QUANT","Intermediate – In high pre-test probability patients, D-dimer is not required prior to definitive imaging."],
   ["ECHO","Intermediate – May be obtained later in hospitalization; not required in initial ED evaluation without signs of heart failure."],
   ["DVT_US","Intermediate – May be helpful if DVT suspected; not necessary if proceeding directly to CTA."],
@@ -4207,6 +4290,7 @@ const COMPLETED_CASES = new Set();
 // Label for the advance button, given where the learner is in the sequence.
 // 0 pre-test | 1-4 cases | 5 med rec | 6-9 case 6 stages (6a-6d) | 10 post-test
 function nextButtonLabel(caseId){
+  if (caseId === 11) return "Start Case 1";
   if (caseId < 5) return "Next Case";
   if (caseId === 5) return "Next Case";
   if (caseId >= 6 && caseId <= 8) return "Next Stage";
@@ -4643,6 +4727,12 @@ function fallbackReasonFor(orderId){
 function gradeOrder(orderId){
   const cfg = CASES[ACTIVE_CASE];
 
+  // The tutorial teaches the interface, so nothing a learner picks there is
+  // marked wrong. Returning a neutral class keeps the feedback layout intact.
+  if (cfg && cfg.tutorial){
+    return { cls:"neutral", tag:"Practice order", reason:"This is the tutorial, so nothing here is scored. In the real cases this box tells you whether the order was high-value, intermediate or low-value, and why." };
+  }
+
   if (ACTIVE_CASE === 1 && orderId === "NO_TESTING"){
     let lr = (cfg.lowValueReasons && cfg.lowValueReasons.has(orderId)) ? cfg.lowValueReasons.get(orderId) : null;
     // Optional name-based low-value rules (useful when catalog IDs differ)
@@ -4827,7 +4917,7 @@ function renderMissedFeedback(cfg, recIds, selectedIds){
   if (!missedFeedbackEl) return;
   // Survey tabs and Case 5 have no diagnostic pathway; show nothing.
   if (!recIds || !recIds.length){ missedFeedbackEl.innerHTML = ""; return; }
-  const missed = recIds.filter(id => !selectedIds.has(id));
+  const missed = missedRecommendedIds(recIds, selectedIds);
 
   if (!missed.length){
     missedFeedbackEl.innerHTML =
@@ -4879,6 +4969,26 @@ function renderMissedFeedback(cfg, recIds, selectedIds){
   }
   html += '</ul></div>';
   missedFeedbackEl.innerHTML = html;
+}
+
+/* Orders that are accepted substitutes for one another. A case recommends the
+   canonical member (BMP), but a learner who ordered the broader panel has not
+   omitted anything, and flagging it as "missed" was simply wrong. Recommended
+   COST still uses the canonical list, so the benchmark stays constant across
+   learners and remains comparable in the data. */
+const EQUIVALENT_ORDERS = [
+  ["BMP","CMP"]
+];
+function equivalentOrderIds(id){
+  const grp = EQUIVALENT_ORDERS.find(g => g.indexOf(id) !== -1);
+  return grp || [id];
+}
+/* Recommended orders the learner genuinely omitted, treating any accepted
+   substitute as satisfying the recommendation. */
+function missedRecommendedIds(recIds, selectedIds){
+  return (recIds || []).filter(id =>
+    !equivalentOrderIds(id).some(alt => selectedIds.has(alt))
+  );
 }
 
 function getRecommendedOrderIds(studentSelectedIds){
@@ -5154,6 +5264,11 @@ function setActiveCase(caseId){
 
   setCase5Visible(false);
   setDxUiVisible(true);
+  // Tutorial-only coaching text lives in the shared order UI, so it is toggled here.
+  try {
+    document.querySelectorAll(".tutorial-only").forEach(el =>
+      el.classList.toggle("hidden", !(cfg && cfg.tutorial)));
+  } catch(e){}
   const ordersOff = !!(cfg && cfg.ordersDisabled);
   setOrderEntryVisible(!ordersOff);
   renderDecisions(cfg);
@@ -5326,8 +5441,7 @@ orderFormEl.addEventListener("submit", (e)=>{
     .reduce((s,o)=>s+Number(o.cost||0), 0);
 
   // Recommended tests the learner did NOT order (added 2026-09)
-  const missedForLog = recIdsForLog
-    .filter(id => !selectedIds.has(id))
+  const missedForLog = missedRecommendedIds(recIdsForLog, selectedIds)
     .map(id => (idToOrder.get(id)?.name || id));
 
   const valueCounts = { high: 0, intermediate: 0, low: 0 };
@@ -5513,7 +5627,7 @@ orderFormEl.addEventListener("submit", (e)=>{
   // Show the pathway comparison for every diagnostic case (1-4), not just Case 1.
   // Cases 0/5/6 are surveys and med rec, which have no diagnostic pathway.
   const cfgNow = CASES[ACTIVE_CASE];
-  const showPathway = ((ACTIVE_CASE >= 1 && ACTIVE_CASE <= 4) || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 9))
+  const showPathway = (ACTIVE_CASE === 11 || (ACTIVE_CASE >= 1 && ACTIVE_CASE <= 4) || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 9))
                       && !(cfgNow && cfgNow.ordersDisabled);
   if (pc) pc.style.display = showPathway ? "block" : "none";
   if (ACTIVE_CASE === 6) CASE6A_ORDERS = Array.from(selectedIds);
@@ -5540,8 +5654,8 @@ function goToCase(caseId){
 }
 
 /* Arrow-key navigation, which a role="tablist" implies and this one did not have. */
-const TAB_ORDER = ["tab0","tab1","tab2","tab3","tab4","tab5","tab6group","tab6","tab7","tab8","tab9","tab10"];
-const TAB_CASE  = { tab0:0, tab1:1, tab2:2, tab3:3, tab4:4, tab5:5, tab6group:6, tab6:6, tab7:7, tab8:8, tab9:9, tab10:10 };
+const TAB_ORDER = ["tab0","tab11","tab1","tab2","tab3","tab4","tab5","tab6group","tab6","tab7","tab8","tab9","tab10"];
+const TAB_CASE  = { tab0:0, tab11:11, tab1:1, tab2:2, tab3:3, tab4:4, tab5:5, tab6group:6, tab6:6, tab7:7, tab8:8, tab9:9, tab10:10 };
 document.querySelector(".tabs").addEventListener("keydown",(e)=>{
   if (!["ArrowRight","ArrowLeft","Home","End"].includes(e.key)) return;
   const visible = TAB_ORDER
@@ -5579,7 +5693,7 @@ if (continueBtnEl){
   continueBtnEl.addEventListener("click", ()=>{
     if (ACTIVE_CASE === 0){
       if (!PRETEST_RESPONSES) return;
-      setActiveCase(1);
+      setActiveCase(11);
       window.scrollTo({top: 0, behavior: "smooth"});
       return;
     }
@@ -5605,6 +5719,12 @@ if (continueBtnEl){
     }
 
     if (resultsEl.classList.contains("hidden")) return;
+
+    if (ACTIVE_CASE === 11){
+      setActiveCase(1);
+      window.scrollTo({top: 0, behavior: "smooth"});
+      return;
+    }
 
     if (ACTIVE_CASE < 5 || (ACTIVE_CASE >= 6 && ACTIVE_CASE <= 9)){
       setActiveCase(ACTIVE_CASE + 1);
