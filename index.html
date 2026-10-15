@@ -1074,7 +1074,7 @@ Next to each medication below, decide whether to <b>continue the home medication
 <script>
 // Case 5 iframe version. Kept in step with the parent APP_VERSION so a row
 // carrying only medrecModuleVersion can still be placed in a cohort.
-const MODULE_VERSION = "v30_2026_09_15";
+const MODULE_VERSION = "v32_2026_10_15";
 const GOOGLE_SHEETS_WEBAPP_URL = ""; // Paste your deployed Google Apps Script Web App URL here (optional)
 
 // Send information back to the parent (Case 1–4 module) for unified analytics.
@@ -1662,7 +1662,7 @@ const ANALYTICS_TIMEOUT_MS = 4000;
 // reclassified to intermediate; commit-before-reveal on the 6b fluid decision;
 // intermediate tiers removed from the antibiotic, source control, lab, insulin
 // and duration decisions; Case 5 sizing, feedback labelling and submit state.
-const APP_VERSION = "HVC_SIM_V31_2026_10_01";
+const APP_VERSION = "HVC_SIM_V32_2026_10_15";
 const ANALYTICS_FETCH_MODE = "no-cors"; // "no-cors" is most compatible (e.g., Google Apps Script)
 
 function getFetchMode(){
@@ -3133,7 +3133,7 @@ lowValueReasons: new Map([
   attribution: "",
   contentHtml: `
     <p>
-      A <strong>healthy 15-year-old woman</strong> with no significant past medical history presents to your
+      A <strong>healthy 15-year-old female</strong> with no significant past medical history presents to your
       outpatient clinic with <strong>3 days of sore throat, fever, and cough</strong>. She also reports
       myalgias, fatigue, and a scratchy voice. Her mother asks whether she needs
       <em>&ldquo;a strep test and antibiotics&rdquo;</em> before she can return to school.
@@ -3246,7 +3246,7 @@ lowValueReasons: new Map([
   attribution: "",
   contentHtml: `
 <p>
-  Your otherwise healthy <strong>15-year-old woman</strong> returns to the emergency department <strong>5 days</strong> after being seen in your clinic for a clinically diagnosed viral pharyngitis.
+  Your otherwise healthy <strong>15-year-old female</strong> returns to the emergency department <strong>5 days</strong> after being seen in your clinic for a clinically diagnosed viral pharyngitis.
   Her fevers initially improved, but she now has <strong>persistent fevers again</strong>, a <strong>worsening, now productive cough</strong>, and feels significantly more malaised.
   She notes that she has been feeling a lot more tired.
 </p>
