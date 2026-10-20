@@ -598,8 +598,8 @@ textarea{min-height:96px;resize:vertical}
     <span id="case6Tabs" class="hidden" role="presentation">
       <button class="tab tab-sub" id="tab6" type="button" role="tab" aria-selected="false" tabindex="-1">6a &middot; Presentation</button>
       <button class="tab tab-sub" id="tab7" type="button" role="tab" aria-selected="false" tabindex="-1">6b &middot; Initial management</button>
-      <button class="tab tab-sub" id="tab8" type="button" role="tab" aria-selected="false" tabindex="-1">6c &middot; Day 1</button>
-      <button class="tab tab-sub" id="tab9" type="button" role="tab" aria-selected="false" tabindex="-1">6d &middot; Day 2</button>
+      <button class="tab tab-sub" id="tab8" type="button" role="tab" aria-selected="false" tabindex="-1">6c &middot; Hospital Day 2</button>
+      <button class="tab tab-sub" id="tab9" type="button" role="tab" aria-selected="false" tabindex="-1">6d &middot; Hospital Day 3</button>
     </span>
     <button class="tab" id="tab10" type="button" role="tab" aria-selected="false" tabindex="-1">Post-test</button>
   </div>
@@ -967,12 +967,12 @@ tr.medrow:first-of-type td{border-top:none}
 <h2>Case Presentation</h2>
 <p>
 Ms. Neal is a 65‑year‑old woman with hypertension, hyperlipidemia, mild coronary artery disease,
-and type 2 diabetes mellitus. Four days ago she was admitted for a <b>foot fracture requiring surgical correction</b>.
+and type 2 diabetes mellitus. Four days ago, she was admitted for a <b>foot fracture requiring surgical correction</b>.
 </p>
 
 <p>
 She is now recovering very well and is ready to discharge home. Her pain has been controlled well
-post‑operatively, and she has only required tylenol for pain control when working with physical therapy.
+post‑operatively, and she has only required acetaminophen for pain control when working with physical therapy.
 She has overall been sleeping well without issues, but occasionally requires melatonin. She states
 that she has a family member at home who had become dependent on opioids and would like to avoid these
 if at all possible.
@@ -1221,7 +1221,7 @@ const HVC = {
   hep: `While it is reasonable to prescribe DVT prophylaxis inpatient and post-operatively, this should be discontinued outpatient if the patient is ambulatory and has lower risk of developing a DVT such as in someone with ankle surgery but who is still able to walk or participate with physical therapy. Strategies to prevent blood clots may be necessary in patients who are expected to have prolonged immobility.`,
   abx: `Surgical prophylaxis is given peri-operatively and stopped within 24 hours of the operation. It has already served its purpose by discharge, and continuing it adds <em>C. difficile</em> risk, resistance and cost without reducing surgical site infection. This is one of the most common things to find still active on a discharge medication list. <br><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10823856/" target="_blank" rel="noopener">Citation</a>`,
   tyl: `Reasonable to continue.`,
-  ibu: `Reasonable to continue in moderation (consider renal function, GI risk, and bleeding risk).`,
+  ibu: `It would be reasonable to prescribe this medication or to have the patient pick it up over the counter. Make sure to advise using ibuprofen in moderation, given the systemic effects and the increased risk of renal dysfunction.`,
   oxy: `The patient has not needed opioid medications after her surgery, and she has stated she would like to avoid opioids at this time.`,
   oxycont: `Clinicians should not treat acute pain such as a fracture with long-acting opioids, and should not prescribe long-acting opioids for intermittent or as-needed use. This is associated with higher overdose risk. <br><a href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm" target="_blank" rel="noopener">Citation</a>`,
   mel: `Reasonable to continue.`,
@@ -2230,7 +2230,7 @@ const LIKERT = [
 const KNOWLEDGE_ITEMS = [
   {
     id:"k1",
-    stem:"A healthy 20-year-old presents with three days of sore throat, subjective fever, and a prominent dry cough. On exam there is no tonsillar exudate and no anterior cervical lymphadenopathy. Which is the most appropriate next step?",
+    stem:"A healthy 20-year-old man presents with three days of sore throat, subjective fever, and a prominent dry cough. On exam there is no tonsillar exudate and no anterior cervical lymphadenopathy. Which is the most appropriate next step?",
     options:[
       {v:"a", label:"Rapid antigen detection test, and treat if positive"},
       {v:"b", label:"Throat culture regardless of the rapid test result"},
@@ -2242,7 +2242,7 @@ const KNOWLEDGE_ITEMS = [
   },
   {
     id:"k2",
-    stem:"A 38-year-old presents with five days of low back pain that began while moving furniture. He has no fever, no history of cancer, no IV drug use, no weight loss, and no bowel or bladder symptoms. His neurologic exam and straight leg raise are normal. What is the most appropriate initial imaging?",
+    stem:"A 38-year-old man presents with five days of low back pain that began while moving furniture. He has no fever, no history of cancer, no IV drug use, no weight loss, and no bowel or bladder symptoms. His neurologic exam and straight leg raise are normal. What is the most appropriate initial imaging?",
     options:[
       {v:"a", label:"No imaging"},
       {v:"b", label:"Lumbar spine radiographs"},
@@ -2254,7 +2254,7 @@ const KNOWLEDGE_ITEMS = [
   },
   {
     id:"k3",
-    stem:"A 62-year-old is on postoperative day four from a total hip replacement and develops pleuritic chest pain, a heart rate of 108, and an oxygen saturation of 91% on room air. Clinical suspicion for pulmonary embolism is high. What is the role of a D-dimer here?",
+    stem:"A 62-year-old man is on postoperative day four from a total hip replacement and develops pleuritic chest pain, a heart rate of 108, and an oxygen saturation of 91% on room air. Clinical suspicion for pulmonary embolism is high. What is the role of a D-dimer here?",
     options:[
       {v:"a", label:"Obtain a D-dimer first and image only if it is elevated"},
       {v:"b", label:"Obtain a D-dimer to gauge the severity of the embolism"},
@@ -2278,7 +2278,7 @@ const KNOWLEDGE_ITEMS = [
   },
   {
     id:"k5",
-    stem:"A 19-year-old collapses during basketball practice with a brief loss of consciousness and rapid, complete recovery. There was no prodrome. His vital signs and cardiac and neurologic examinations are normal. What is the most appropriate next step?",
+    stem:"A 19-year-old man collapses during basketball practice with a brief loss of consciousness and rapid, complete recovery. There was no prodrome. His vital signs and cardiac and neurologic examinations are normal. What is the most appropriate next step?",
     options:[
       {v:"a", label:"Reassurance, since syncope in young people is usually vasovagal"},
       {v:"b", label:"EKG and echocardiogram"},
@@ -2292,7 +2292,7 @@ const KNOWLEDGE_ITEMS = [
     id:"k6",
     stem:"A previously healthy adult was admitted with community-acquired pneumonia. He has now been afebrile for 48 hours, is breathing comfortably on room air, and is eating normally. Which total antibiotic duration is most consistent with current guidance?",
     options:[
-      {v:"a", label:"Five days, given that he has been clinically stable for 48 hours"},
+      {v:"a", label:"Five days"},
       {v:"b", label:"Ten days"},
       {v:"c", label:"Fourteen days"},
       {v:"d", label:"Continue until the chest X-ray has cleared"}
@@ -2302,7 +2302,7 @@ const KNOWLEDGE_ITEMS = [
   },
   {
     id:"k7",
-    stem:"A 30-year-old woman is seen for a routine preoperative visit before an elective knee arthroscopy. She is afebrile and has no dysuria, urgency, frequency, or flank pain. She mentions that her urine has looked cloudy. What is the most appropriate next step?",
+    stem:"A 30-year-old woman is seen for a routine preoperative visit before an elective knee arthroscopy. She is afebrile and has no dysuria, urgency, frequency, suprapubic pain, or flank pain. She mentions that her urine has looked cloudy. What is the most appropriate next step?",
     options:[
       {v:"a", label:"Urinalysis and urine culture; treat if organisms are found"},
       {v:"b", label:"Urine culture alone"},
@@ -2982,7 +2982,7 @@ const CASES = {
           <p class="small"><strong>Cardiovascular:</strong> Regular rate and rhythm. No murmurs, rubs or gallops.</p>
           <p class="small"><strong>Respiratory:</strong> Clear to auscultation bilaterally. Normal work of breathing.</p>
           <p class="small"><strong>Abdomen:</strong> Soft, non-tender, no organomegaly.</p>
-          <p class="small"><strong>Extremities:</strong> No oedema. Pulses intact.</p>
+          <p class="small"><strong>Extremities:</strong> No edema. Pulses intact.</p>
         </div>
       </div>
     `,
@@ -3046,7 +3046,7 @@ highValueReasons: new Map([
   ["BMP","High Value – Evaluates electrolytes and renal function prior to contrast imaging."],
   ["CMP","High Value – Acceptable alternative to BMP; broader metabolic assessment."],
   ["CTPA","High Value – Definitive imaging for suspected pulmonary embolism in high pre-test probability."],
-  ["CXR","High Value – A chest X-ray can often be obtained faster than a CT pulmonary angiogram, and it helps rule out alternative causes of chest pain such as pneumothorax or aortic dissection. It is not required once the CTPA is in hand, so you are not penalised for leaving it out \u2014 but ordering it is a reasonable, low-cost move, particularly if there is any delay in getting the CT."],
+  ["CXR","High Value – A chest X-ray can often be obtained faster than a CT pulmonary angiogram, and it helps rule out alternative causes of chest pain such as pneumothorax or aortic dissection. It is not required once the CTPA is in hand, so you are not penalized for leaving it out \u2014 but ordering it is a reasonable, low-cost move, particularly if there is any delay in getting the CT."],
   ["PDF_4569759","High Value – BNP can help risk-stratify pulmonary emboli and act as a surrogate of heart strain, however, it should not be used to confirm the diagnosis. Importantly, BNP lacks specificity; other conditions like heart failure or chronic kidney disease also cause elevations."],
   ["LACTATE","High Value – Lactate can help risk-stratify patients with pulmonary emboli and act as a surrogate of heart strain. Since this patient is showing signs of hemodynamic changes such as tachycardia and tachypnea, a lactate would be reasonable in this situation."]
 ]),
@@ -3073,7 +3073,7 @@ lowValueReasons: new Map([
     missedReasons: new Map([
       ["CTPA","This is the definitive test for the suspected diagnosis. With a high pre-test probability (two weeks of immobility, tachycardia, hypoxia, pleuritic pain), no other result excludes PE. Without CT pulmonary angiography this patient leaves without a diagnosis."],
       ["EKG","The fastest study to identify an alternative or concurrent cause of chest pain, and it may show right heart strain."],
-      ["TROP","Evaluates for myocardial injury. In confirmed PE it also risk-stratifies and helps decide whether the patient needs a higher level of care."],
+      ["TROP","Evaluates for myocardial injury. In confirmed PE, it also risk-stratifies and helps decide whether the patient needs a higher level of care."],
       ["CBC","Anemia is a common contributor to dyspnea and tachycardia, and a baseline count is needed before starting anticoagulation."],
       ["BMP","Renal function is required before contrast-enhanced CT and guides anticoagulant dosing."],
       ["CXR","Reasonable to omit once CT pulmonary angiography is obtained. Otherwise it is the first-line study for pneumonia, pneumothorax or effusion."]
@@ -3104,12 +3104,12 @@ lowValueReasons: new Map([
 </p>
 <ul class="small">
   <li><strong>CTA Chest – PE protocol (CTPA)</strong> – evaluates the pulmonary arteries directly; this is the definitive test in many ED settings.</li>
-  <li class="muted">A <strong>Chest X-ray (CXR)</strong> can be helpful for alternate diagnoses (pneumonia, pneumothorax, aortic dissection) and for interpreting V/Q scans, and it may be reasonable to omit it if CTPA is already under way. The practical caveat is timing: in many settings a chest film is available far sooner than a CT, so if the CTPA is delayed &mdash; scanner occupied, contrast allergy being worked through, patient needing stabilisation first &mdash; obtaining a CXR in the interval is reasonable and may change what you do while you wait.</li>
+  <li class="muted">A <strong>Chest X-ray (CXR)</strong> can be helpful for alternate diagnoses (pneumonia, pneumothorax, aortic dissection) and for interpreting V/Q scans, and it may be reasonable to omit it if CTPA is already under way. The practical caveat is timing: in many settings a chest film is available far sooner than a CT, so if the CTPA is delayed &mdash; scanner occupied, contrast allergy being worked through, patient needing stabilization first &mdash; obtaining a CXR in the interval is reasonable and may change what you do while you wait.</li>
 </ul>
 
 <strong>Intermediate-yield (context-dependent)</strong>
 <ul class="small">
-  <li><strong>D-dimer</strong> – useful to <em>rule out</em> PE in <strong>low</strong> pre-test probability patients; in high probability cases it adds cost and delay without changing the need for definitive imaging.</li>
+  <li><strong>D-dimer</strong> – useful to <em>rule out</em> PE in <strong>low</strong> pre-test probability patients; in high probability cases, it adds cost and delay without changing the need for definitive imaging.</li>
   <li><strong>Lower extremity venous ultrasound</strong> – can help if leg symptoms suggest DVT or if CT is contraindicated; otherwise not required when proceeding directly to CTPA.</li>
   <li><strong>PT/INR, PTT</strong> – can be appropriate if anticoagulation is imminent or baseline coagulopathy is a concern, but they do not diagnose PE.</li>
   <li><strong>Echocardiogram</strong> – may be useful for risk stratification (RV strain) or shock, but is not part of the minimal initial diagnostic pathway in a stable patient.</li>
@@ -3174,7 +3174,7 @@ lowValueReasons: new Map([
     ["BMP","Low Value – She is tolerating oral intake with normal vitals, so electrolytes and renal function are not in question. With vomiting, poor intake or clinical dehydration it would be reasonable to obtain."],
     ["CMP","Low Value – Everything that applies to the BMP applies here, with liver tests added that nothing in her presentation calls for. Reasonable if she were systemically unwell or you had a specific hepatic concern."],
     ["CXR","Low Value – Her lungs are clear, she is not hypoxic and her work of breathing is normal. A dry cough in a viral syndrome does not warrant a chest film. Focal findings, hypoxia, or a worsening or persistent course would make it reasonable."],
-    ["BLOOD_CX","Low Value – Blood cultures are for suspected bacteraemia. She is well-appearing with stable vitals and no systemic signs, so the yield here is close to zero, and a contaminant costs far more than the culture in repeat testing and unnecessary antibiotics. Reasonable were she febrile and ill-appearing."],
+    ["BLOOD_CX","Low Value – Blood cultures are for suspected bacteremia. She is well-appearing with stable vitals and no systemic signs, so the yield here is close to zero, and a contaminant costs far more than the culture in repeat testing and unnecessary antibiotics. Reasonable were she febrile and ill-appearing."],
     ["SPUTUM_CX","Low Value – There is no pneumonia to culture, and a well adolescent with a dry cough will not produce a usable specimen. Reasonable with a productive cough and radiographic pneumonia, particularly if she were sick enough to admit."],
     ["PDF_4566588","Low Value – Her modified Centor (McIsaac) score is 1, and guidelines recommend against testing at 0–1. The pre-test probability of group A strep is low, and a positive result in this setting is more likely to reflect chronic carriage than acute infection — which leads to antibiotics that do not help her and carry real harms."],
     ["PDF_4567060","Low Value – Throat culture has the same problem as rapid antigen testing at a score of 1, and adds a 24–48 hour delay. Culture is reserved for patients who warrant testing and have a negative rapid antigen test, which does not apply here."],
@@ -3225,7 +3225,7 @@ lowValueReasons: new Map([
 
 <strong>Common pitfalls (low-value care)</strong>
 <ul class="small">
-  <li><strong>Testing for strep anyway, because the throat hurts and the family expects it.</strong> At a score of 0&ndash;1 a positive result is more likely carriage than infection, so testing converts a self-limited illness into an antibiotic prescription.</li>
+  <li><strong>Testing for strep anyway because the throat hurts and the family expects it.</strong> At a score of 0&ndash;1, a positive result is more likely carriage than infection, so testing converts a self-limited illness into an antibiotic prescription.</li>
   <li><strong>UA or urine culture for &ldquo;darker urine&rdquo; without urinary symptoms</strong> &rarr; usually asymptomatic bacteriuria; avoid unnecessary antibiotics. Darker urine in a febrile adolescent with reduced oral intake is far more often concentration than infection.</li>
   <li><strong>Broad respiratory pathogen panel by default</strong> &rarr; higher cost, and rarely changes outpatient management.</li>
   <li><strong>Blood cultures in a well-appearing outpatient</strong> &rarr; low yield; reserve for severe illness or sepsis risk.</li>
@@ -3280,8 +3280,8 @@ lowValueReasons: new Map([
     ["BLOOD_CX","High Value – In suspected sepsis, blood cultures are indicated prior to antibiotics when feasible."]
   ]),
   intermediateIds: new Map([
-    ["SPUTUM_CX","Intermediate – Reasonable if she can produce a specimen, but the recommendation behind it is a weak one resting on low-quality evidence, which is why this sits at intermediate rather than high. Per IDSA guidelines, sputum for culture and Gram stain should be obtained in hospitalised children who can produce sputum (weak recommendation; low-quality evidence). In practice these tests are infrequently performed in children with CAP, because children cannot always provide an adequate specimen. Gram stain and culture of expectorated sputum should be attempted in older children and adolescents with more severe disease, including inpatients, or in those in whom outpatient therapy has failed."],
-    ["PDF_4720655","Intermediate – Defensible given the hypoxia. A blood gas measures what the monitor can only estimate, and in a child who is hypoxic and working harder to breathe the useful numbers are the pH and the pCO\u2082: they tell you whether she is compensating or tiring, which is a ventilation question the saturation cannot answer. Know the limit of the venous sample, though. A VBG gives reliable pH, pCO\u2082 and bicarbonate, but venous pO\u2082 reflects tissue extraction rather than arterial oxygenation, so it does not quantify the hypoxaemia itself. If you want that number on blood testing it has to be an arterial sample \u2014 and in most cases the pulse oximeter has already answered the question."],
+    ["SPUTUM_CX","Intermediate – Reasonable if she can produce a specimen, but the recommendation behind it is a weak one resting on low-quality evidence, which is why this sits at intermediate rather than high. Per IDSA guidelines, sputum for culture and Gram stain should be obtained in hospitalized children who can produce sputum (weak recommendation; low-quality evidence). In practice these tests are infrequently performed in children with CAP, because children cannot always provide an adequate specimen. Gram stain and culture of expectorated sputum should be attempted in older children and adolescents with more severe disease, including inpatients, or in those in whom outpatient therapy has failed."],
+    ["PDF_4720655","Intermediate – Defensible given the hypoxia. A blood gas measures what the monitor can only estimate, and in a child who is hypoxic and working harder to breathe the useful numbers are the pH and the pCO\u2082: they tell you whether she is compensating or tiring, which is a ventilation question the saturation cannot answer. Know the limit of the venous sample, though. A VBG gives reliable pH, pCO\u2082 and bicarbonate, but venous pO\u2082 reflects tissue extraction rather than arterial oxygenation, so it does not quantify the hypoxemia itself. If you want that number on blood testing it has to be an arterial sample \u2014 and in most cases the pulse oximeter has already answered the question."],
     ["COVID_PCR","Intermediate – Her prior visit was a clinically diagnosed viral pharyngitis and no pathogen was identified, so testing is more defensible now than it was then. It still will not change the immediate management of her sepsis physiology, which is the priority."],
     ["FLU_PCR","Intermediate – No pathogen was identified at her prior visit, so testing is reasonable. It will not change the immediate management of her sepsis physiology, which is the priority."],
     ["RPP","Intermediate – Broad/costly; consider if results will change management in severe/high-risk cases."],
@@ -3315,7 +3315,7 @@ lowValueReasons: new Map([
         {id:"dc_abx", label:"Discharge with oral antibiotics and close follow-up", tier:"low",
          why:"This is the answer that would have been right earlier in the illness, and it is wrong now. A sustained saturation below 90% on room air is the finding that moves a child with community-acquired pneumonia from outpatient to inpatient care under the IDSA and PIDS guideline. Discharging her means sending home a hypoxic child with sepsis physiology, with no way to deliver oxygen and no one to detect deterioration overnight."},
         {id:"admit_abx", label:"Admit for inpatient antibiotics", tier:"high",
-         why:"She meets the guideline threshold for hospitalisation: moderate to severe community-acquired pneumonia with respiratory distress and a sustained saturation below 90% on room air. Admission buys three things she cannot get at home &mdash; supplemental oxygen, serial reassessment of a child whose trajectory is still worsening, and reliable delivery of antibiotics. This is what high-value care looks like when the patient is genuinely sick: the expensive option is the correct one, because the cheaper one does not meet the need."},
+         why:"She meets the guideline threshold for hospitalization: moderate to severe community-acquired pneumonia with respiratory distress and a sustained saturation below 90% on room air. Admission buys three things she cannot get at home — supplemental oxygen, serial reassessment of a child whose trajectory is still worsening, and reliable delivery of antibiotics. This is what high-value care looks like when the patient is genuinely sick: the expensive option is the correct one, because the cheaper one does not meet the need."},
         {id:"admit_obs", label:"Admit for observation without antibiotics", tier:"low",
          why:"Low value. Admitting her is recommended at this time, but she also needs antibiotics to treat the underlying infection. She is in septic shock and requires fluid resuscitation and intervention on her bacterial infection."},
         {id:"dc_noabx", label:"Discharge without antibiotics", tier:"low",
@@ -3326,7 +3326,7 @@ lowValueReasons: new Map([
 <strong>Answer</strong>
 <p class="small">
   This return visit is <strong>not</strong> the same as the initial outpatient URI. She now has recurrent fever, worsening cough,
-  tachycardia/tachypnea, frank hypotension, hypoxaemia, lethargy, and focal lung findings (LLL crackles).
+  tachycardia/tachypnea, frank hypotension, hypoxemia, lethargy, and focal lung findings (LLL crackles).
   In this setting, a broader evaluation is <strong>high value</strong> because it quickly changes management (fluids, antibiotics, disposition).
 </p>
 
@@ -3337,19 +3337,19 @@ lowValueReasons: new Map([
   with new focal left lower lobe crackles, a productive cough and an ill appearance is the classic pattern of post-viral
   secondary bacterial pneumonia. The usual organism is <em>Streptococcus pneumoniae</em>, with
   <em>Staphylococcus aureus</em> (including MRSA) and <em>Streptococcus pyogenes</em> as the feared causes, because
-  after a viral prodrome they produce necrotising disease and empyema.
+  after a viral prodrome they produce necrotizing disease and empyema.
 </p>
 
 <strong>She is in septic shock</strong>
 <p class="small">
   She has a suspected infection with organ dysfunction, which is sepsis, and she is hypotensive with a raised lactate
   despite that infection being the only explanation &mdash; which makes this <strong>septic shock</strong> rather than
-  sepsis alone. The distinction is not semantic: it sets the urgency, the resuscitation target and the level of care.
+  sepsis alone. The distinction is not semantic; it sets the urgency, the resuscitation target and the level of care.
   She meets it across more than one organ system:
 </p>
 <ul class="small">
-  <li><strong>Hypoxaemia</strong> &mdash; SpO&#8322; 89% on room air</li>
-  <li><strong>Tachypnoea</strong> &mdash; respiratory rate 24/min</li>
+  <li><strong>Hypoxemia</strong> &mdash; SpO&#8322; 89% on room air</li>
+  <li><strong>Tachypnea</strong> &mdash; respiratory rate 24/min</li>
   <li><strong>Hypotension</strong> &mdash; 85/33, a MAP of 50, against an expected 109/65 for her age</li>
   <li><strong>Altered mental status</strong> &mdash; lethargic, intermittently falling asleep during the assessment</li>
   <li><strong>Elevated lactate</strong> &mdash; 6 mmol/L (54.06 mg/dL)</li>
@@ -3357,13 +3357,13 @@ lowValueReasons: new Map([
 </ul>
 <p class="small">
   A MAP of 50 against an expected 109/65, a lactate of 6 mmol/L and a child who is falling asleep mid-assessment are
-  perfusion failure, not a soft blood pressure. She falls under the <strong>paediatric sepsis pathway</strong>, which
+  perfusion failure, not a soft blood pressure. She falls under the <strong>pediatric sepsis pathway</strong>, which
   applies under 18 years of age. Because she is in septic shock, <strong>begin the sepsis bundle while obtaining
   diagnostics</strong> &mdash; the workup and the treatment run in parallel, not in sequence. Fluid resuscitation and
   timely antibiotics start now; they do not wait on the chest film or the cultures.
 </p>
 <p class="small">
-  Paediatric patients also have a separate scoring system for septic shock criteria, the
+  Pediatric patients also have a separate scoring system for septic shock criteria, the
   <strong>Phoenix sepsis score</strong>
   (<a href="https://www.mdcalc.com/calc/10509/phoenix-sepsis-score" target="_blank" rel="noopener noreferrer">open the calculator on MDCalc</a>).
 </p>
@@ -3421,7 +3421,7 @@ lowValueReasons: new Map([
 <p class="small">
   The 2011 IDSA and PIDS guideline on community-acquired pneumonia in infants and children is explicit on this point:
   children and infants with moderate to severe CAP &mdash; defined by several factors including respiratory distress and
-  hypoxaemia, a <strong>sustained SpO&#8322; below 90% on room air at sea level</strong> &mdash; should be hospitalised.
+  hypoxemia, a <strong>sustained SpO&#8322; below 90% on room air at sea level</strong> &mdash; should be hospitalized.
   At 89% on room air with increased work of breathing, she meets that threshold, and no amount of close follow-up
   substitutes for oxygen she cannot get at home.
 </p>
@@ -3432,14 +3432,14 @@ lowValueReasons: new Map([
   <li><strong>She is hypoxic, so this is severe CAP.</strong> A sustained SpO&#8322; below 90% on room air is the
       guideline threshold on its own, irrespective of how she is perfusing.</li>
   <li><strong>She is in septic shock.</strong> Hypotension with a MAP of 50, a lactate of 6 mmol/L and altered mental status are
-      organ dysfunction, and that mandates inpatient care with or without the hypoxaemia.</li>
+      organ dysfunction, and that mandates inpatient care with or without the hypoxemia.</li>
 </ol>
 <p class="small">
   A patient with either finding in isolation would be admitted. She has both, which is why this is not a close call.
 </p>
 <p class="small">The same guideline lists other circumstances that warrant admission:</p>
 <ul class="small">
-  <li>Infants <strong>under 3 to 6 months</strong> with suspected bacterial CAP are likely to benefit from hospitalisation.</li>
+  <li>Infants <strong>under 3 to 6 months</strong> with suspected bacterial CAP are likely to benefit from hospitalization.</li>
   <li>Suspected or documented CAP caused by a <strong>pathogen of increased virulence</strong>, such as community-associated
       methicillin-resistant <em>Staphylococcus aureus</em>.</li>
   <li>Concern about <strong>careful observation at home</strong>, or inability to comply with therapy or to be followed up.</li>
@@ -3457,7 +3457,7 @@ lowValueReasons: new Map([
   stratifies adults with CAP into five risk classes using age, comorbid illness, vital signs and a handful of laboratory
   values, and the class maps onto a recommended site of care: outpatient treatment for the lowest classes, admission for
   the highest. CURB-65 does the same job with fewer variables. These scores are not validated in children, which is why
-  the paediatric guideline above uses explicit criteria instead &mdash; but they are the tools you will reach for on an
+  the pediatric guideline above uses explicit criteria instead &mdash; but they are the tools you will reach for on an
   adult service, and the underlying discipline is identical: measure severity rather than estimating it from how unwell
   someone looks.
 </p>
@@ -3534,7 +3534,7 @@ lowValueReasons: new Map([
           {id:"relax", label:"A skeletal muscle relaxant alone", tier:"intermediate", why:"Cyclobenzaprine and similar agents give modest short-term benefit, much of it sedation. Reasonable as a night-time adjunct, weaker as the only thing you give him."},
           {id:"opioid", label:"Oxycodone as needed for pain", tier:"low", why:"Opioids are no more effective than NSAIDs for acute low back pain, and a first prescription in an opioid-naive patient carries a measurable risk of long-term use. Guidelines recommend against them as first-line here."},
           {id:"steroid", label:"A short oral corticosteroid taper", tier:"low", why:"Systemic steroids have not shown benefit in acute low back pain without radiculopathy, and even with radiculopathy the effect on pain is minimal. He has a normal neurologic exam and a negative straight leg raise."},
-          {id:"nsaid", label:"A scheduled NSAID for a short course, with acetaminophen as needed", tier:"high", why:"NSAIDs are first-line for acute low back pain and outperform placebo for pain and function. Scheduling rather than dosing as-needed keeps him ahead of the pain, which is what lets him stay active."}
+          {id:"nsaid", label:"A scheduled NSAID for a short course, with acetaminophen as needed", tier:"high", why:"NSAIDs are first-line for acute low back pain and outperform placebo for pain and function. They also reduce the inflammation driving the pain, which is why the NSAID is scheduled and the acetaminophen is as-needed: the scheduled anti-inflammatory treats the cause and keeps him ahead of the pain, while the acetaminophen covers breakthrough symptoms. Staying ahead of the pain is what lets him stay active."}
         ]},
       { id:"activity", question:"Activity advice", hint:"",
         options:[
@@ -3547,7 +3547,7 @@ lowValueReasons: new Map([
         options:[
           {id:"order", label:"Order the X-ray, since it is inexpensive and it preserves the relationship", tier:"low", why:"A plain film is cheap on its own, but it is rarely the end of the sequence. A degenerative finding on an X-ray in a 45-year-old invites an MRI, and the MRI invites a referral. The relationship is better served by an explanation than by a test you do not believe in."},
           {id:"defer", label:"Defer the discussion and tell him to come back if he is not better", tier:"intermediate", why:"Better than ordering the film, but it leaves his question unanswered and makes it likely he asks again, or asks someone else."},
-          {id:"explain", label:"Explain that imaging this early does not change the treatment, and often shows age-related changes that lead to more testing", tier:"high", why:"This is the part of high-value care that actually happens in the room. Patients who are told why generally accept it; the explanation takes about ninety seconds and is the difference between a shared decision and a refusal."},
+          {id:"explain", label:"Explain that imaging this early does not change the treatment, and often shows age-related changes that lead to more testing", tier:"high", why:"This is the part of high-value care that actually happens in the room. Patients who are told why generally accept it; the explanation takes about ninety seconds and is the difference between a shared decision and a refusal. One framing that tends to land: imaging of the back is mostly used for surgical planning, and nothing about his presentation suggests he needs anything as drastic as spine surgery \u2014 so the plan is stretches, a short NSAID course and staying active, and we follow it over time. Few patients push for a test once they understand it is a step toward an operation they do not want."},
           {id:"unavailable", label:"Tell him imaging is not available for this indication", tier:"low", why:"It is not true, and it swaps a clinical explanation for a bureaucratic one. Patients who are stonewalled tend to seek the imaging somewhere else, usually somewhere with less context about them."}
         ]},
       { id:"followup", question:"Return precautions and follow-up", hint:"",
@@ -3662,12 +3662,12 @@ lowValueReasons: new Map([
     `,
     highValueIds: new Set(["LACTATE","BLOOD_CX","CBC","BMP","CMP","XR_FOOT","PDF_4569728"]),
     highValueReasons: new Map([
-      ["LACTATE","High Value – Tells you whether he is hypoperfusing when his blood pressure alone might not. Anything above 2 has to be rechecked."],
-      ["BLOOD_CX","High Value – Draw them before antibiotics if you can do it without delay. Worth contrasting with simple cellulitis, where blood cultures are a waste; the systemic signs are what change that here."],
+      ["LACTATE","High Value – Tells you whether he is hypoperfusing when his blood pressure alone might not. Anything above 2 mmol/L or 18 mg/dL has to be rechecked."],
+      ["BLOOD_CX","High Value – Draw them before antibiotics if you can do it without delay. Worth contrasting with simple cellulitis, where blood cultures are a waste; the systemic signs are what changes that here."],
       ["CBC","High Value – The white count and platelets both feed into how sick you decide he is."],
       ["BMP","High Value – Creatinine and bicarbonate tell you about organ dysfunction, and you need the renal function before you dose vancomycin. His glucose is 358."],
       ["CMP","High Value – Fine instead of a BMP if you also want liver function."],
-      ["XR_FOOT","High Value – Looks for gas, a foreign body and bony changes for $490. It is also what lets you say you thought about deeper imaging and decided against it."],
+      ["XR_FOOT","High Value – Looks for gas, a foreign body and bony changes concerning for osteomyelitis, for $490. It is also what lets you say you thought about deeper imaging and decided against it."],
       ["PDF_4569728","High Value – Taken from the wound bed at debridement. Everything you do with antibiotics on day two depends on getting this specimen today."]
     ]),
     intermediateIds: new Map([
@@ -3679,8 +3679,8 @@ lowValueReasons: new Map([
       ["DVT_US","Intermediate – A hot swollen leg is a fair thought, but the infection explains everything you are looking at. Worth it only if the calf findings go beyond the cellulitis."]
     ]),
     lowValueReasons: new Map([
-      ["PDF_4569806","Low Value – His A1c was 9.8% one month ago. The A1c reflects roughly three months of glycaemic control, so repeating it this soon cannot show a meaningful change — you would be paying $65 to re-measure a number you already have. It is also not a test that changes anything tonight. Worth repeating at about three months, when it can actually tell you whether the plan is working."],
-      ["SWAB_SUPERFICIAL","Low Value – Swabbing the surface grows whatever is colonising the ulcer, which is rarely what is infecting the tissue underneath. It bills at the same $210 as the deep culture and will send you after the wrong organism."],
+      ["PDF_4569806","Low Value – His A1c was 9.8% one month ago. The A1c reflects roughly three months of glycemic control, so repeating it this soon cannot show a meaningful change — you would be paying $65 to re-measure a number you already have. It is also not a test that changes anything tonight. Worth repeating at about three months, when it can actually tell you whether the plan is working."],
+      ["SWAB_SUPERFICIAL","Low Value – Swabbing the surface grows whatever is colonizing the ulcer, which is rarely what is infecting the tissue underneath. It bills at the same $210 as the deep culture and will send you after the wrong organism."],
       ["MRI_LE_NONJOINT","Low Value – In a patient without a probe to bone, MRI of the foot can be considered after evaluation by a subspecialist. It is not part of the initial emergency department workup, and at $5,470 to $7,670 it is the most expensive order available in this case."],
       ["MRI_LE_NONJOINT_WWO","Low Value – In a patient without a probe to bone, MRI of the foot can be considered after evaluation by a subspecialist. Adding contrast raises the cost further without changing that."],
       ["BONE_BX","Low Value – As with MRI, bone biopsy can be considered after evaluation by a subspecialist if osteomyelitis remains a concern. It has no role in the initial workup, and it is both invasive and expensive at $7,830."],
@@ -3710,7 +3710,7 @@ lowValueReasons: new Map([
 <ul class="small">
   <li><strong>Lactate</strong> &ndash; identifies occult hypoperfusion and sets the resuscitation target.</li>
   <li><strong>Blood cultures</strong> &ndash; drawn before antibiotics, provided that does not delay them.</li>
-  <li><strong>CBC and BMP</strong> &ndash; organ-dysfunction assessment, and renal function for antibiotic dosing.</li>
+  <li><strong>CBC and BMP</strong> &ndash; organ-dysfunction assessment and renal function for antibiotic dosing.</li>
   <li><strong>Foot X-ray</strong> &ndash; gas, foreign body and bony destruction, for $490.</li>
   <li><strong>Deep tissue culture at debridement</strong> &ndash; the specimen that lets you narrow therapy in 48 hours.</li>
 </ul>
@@ -3724,8 +3724,8 @@ lowValueReasons: new Map([
 
 <strong>Two cultures, same price</strong>
 <p class="small">
-  A surface swab and a deep tissue culture taken at debridement both bill at $210. The swab grows whatever
-  is living on the ulcer and will point you at the wrong organism; the deep specimen is what lets you narrow
+  A surface swab and a deep tissue culture taken at debridement both bill at $210. A superficial swab may pick
+  up non-pathogenic skin flora and point you to the wrong organism. The deep specimen is what lets you narrow
   his antibiotics on day two. Cost tells you nothing about which one to order.
 </p>
 
@@ -3801,14 +3801,14 @@ lowValueReasons: new Map([
         revealTitle:"Three hours later — repeat lactate",
         options:[
           {id:"f500", label:"500 mL bolus over 2 hours, then reassess", tier:"intermediate",
-           why:"Giving a smaller test dose before full repletion is reasonable, but not over two hours. He is hypotensive and not adequately perfusing, so a test dose belongs over 30 to 60 minutes. The instinct behind the slower rate is sound &mdash; he is an older man with uncontrolled diabetes, so the pre-test probability of heart failure is not trivial &mdash; but his echocardiogram one month ago was normal with an ejection fraction of 65%, which is the piece of information that should settle it.",
+           why:"Giving a smaller test dose before full repletion is reasonable, but not over two hours. He is hypotensive and not adequately perfusing, so a test dose belongs over 30 to 60 minutes. The instinct behind the slower rate is sound — he is an older man with uncontrolled diabetes, so the pre-test probability of heart failure is not trivial — but his echocardiogram one month ago was normal with an ejection fraction of 65%, which is the piece of information that should settle it.",
            reveal:"<strong>Repeat lactate 22 mg/dL (2.4 mmol/L), better but still up.</strong> MAP 66, heart rate 112. He is part way there and needs the remaining volume."},
           {id:"fmaint", label:"Maintenance fluids only", tier:"low",
            why:"Maintenance fluid replaces ongoing losses; it does not resuscitate. He is hypotensive with a MAP of 62 and an elevated lactate.",
            reveal:"<strong>Repeat lactate 31 mg/dL (3.4 mmol/L), rising.</strong> MAP 60, heart rate 126. He is falling behind."},
           {id:"f30", label:"30 mL/kg crystalloid, started now", tier:"high",
-           why:"30 mL/kg is the target for septic hypotension. At 92 kg that is about 2.8 litres. Nothing here argues for holding back: no heart failure, no dialysis.",
-           reveal:"After 2.8 litres: <strong>repeat lactate 14 mg/dL (1.6 mmol/L), normal.</strong> MAP 74, heart rate 98, and he is more alert. You only know the fluids worked because you rechecked."},
+           why:"30 mL/kg is the target for septic hypotension. At 92 kg that is about 2.8 liters. Nothing here argues for holding back: no heart failure, no dialysis.",
+           reveal:"After 2.8 liters: <strong>repeat lactate 14 mg/dL (1.6 mmol/L), normal.</strong> MAP 74, heart rate 98, and he is more alert. You only know the fluids worked because you rechecked."},
           {id:"fnone", label:"Hold fluids — he is not hypotensive enough to need them", tier:"low",
            why:"A MAP of 62 meets the threshold for hypotension, and he also has an elevated lactate and new confusion. This is the patient the resuscitation targets were written for.",
            reveal:"<strong>Repeat lactate 33 mg/dL (3.7 mmol/L), rising.</strong> MAP 58, heart rate 130, and he is harder to rouse. He is heading toward shock."}
@@ -3835,7 +3835,7 @@ lowValueReasons: new Map([
         ]},
       { id:"dispo", question:"Disposition", hint:"",
         options:[
-          {id:"mon", label:"Monitored bed with sepsis protocol; ICU if vasopressors are required", tier:"high", why:"He requires frequent monitoring and a location that can escalate care quickly if he does not respond to fluids."},
+          {id:"mon", label:"Inpatient bed with sepsis protocol; ICU if vasopressors are required", tier:"high", why:"He requires frequent monitoring and a location that can escalate care quickly if he does not respond to fluids."},
           {id:"obs", label:"Observation unit with a 48-hour recheck", tier:"low", why:"Observation pathways are designed for short, low-acuity stays. They are not built to manage septic shock."},
           {id:"home", label:"Discharge on oral antibiotics with clinic follow-up", tier:"low", why:"He is hypotensive, confused and febrile with an undrained foot infection. He is not a candidate for outpatient management."}
         ]}
@@ -3854,7 +3854,7 @@ lowValueReasons: new Map([
   <tr><td>Measure lactate; repeat if above 2</td><td>2.9 mmol/L &mdash; the repeat is required, and is the element most often forgotten</td></tr>
   <tr><td>Blood cultures before antibiotics</td><td>Drawn</td></tr>
   <tr><td>Broad-spectrum antibiotics within the hour</td><td>Vancomycin + piperacillin-tazobactam</td></tr>
-  <tr><td>30 mL/kg crystalloid for hypotension or lactate 4 or above</td><td>Required &mdash; MAP 62. At 92 kg that is roughly 2.8 litres</td></tr>
+  <tr><td>30 mL/kg crystalloid for hypotension or lactate 4 or above</td><td>Indicated here &mdash; MAP 62. At 92 kg that is roughly 2.8 liters. This is a starting target, not a universal prescription: in heart failure or renal dysfunction, give smaller boluses and reassess between them</td></tr>
   <tr><td>Vasopressors if the MAP stays below 65 after fluids</td><td>Norepinephrine, with escalation of care</td></tr>
   <tr><td><strong>Source control</strong></td><td><strong>Urgent debridement with deep tissue culture</strong></td></tr>
 </table>
@@ -3862,7 +3862,7 @@ lowValueReasons: new Map([
 <strong>Do not skip source control</strong>
 <p class="small">
   It is the one step on that list that is not something you order from a pharmacy, which may be why it gets
-  forgotten. Antibiotics will not sterilise pus that has nowhere to go, and the debridement is also how you
+  forgotten. Antibiotics will not sterilize pus that has nowhere to go, and the debridement is also how you
   get the specimen that lets you narrow therapy on day two.
 </p>
 
@@ -3877,18 +3877,18 @@ lowValueReasons: new Map([
   8: {
     title: "Case 6c – Hospital day 1",
     ordersDisabled: true,
-    diagnosis: "Improving on empiric therapy; organism not yet identified",
+    diagnosis: "Improving on empiric therapy; gram-positive cocci in clusters, susceptibilities pending",
     attribution: "",
     contentHtml: `
       <p>
-        <strong>Twenty-four hours after admission.</strong> He responded to fluids without requiring vasopressors, has been afebrile for 12 hours, and his
-        white count and lactate have normalised. The erythema has receded and is marked. He is mobilising to
+        <strong>Hospital Day 2.</strong> Twenty-four hours after admission, he responded to fluids without requiring vasopressors, has been afebrile for 12 hours, and his
+        white count and lactate have normalized. The erythema has receded and is marked. He is mobilizing to
         the chair with therapy, not yet back to baseline.
       </p>
       <div class="fs-wrap">
         <table class="fs">
           <thead>
-            <tr><th class="fs-lab">Result</th><th>ED &middot; Day 0</th><th>Hospital Day 1</th></tr>
+            <tr><th class="fs-lab">Result</th><th>ED &middot; Hospital Day 1</th><th>Hospital Day 2</th></tr>
           </thead>
           <tbody>
             <tr class="fs-sect"><td colspan="3">Vitals</td></tr>
@@ -3958,18 +3958,19 @@ lowValueReasons: new Map([
           {id:"cont", label:"Continue for the rest of the admission", tier:"low", why:"Telemetry that is never reassessed is among the most common low-value inpatient orders. He has no cardiac indication for it now."},
           {id:"stop", label:"Discontinue telemetry", tier:"high", why:"He has no arrhythmia and no cardiac indication, and he has been hemodynamically stable for 24 hours. Continuing telemetry beyond that point limits his mobility, generates alarms that do not change management, and can be the only reason he still occupies a monitored bed."}
         ]},
-      { id:"labs", question:"Laboratory monitoring", hint:"",
+      { id:"labs", question:"Laboratory monitoring", hint:"He still requires a daily BMP while on vancomycin, given the risk of nephrotoxicity. The question is what to do with the other labs.",
         options:[
-          {id:"qod", label:"Every-other-day CBC only", tier:"low", why:"A schedule, not an indication. His count has already normalised and his examination is improving, so there is no question an every-other-day CBC would answer. Reduced-frequency routine labs are still routine labs."},
-          {id:"stoplabs", label:"Stop the daily labs; recheck if the clinical course changes", tier:"high", why:"His clinical examination is improving and his labs have normalized. Daily phlebotomy in a stable patient contributes to iatrogenic anemia, interrupts sleep, and produces borderline results that prompt further testing without changing management."},
-          {id:"daily", label:"Continue daily CBC, BMP and CRP", tier:"low", why:"Three tests daily in a patient whose examination already demonstrates that he is improving."}
+          {id:"qod", label:"Every-other-day CBC only", tier:"low", why:"A schedule, not an indication. His count has already normalized and his examination is improving, so there is no question an every-other-day CBC would answer. Reduced-frequency routine labs are still routine labs."},
+          {id:"stoplabs", label:"Stop CBC monitoring; recheck if the clinical course changes", tier:"high", why:"His clinical examination is improving and his white count has normalized, so the CBC and CRP have no question left to answer. The daily BMP continues, because vancomycin requires renal monitoring \u2014 that is an indication, not a routine. Daily phlebotomy beyond what is indicated contributes to iatrogenic anemia, interrupts sleep, and produces borderline results that prompt further testing without changing management."},
+          {id:"daily", label:"Continue daily CBC and CRP", tier:"low", why:"His examination already demonstrates that he is improving, and neither result would change what you do. A normalized white count rechecked daily mostly generates borderline values that invite further testing."}
         ]},
-      { id:"abx6b", question:"Antibiotics, with clusters on the Gram stain and susceptibilities pending", hint:"",
+      { id:"abx6b", question:"Antibiotics, with clusters on the Gram stain and susceptibilities pending", hint:"The deep tissue culture is growing gram-positive cocci in clusters.",
         options:[
           {id:"stopall", label:"Stop all antibiotics because he is afebrile", tier:"low", why:"He is afebrile because the antibiotics are working. Defervescence at 24 hours reflects treatment response, not resolution of the infection, and he has not completed a course for a severe soft tissue infection."},
-          {id:"stopvanc", label:"Stop vancomycin now", tier:"low", why:"Clusters is precisely the pattern that may represent MRSA. Discontinuing vancomycin before susceptibilities return is a decision made without data, in a patient who presented with septic shock 24 hours ago."},
+          {id:"stopvanc", label:"Stop vancomycin now", tier:"low", why:"Clusters is precisely the pattern that may represent MRSA, and vancomycin is the agent covering it. Stopping the drug that treats the organism you are growing, while continuing the one covering organisms you are not, is backwards."},
           {id:"antifungal", label:"Add antifungal coverage with fluconazole", tier:"low", why:"There is nothing here to suggest a fungal infection. The Gram stain shows bacteria, he is immunocompetent apart from his diabetes, and he is already improving on antibacterial therapy. Empiric fluconazole adds cost, meaningful drug interactions through CYP inhibition, QT prolongation, and selection pressure for resistant Candida, with no expected benefit."},
-          {id:"continue", label:"Continue vancomycin and piperacillin-tazobactam, narrow once susceptibilities return", tier:"high", why:"Gram-positive cocci in clusters indicates staphylococcus, but a Gram stain cannot distinguish MRSA from MSSA, and diabetic foot infections are frequently polymicrobial. Susceptibilities return tomorrow. Narrowing is the goal and should happen as soon as the data support it, but not before."}
+          {id:"meropenem", label:"Change to vancomycin and meropenem, narrow once susceptibilities return", tier:"low", why:"An escalation in a patient who is improving. Meropenem is broader than piperacillin-tazobactam, not narrower, and nothing about his course calls for it. Reaching for a carbapenem in a responding patient is how resistance is manufactured."},
+          {id:"continue", label:"Continue vancomycin, discontinue piperacillin-tazobactam", tier:"high", why:"The deep culture is growing gram-positive cocci in clusters, which vancomycin covers. Piperacillin-tazobactam was added for the anaerobic and gram-negative organisms a diabetic foot infection may harbor, and none of those have grown. You can make this call with more confidence than usual because the specimen is a deep tissue culture taken at debridement, which is far more likely to represent the true pathogen than a surface swab. The caveat worth holding on to: an organism can fail to grow, and an anaerobe or an atypical is exactly the kind that might in a foot infection. If he worsens after narrowing, treat that as a real signal and restart the piperacillin-tazobactam rather than assuming the culture settled the question."}
         ]},
       { id:"insulin", question:"Insulin, in a patient eating normally who has missed 24 hours of basal", hint:"Home regimen: glargine 25 units daily. Eating a normal diet.",
         options:[
@@ -3991,10 +3992,10 @@ lowValueReasons: new Map([
 <strong>De-escalating monitoring</strong>
 <p class="small">
   Continuous monitoring can be discontinued since the patient has significantly stabilized. He has not
-  experienced any arrhythmias and does not have evidence of heart failure. Having someone on cardiac
-  monitoring in the setting of severe sepsis with a MAP below 65 is very reasonable, but he has vastly
-  improved since that time. Similarly, now that his labs have normalized, there is limited indication to
-  continuously trend them.
+  experienced any arrhythmias and does not have evidence of heart failure. His laboratory monitoring
+  narrows rather than stops: he needs a <strong>daily BMP while he remains on vancomycin</strong>, because
+  of the risk of nephrotoxicity. Now that his white count and inflammatory markers have normalized, there is
+  limited indication to keep trending those.
 </p>
 
 <strong>When telemetry <em>is</em> indicated</strong>
@@ -4008,7 +4009,7 @@ lowValueReasons: new Map([
   increase life-threatening arrhythmias, rapid-response activations or mortality, confirming that these harms are
   incurred with no corresponding safety gain.<sup>1,5</sup> It is important to note that telemetry does not entail pulse
   oximetry use, as that can be done on a non-telemetry bed and is a separate decision. Now that our patient has
-  stabilised and is no longer in sepsis or septic shock, telemetry should be discontinued.
+  stabilized and is no longer in sepsis or septic shock, telemetry should be discontinued.
 </p>
 
 <p class="small"><strong>Abridged indications for telemetry, per AHA guidelines</strong></p>
@@ -4055,22 +4056,28 @@ lowValueReasons: new Map([
 </ol>
 
 <p class="small">
-  Antibiotics follow a different timeline. Monitoring can be de-escalated as soon as the patient is stable,
-  but antimicrobial therapy can only be narrowed once the microbiology allows it, and his susceptibilities
-  are still pending.
+  Antibiotics follow their own timeline. Monitoring is de-escalated once the patient is stable; antimicrobial
+  therapy narrows only when the microbiology allows it. Here it does. The deep culture is growing
+  <strong>gram-positive cocci in clusters</strong>, which vancomycin covers, so the piperacillin-tazobactam
+  can come off today even though susceptibilities are still pending: it was added for the anaerobes and
+  gram-negatives a diabetic foot infection may harbor, and none of those have grown. The deep specimen taken
+  at debridement is what makes that call defensible, because it represents the wound rather than the skin.
+  Hold the caveat too &mdash; an anaerobe or an atypical can fail to grow, so if he worsens after narrowing,
+  restart the broader agent rather than assuming the culture answered the question.
 </p>
 
 <strong>What should come off today</strong>
 <ul class="small">
   <li><strong>Telemetry</strong> &ndash; no cardiac indication, and it restricts his mobility.</li>
-  <li><strong>Daily CBC, BMP and CRP</strong> &ndash; his examination is a better monitor than his labs.</li>
+  <li><strong>Piperacillin-tazobactam</strong> &ndash; the deep culture is growing gram-positive cocci in clusters; continue vancomycin alone.</li>
+  <li><strong>Daily CBC and CRP</strong> &ndash; his examination is a better monitor than his labs. The <strong>BMP stays daily</strong> while he is on vancomycin.</li>
   <li><strong>Maintenance IV fluids</strong> &ndash; he is eating and drinking.</li>
 </ul>
 
 <strong>What should go on today</strong>
 <ul class="small">
   <li><strong>His home basal insulin, plus correction</strong> &ndash; he has missed 24 hours and is eating normally.</li>
-  <li><strong>Prophylactic enoxaparin</strong> &ndash; hospitalised, infected, mobilising to the chair only.</li>
+  <li><strong>Prophylactic enoxaparin</strong> &ndash; hospitalized, infected, mobilizing to the chair only.</li>
 </ul>
 
 <strong>What waits</strong>
@@ -4094,8 +4101,8 @@ lowValueReasons: new Map([
     attribution: "",
     contentHtml: `
       <p>
-        <strong>Forty-eight hours after admission.</strong> The wound is clean and granulating, the erythema has
-        resolved, he has been afebrile throughout and his glucose is controlled. He is mobilising with therapy.
+        <strong>Hospital Day 3.</strong> Forty-eight hours after admission, the wound is clean and granulating, the erythema has
+        resolved, he has been afebrile throughout and his glucose is controlled. He is mobilizing with therapy.
       </p>
       <div class="grid2">
         <div class="summary">
@@ -4138,7 +4145,7 @@ lowValueReasons: new Map([
         ]},
       { id:"duration", question:"Duration, for a debrided soft-tissue infection without bone involvement", hint:"",
         options:[
-          {id:"none", label:"No antibiotics are indicated", tier:"low", why:"Debridement is source control, not treatment. He presented in septic shock with a deep soft tissue infection and a deep culture growing S. aureus, and removing devitalised tissue does not sterilise what remains. This is the opposite error to the six-week answer and it is the more dangerous one."},
+          {id:"none", label:"No antibiotics are indicated", tier:"low", why:"Debridement is source control, not treatment. He presented in septic shock with a deep soft tissue infection and a deep culture growing S. aureus, and removing devitalized tissue does not sterilize what remains. This is the opposite error to the six-week answer and it is the more dangerous one."},
           {id:"short", label:"A 1–2 week course, counted from the debridement", tier:"high", why:"Without bone involvement this is a soft tissue infection, and once source control has been achieved a one-to-two week course performs as well as a longer one. Two details carry the answer: the absence of bone involvement is what rules out a six-week course, and the clock starts at the debridement rather than at admission. The upper end of the range is the reasonable choice here given his impaired perfusion."},
           {id:"sixwk", label:"Six weeks, given risk of osteomyelitis", tier:"low", why:"Six weeks is the duration for osteomyelitis, and the question is whether he has it. The probe did not reach bone, the X-ray showed no bony destruction, and podiatry examined the wound and documented no concern for bone involvement. Treating a risk rather than a diagnosis commits him to six weeks of therapy, its adverse effects, and in most hands a line to deliver it."},
           {id:"indef", label:"Indefinite suppression", tier:"low", why:"Suppressive therapy is reserved for retained hardware or an infection that cannot be cleared. Neither applies to a debrided soft tissue ulcer in a patient who has already responded."}
@@ -5075,14 +5082,14 @@ function renderBreakdownTable(orderIds, title){
    patient, commits to an interpretation, and is graded on both.
 
    The expected score for this vignette is 6.0 -- "PE most likely diagnosis" (3),
-   HR > 100 (1.5), immobilised >= 3 days (1.5). Two-tier Wells is used, because
+   HR > 100 (1.5), immobilized >= 3 days (1.5). Two-tier Wells is used, because
    the > 4 / <= 4 split is the one that actually drives the D-dimer decision.
    Three-tier would call 6.0 "moderate", which reads as less urgent than it is. */
 const WELLS_EXPECTED = [
   { points:3,   label:"PE is the most likely diagnosis", present:true,
     why:"He has pleuritic pain, hypoxia and tachycardia two weeks into immobility, and a clear chest exam. Nothing else on the table explains it better." },
   { points:1.5, label:"HR > 100 bpm", present:true, why:"He is 110." },
-  { points:1.5, label:"Immobilisation \u2265 3 days or surgery in the previous 4 weeks", present:true,
+  { points:1.5, label:"Immobilization \u2265 3 days or surgery in the previous 4 weeks", present:true,
     why:"Two weeks largely in bed after a fall." },
   { points:3,   label:"Clinical signs of DVT", present:false, why:"No leg swelling or tenderness on exam." },
   { points:1.5, label:"Previous DVT/PE", present:false, why:"No prior history given." },
