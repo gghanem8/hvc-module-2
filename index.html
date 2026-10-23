@@ -3970,7 +3970,7 @@ lowValueReasons: new Map([
           {id:"stopvanc", label:"Discontinue vancomycin, continue piperacillin-tazobactam", tier:"low", why:"This drops the wrong agent. Gram-positive cocci in clusters is precisely the pattern that may represent MRSA, and vancomycin is what covers it. Stopping the drug that treats the organism you are actually growing, while keeping the one aimed at organisms that have not grown, narrows in the wrong direction."},
           {id:"antifungal", label:"Add antifungal coverage with fluconazole", tier:"low", why:"There is nothing here to suggest a fungal infection. The Gram stain shows bacteria, he is immunocompetent apart from his diabetes, and he is already improving on antibacterial therapy. Empiric fluconazole adds cost, meaningful drug interactions through CYP inhibition, QT prolongation, and selection pressure for resistant Candida, with no expected benefit."},
           {id:"meropenem", label:"Change to vancomycin and meropenem, narrow once susceptibilities return", tier:"low", why:"An escalation in a patient who is improving. Meropenem is broader than piperacillin-tazobactam, not narrower, and nothing about his course calls for it. Reaching for a carbapenem in a responding patient is how resistance is manufactured."},
-          {id:"continue", label:"Continue vancomycin and piperacillin-tazobactam", tier:"high", why:"Diabetic foot infections are frequently polymicrobial, and in this situation one can reasonably opt to continue broad coverage pending final sensitivities. A Gram stain also cannot distinguish MRSA from MSSA, and an anaerobe or a gram-negative can fail to grow even on a good specimen. Some providers would feel comfortable discontinuing the piperacillin-tazobactam here, since only gram-positive organisms are growing in the deep wound culture \u2014 that is a defensible call, particularly given that a deep specimen taken at debridement represents the wound far better than a surface swab. Either way, narrowing is the goal and should happen as soon as the data support it; susceptibilities return tomorrow."}
+          {id:"continue", label:"Continue vancomycin and piperacillin-tazobactam", tier:"high", why:"Diabetic foot infections are frequently polymicrobial, and in this situation one can reasonably opt to continue broad coverage pending final sensitivities. A Gram stain cannot distinguish MRSA from MSSA \u2014 so vancomycin should definitely be continued. However, an anaerobe or a gram-negative bacteria can fail to grow, or be delayed to grow, even on a good specimen. Therefore, we often opt to continue the piperacillin-tazobactam until the cultures are more definitive. Some providers would feel comfortable discontinuing the piperacillin-tazobactam here since he is markedly improved and only gram-positive organisms are growing in the deep wound culture. That is a defensible call, particularly given that a deep specimen taken at debridement represents the wound far better than a surface swab."}
         ]},
       { id:"insulin", question:"Insulin, in a patient eating normally who has missed 24 hours of basal", hint:"Home regimen: glargine 25 units daily. Eating a normal diet.",
         options:[
@@ -4056,15 +4056,13 @@ lowValueReasons: new Map([
 </ol>
 
 <p class="small">
-  Antibiotics follow their own timeline. Monitoring is de-escalated as soon as the patient is stable;
-  antimicrobial therapy narrows only when the microbiology allows it, and his susceptibilities are still
-  pending. The deep culture is growing <strong>gram-positive cocci in clusters</strong>, but a Gram stain
-  cannot separate MRSA from MSSA, and diabetic foot infections are frequently polymicrobial &mdash; so
-  continuing broad coverage until final sensitivities return is a reasonable position. Some providers would
-  be comfortable stopping the piperacillin-tazobactam now, on the grounds that only gram-positive organisms
-  are growing in a deep specimen taken at debridement, which represents the wound far better than a surface
-  swab. Both are defensible; what is not defensible is leaving broad coverage in place once the
-  susceptibilities are back.
+  The deep culture is growing <strong>gram-positive cocci in clusters</strong>, but a Gram stain cannot
+  separate MRSA from MSSA, and diabetic foot infections are frequently polymicrobial &mdash; so continuing
+  broad coverage until final sensitivities return is a reasonable position. Some providers would be
+  comfortable stopping the piperacillin-tazobactam now, on the grounds that only gram-positive organisms are
+  growing in a deep specimen taken at debridement, for which vancomycin monotherapy would be appropriate.
+  Both options are defensible and are contingent on the patient&rsquo;s status, prior microbiology, and
+  clinical assessment of the wound itself.
 </p>
 
 <strong>What should come off today</strong>
@@ -4079,13 +4077,6 @@ lowValueReasons: new Map([
   <li><strong>His home basal insulin, plus correction</strong> &ndash; he has missed 24 hours and is eating normally.</li>
   <li><strong>Prophylactic enoxaparin</strong> &ndash; hospitalized, infected, mobilizing to the chair only.</li>
 </ul>
-
-<strong>What waits</strong>
-<p class="small">
-  Cocci <strong>in clusters</strong> is staph, and no Gram stain distinguishes MRSA from MSSA. Vancomycin
-  stays until the susceptibilities are back tomorrow. Stopping it today is a guess; broadening further is
-  treating a man who is already getting better.
-</p>
 
 <strong>One thing to notice</strong>
 <p class="small">
