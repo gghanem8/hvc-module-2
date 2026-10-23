@@ -3967,10 +3967,10 @@ lowValueReasons: new Map([
       { id:"abx6b", question:"Antibiotics, with clusters on the Gram stain and susceptibilities pending", hint:"The deep tissue culture is growing gram-positive cocci in clusters.",
         options:[
           {id:"stopall", label:"Stop all antibiotics because he is afebrile", tier:"low", why:"He is afebrile because the antibiotics are working. Defervescence at 24 hours reflects treatment response, not resolution of the infection, and he has not completed a course for a severe soft tissue infection."},
-          {id:"stopvanc", label:"Discontinue vancomycin, continue piperacillin-tazobactam", tier:"low", why:"This is the correct answer inverted. Gram-positive cocci in clusters is precisely the pattern that may represent MRSA, and vancomycin is the agent covering it. Stopping the drug that treats the organism you are growing, while continuing the one covering organisms that have not grown, narrows in the wrong direction \u2014 it keeps the broader agent and drops the targeted one."},
+          {id:"stopvanc", label:"Discontinue vancomycin, continue piperacillin-tazobactam", tier:"low", why:"This drops the wrong agent. Gram-positive cocci in clusters is precisely the pattern that may represent MRSA, and vancomycin is what covers it. Stopping the drug that treats the organism you are actually growing, while keeping the one aimed at organisms that have not grown, narrows in the wrong direction."},
           {id:"antifungal", label:"Add antifungal coverage with fluconazole", tier:"low", why:"There is nothing here to suggest a fungal infection. The Gram stain shows bacteria, he is immunocompetent apart from his diabetes, and he is already improving on antibacterial therapy. Empiric fluconazole adds cost, meaningful drug interactions through CYP inhibition, QT prolongation, and selection pressure for resistant Candida, with no expected benefit."},
           {id:"meropenem", label:"Change to vancomycin and meropenem, narrow once susceptibilities return", tier:"low", why:"An escalation in a patient who is improving. Meropenem is broader than piperacillin-tazobactam, not narrower, and nothing about his course calls for it. Reaching for a carbapenem in a responding patient is how resistance is manufactured."},
-          {id:"continue", label:"Continue vancomycin, discontinue piperacillin-tazobactam", tier:"high", why:"The deep culture is growing gram-positive cocci in clusters, which vancomycin covers. Piperacillin-tazobactam was added for the anaerobic and gram-negative organisms a diabetic foot infection may harbor, and none of those have grown. You can make this call with more confidence than usual because the specimen is a deep tissue culture taken at debridement, which is far more likely to represent the true pathogen than a surface swab. The caveat worth holding on to: an organism can fail to grow, and an anaerobe or an atypical is exactly the kind that might in a foot infection. If he worsens after narrowing, treat that as a real signal and restart the piperacillin-tazobactam rather than assuming the culture settled the question."}
+          {id:"continue", label:"Continue vancomycin and piperacillin-tazobactam", tier:"high", why:"Diabetic foot infections are frequently polymicrobial, and in this situation one can reasonably opt to continue broad coverage pending final sensitivities. A Gram stain also cannot distinguish MRSA from MSSA, and an anaerobe or a gram-negative can fail to grow even on a good specimen. Some providers would feel comfortable discontinuing the piperacillin-tazobactam here, since only gram-positive organisms are growing in the deep wound culture \u2014 that is a defensible call, particularly given that a deep specimen taken at debridement represents the wound far better than a surface swab. Either way, narrowing is the goal and should happen as soon as the data support it; susceptibilities return tomorrow."}
         ]},
       { id:"insulin", question:"Insulin, in a patient eating normally who has missed 24 hours of basal", hint:"Home regimen: glargine 25 units daily. Eating a normal diet.",
         options:[
@@ -4056,20 +4056,20 @@ lowValueReasons: new Map([
 </ol>
 
 <p class="small">
-  Antibiotics follow their own timeline. Monitoring is de-escalated once the patient is stable; antimicrobial
-  therapy narrows only when the microbiology allows it. Here it does. The deep culture is growing
-  <strong>gram-positive cocci in clusters</strong>, which vancomycin covers, so the piperacillin-tazobactam
-  can come off today even though susceptibilities are still pending: it was added for the anaerobes and
-  gram-negatives a diabetic foot infection may harbor, and none of those have grown. The deep specimen taken
-  at debridement is what makes that call defensible, because it represents the wound rather than the skin.
-  Hold the caveat too &mdash; an anaerobe or an atypical can fail to grow, so if he worsens after narrowing,
-  restart the broader agent rather than assuming the culture answered the question.
+  Antibiotics follow their own timeline. Monitoring is de-escalated as soon as the patient is stable;
+  antimicrobial therapy narrows only when the microbiology allows it, and his susceptibilities are still
+  pending. The deep culture is growing <strong>gram-positive cocci in clusters</strong>, but a Gram stain
+  cannot separate MRSA from MSSA, and diabetic foot infections are frequently polymicrobial &mdash; so
+  continuing broad coverage until final sensitivities return is a reasonable position. Some providers would
+  be comfortable stopping the piperacillin-tazobactam now, on the grounds that only gram-positive organisms
+  are growing in a deep specimen taken at debridement, which represents the wound far better than a surface
+  swab. Both are defensible; what is not defensible is leaving broad coverage in place once the
+  susceptibilities are back.
 </p>
 
 <strong>What should come off today</strong>
 <ul class="small">
   <li><strong>Telemetry</strong> &ndash; no cardiac indication, and it restricts his mobility.</li>
-  <li><strong>Piperacillin-tazobactam</strong> &ndash; the deep culture is growing gram-positive cocci in clusters; continue vancomycin alone.</li>
   <li><strong>Daily CBC and CRP</strong> &ndash; his examination is a better monitor than his labs. The <strong>BMP stays daily</strong> while he is on vancomycin.</li>
   <li><strong>Maintenance IV fluids</strong> &ndash; he is eating and drinking.</li>
 </ul>
