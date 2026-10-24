@@ -294,6 +294,8 @@ button.primary:active{transform:translateY(1px)}
 .tut-arrow{display:flex;align-items:center;gap:10px;margin:14px 0 6px;
   color:var(--no);font-weight:600}
 .tut-arrow .arrow{font-size:1.5rem;line-height:1}
+.ack-list{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ack-list li{color:var(--heading);font-weight:600}
 
 #orderFeedback ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
 #orderFeedback li{
@@ -478,7 +480,7 @@ textarea{min-height:96px;resize:vertical}
       <li><strong>High-value care is dynamic:</strong> what’s high value depends on the patient, timing, and pre-test probability.</li>
       <li><strong>This information is for educational purposes only and should not be considered medical advice or be used in place of clinician judgement.</strong></li>
     </ul>
-    <div class="muted" style="margin-top:10px; font-size:13px;">Module developed by Dr. Ghadi Ghanem and Dr. Alexandra Glaeser at the UCLA David Geffen School of Medicine. This is not an official service or website of DGSOM. The following modules were developed utilizing ChatGPT (OpenAI, 2026). The cases and responses were written and verified by the authors utilizing current society guidelines and expert opinions</div>
+    <div class="muted" style="margin-top:10px; font-size:13px;">Module developed by Dr. Ghadi Ghanem and Dr. Alexandra Glaeser at the UCLA David Geffen School of Medicine. This is not an official service or website of DGSOM. The following modules were developed utilizing ChatGPT (OpenAI, 2026). The cases and responses were written and verified by the authors utilizing current society guidelines and expert opinions.</div>
   </div>
 
   <div class="grid2" style="margin-top:14px;">
@@ -1221,7 +1223,7 @@ const HVC = {
   hep: `While it is reasonable to prescribe DVT prophylaxis inpatient and post-operatively, this should be discontinued outpatient if the patient is ambulatory and has lower risk of developing a DVT such as in someone with ankle surgery but who is still able to walk or participate with physical therapy. Strategies to prevent blood clots may be necessary in patients who are expected to have prolonged immobility.`,
   abx: `Surgical prophylaxis is given peri-operatively and stopped within 24 hours of the operation. It has already served its purpose by discharge, and continuing it adds <em>C. difficile</em> risk, resistance and cost without reducing surgical site infection. This is one of the most common things to find still active on a discharge medication list. <br><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10823856/" target="_blank" rel="noopener">Citation</a>`,
   tyl: `Reasonable to continue.`,
-  ibu: `It would be reasonable to prescribe this medication or to have the patient pick it up over the counter. Make sure to advise using ibuprofen in moderation, given the systemic effects and the increased risk of renal dysfunction.`,
+  ibu: `It would be reasonable to use ibuprofen as a second line for pain, with first line being acetaminophen. It would also be reasonable to discontinue this medication, since her pain is controlled on acetaminophen inpatient.`,
   oxy: `The patient has not needed opioid medications after her surgery, and she has stated she would like to avoid opioids at this time.`,
   oxycont: `Clinicians should not treat acute pain such as a fracture with long-acting opioids, and should not prescribe long-acting opioids for intermittent or as-needed use. This is associated with higher overdose risk. <br><a href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm" target="_blank" rel="noopener">Citation</a>`,
   mel: `Reasonable to continue.`,
@@ -5706,7 +5708,21 @@ if (continueBtnEl){
       setSurveyVisible(null);
       setDxUiVisible(false);
       resultsEl.classList.remove("hidden");
-      resultsEl.innerHTML = '<div class="card"><h2>Module Complete</h2><p class="muted">Thank you for completing the High-Value Care Simulator.</p><p class="small">You may close this window or refresh the page to restart.</p></div>';
+      resultsEl.innerHTML =
+        '<div class="card">' +
+          '<h2>Module Complete</h2>' +
+          '<p class="muted">Thank you for completing the High-Value Care Simulator.</p>' +
+          '<p class="small">You may close this window or refresh the page to restart.</p>' +
+          '<h3 style="margin-top:22px;">Acknowledgements</h3>' +
+          '<p class="small">Thank you to the multiple physicians who helped review these cases and the feedback provided.</p>' +
+          '<ul class="small ack-list">' +
+            '<li>Edward Ha, MD, MEHP, FACP</li>' +
+            '<li>Russell Kerbel, MD, MBA</li>' +
+            '<li>Tomer Begaz, MD</li>' +
+            '<li>Christopher Moriates, MD</li>' +
+            '<li>Amanda Kosack, MD</li>' +
+          '</ul>' +
+        '</div>';
       if (continueBtnEl) continueBtnEl.classList.add("hidden");
       window.scrollTo({top: 0, behavior: "smooth"});
       return;
