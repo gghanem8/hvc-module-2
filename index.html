@@ -297,6 +297,66 @@ button.primary:active{transform:translateY(1px)}
 .ack-list{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
 .ack-list li{color:var(--heading);font-weight:600}
 
+/* Certificate of completion. Rendered entirely in the browser; the name the
+   learner types is never transmitted and never stored. */
+/* Colours are hard-coded rather than themed: the certificate is meant to be
+   printed on white paper, so it must not follow the module's dark palette. */
+.cert{--gold:#c08b2e;--ink:#15181c;
+  background:#fff;color:var(--ink);margin:16px 0 0;padding:10px;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  border:10px solid #22262b;box-shadow:0 2px 10px rgba(0,0,0,.14);
+  font-family:Georgia,"Times New Roman",Times,serif}
+.cert-frame{border:2px solid var(--gold);padding:30px 34px 26px;position:relative;
+  min-height:420px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.cert-corner{position:absolute;width:86px;height:86px;color:var(--ink)}
+.cert-corner.tl{top:8px;left:8px}
+.cert-corner.tr{top:8px;right:8px;transform:scaleX(-1)}
+.cert-corner.bl{bottom:8px;left:8px;transform:scaleY(-1)}
+.cert-corner.br{bottom:8px;right:8px;transform:scale(-1,-1)}
+.cert-hr{width:300px;max-width:68%;border-top:1.5px solid var(--ink);margin:6px 0 10px}
+.cert-h1{font-size:3.1rem;line-height:1.02;letter-spacing:.07em;font-weight:700;
+  text-transform:uppercase;margin:0;text-shadow:1px 1px 0 rgba(0,0,0,.16)}
+.cert-h2{font-size:1.45rem;letter-spacing:.1em;text-transform:uppercase;margin:4px 0 0;font-weight:400}
+.cert-lead{font-size:.8rem;letter-spacing:.11em;text-transform:uppercase;margin:18px 0 0}
+.cert-name{font-size:2rem;font-weight:400;margin:6px 0 0;padding:0 18px 12px;line-height:1.25;
+  max-width:100%;overflow-wrap:break-word}
+.cert-course{font-size:1.3rem;font-weight:700;margin:8px 0 0;padding:0 18px 10px;letter-spacing:.02em}
+.cert-line{width:430px;max-width:84%;border-bottom:1.5px solid var(--ink);margin:0 0 2px}
+.cert-seal{width:76px;height:96px;margin:14px 0 2px}
+.cert-feet{display:flex;gap:46px;justify-content:center;width:100%;margin-top:auto;padding-top:14px;
+  flex-wrap:wrap}
+.cert-foot{flex:0 1 230px;min-width:170px}
+.cert-foot-val{font-size:.98rem;padding-bottom:3px;min-height:1.3em}
+.cert-foot-val.mono{font-family:ui-monospace,Consolas,"Courier New",monospace;
+  font-size:.92rem;letter-spacing:.04em}
+.cert-foot-rule{border-bottom:1.3px solid var(--ink)}
+.cert-foot-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+@media (max-width:560px){
+  .cert-h1{font-size:2.1rem}
+  .cert-h2{font-size:1.1rem}
+  .cert-name{font-size:1.5rem}
+  .cert-frame{padding:22px 16px}
+  .cert-corner{width:58px;height:58px}
+}
+.cert-disclosure{border-left:3px solid var(--accent);background:var(--panel,rgba(0,0,0,.03));border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0 4px}
+.cert-disclosure p{margin:0 0 7px}
+.cert-disclosure p:last-child{margin-bottom:0}
+.cert-form{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:10px}
+.cert-form .primary{margin-top:0}
+.cert-form input{flex:1 1 240px;min-width:0;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--heading);font-size:.95rem}
+/* Printing: the certificate is copied into #certPrintRoot, a direct child of
+   <body>, and every other top-level element is hidden. Hiding by display (not
+   visibility) keeps the page from printing blank leading pages where the
+   module's own layout used to be. */
+@media print{
+  body > *{display:none !important}
+  body > #certPrintRoot{display:block !important}
+  #certPrintRoot .cert{margin:0;box-shadow:none;border-width:8px}
+  #certPrintRoot .cert-frame{min-height:0}
+  .no-print{display:none !important}
+  @page{size:landscape;margin:10mm}
+}
+
 #orderFeedback ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
 #orderFeedback li{
   padding:11px 14px;border-radius:9px;font-size:.95rem;
@@ -583,7 +643,7 @@ textarea{min-height:96px;resize:vertical}
     <button type="button" id="resumeRestart" class="tab">Start over</button>
   </div>
   <h1>Medical Case Simulator</h1>
-  <div class="muted">
+  <div class="muted" id="moduleSubtitle">
     Practice high-value care by selecting the <strong>initial diagnostic tests</strong> you would order at this stage of the encounter.
     <strong>Costs are hidden until you submit.</strong>
   </div>
@@ -677,7 +737,7 @@ textarea{min-height:96px;resize:vertical}
     <strong>&ldquo;No diagnostic testing necessary&rdquo;</strong> if you do not think any orders are needed for this case.
   </div>
 
-  <label class="field-label" for="search">Search and add orders</label>
+  <label class="field-label" for="search" id="searchLabel">Search and add orders</label>
   <input type="text" id="search" aria-describedby="dxHint"
          placeholder="Search &amp; add orders (e.g., CBC, CXR, CTA, COVID)&hellip;"
          autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="search" />
@@ -1076,7 +1136,7 @@ Next to each medication below, decide whether to <b>continue the home medication
 <script>
 // Case 5 iframe version. Kept in step with the parent APP_VERSION so a row
 // carrying only medrecModuleVersion can still be placed in a cohort.
-const MODULE_VERSION = "v32_2026_10_15";
+const MODULE_VERSION = "v33_2026_10_29";
 const GOOGLE_SHEETS_WEBAPP_URL = ""; // Paste your deployed Google Apps Script Web App URL here (optional)
 
 // Send information back to the parent (Case 1–4 module) for unified analytics.
@@ -1664,7 +1724,7 @@ const ANALYTICS_TIMEOUT_MS = 4000;
 // reclassified to intermediate; commit-before-reveal on the 6b fluid decision;
 // intermediate tiers removed from the antibiotic, source control, lab, insulin
 // and duration decisions; Case 5 sizing, feedback labelling and submit state.
-const APP_VERSION = "HVC_SIM_V32_2026_10_15";
+const APP_VERSION = "HVC_SIM_V33_2026_10_29";
 const ANALYTICS_FETCH_MODE = "no-cors"; // "no-cors" is most compatible (e.g., Google Apps Script)
 
 function getFetchMode(){
@@ -4288,6 +4348,218 @@ const COMPLETED_CASES = new Set();
 
 // Label for the advance button, given where the learner is in the sequence.
 // 0 pre-test | 1-4 cases | 5 med rec | 6-9 case 6 stages (6a-6d) | 10 post-test
+/* =========================
+   Certificate of completion
+
+   The code is RANDOM and deterministic only in its check characters. It is not
+   derived from the session, the linking code or anything else in the dataset,
+   it is never transmitted, and it is stored nowhere -- so it cannot be used to
+   re-identify a participant, and the research record stays anonymous.
+
+   What it does buy is detection of the thing that actually happens: a learner
+   forwarding their certificate to a classmate who edits the name. The last two
+   characters are a checksum over the random payload AND the name, so changing
+   the name invalidates the code. Two certificates bearing the same code are a
+   copy. Neither is proof of authorship -- the algorithm sits in a file the
+   browser downloads, so a determined learner can mint a valid code -- but it
+   raises forgery from "edit a PDF" to "read the source and implement a hash",
+   which is the difference that matters for casual sharing.
+   ========================= */
+const CERT_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";   // no 0/O/1/I
+
+function certNormalizeName(name){
+  return String(name || "").toUpperCase().replace(/[^A-Z]+/g, " ").trim();
+}
+function certHash(str){
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+function certRandomPayload(n){
+  const out = [];
+  const buf = new Uint32Array(n);
+  try { (window.crypto || window.msCrypto).getRandomValues(buf); }
+  catch(e){ for (let i=0;i<n;i++) buf[i] = Math.floor(Math.random()*4294967296); }
+  for (let i=0;i<n;i++) out.push(CERT_ALPHABET[buf[i] % CERT_ALPHABET.length]);
+  return out.join("");
+}
+/* The random payload is generated once per completion and then reused, so
+   re-printing gives the same code -- and so a learner who mints certificates
+   for several names leaves every one of them sharing the same payload, which
+   is visible at a glance in the validator. */
+let CERT_PAYLOAD = null;
+function certPayload(){
+  if (!CERT_PAYLOAD) CERT_PAYLOAD = certRandomPayload(8);
+  return CERT_PAYLOAD;
+}
+/* HVC-XXXX-XXXX-CC : 8 random characters, then 2 check characters over the
+   payload and the normalized name. */
+function certMakeCode(name){
+  const payload = certPayload();
+  return "HVC-" + payload.slice(0,4) + "-" + payload.slice(4,8) + "-" + certCheck(payload, name);
+}
+function certCheck(payload, name){
+  const h = certHash(payload + "|" + certNormalizeName(name));
+  return CERT_ALPHABET[h % 32] + CERT_ALPHABET[(h >>> 5) % 32];
+}
+/* Returns true when the code's check characters match the name it is printed
+   against. Used by the separate validator page, and kept here so both read from
+   one definition. */
+function certVerify(code, name){
+  const m = /^HVC-([A-Z2-9]{4})-([A-Z2-9]{4})-([A-Z2-9]{2})$/.exec(String(code||"").trim().toUpperCase());
+  if (!m) return false;
+  return certCheck(m[1] + m[2], name) === m[3];
+}
+
+/* The markup for the name prompt. Marked .no-print so it disappears from the
+   printed page. */
+function certPromptHtml(){
+  return '' +
+    '<div class="card no-print" id="certPrompt">' +
+      '<h3 style="margin-top:0;">Certificate of completion</h3>' +
+      '<p class="small">Type your name as you would like it to appear on the certificate. ' +
+        'The certificate is generated in your browser \u2014 print it or save it as a PDF from the ' +
+        'print dialog.</p>' +
+      '<div class="cert-disclosure small">' +
+        '<p><strong>Your name is not collected.</strong> It is used only to draw the certificate in ' +
+          'this browser. It is not transmitted to the study, it is not saved anywhere, and it does ' +
+          'not appear in the research data.</p>' +
+        '<p><strong>The verification code is randomly generated.</strong> It is not derived from your ' +
+          'name, your answers, or any study identifier, it is not recorded, and it cannot be used to ' +
+          'identify you. Its only purpose is to let a certificate be checked for authenticity: the ' +
+          'code is bound to the name printed on the certificate, so if that name is changed the code ' +
+          'no longer matches.</p>' +
+      '</div>' +
+      '<div class="cert-form">' +
+        '<input type="text" id="certNameInput" maxlength="60" autocomplete="off" ' +
+          'placeholder="Your name" aria-label="Name for certificate" />' +
+        '<button type="button" class="primary" id="certGenBtn">Generate certificate</button>' +
+      '</div>' +
+      '<p class="small" id="certError" style="color:var(--no);display:none;">Enter your name first.</p>' +
+    '</div>' +
+    '<div id="certificate" class="hidden"></div>' +
+    '<div class="no-print" id="certActions" style="display:none;margin-top:12px;">' +
+      '<button type="button" class="tab" id="certPrintBtn">Print / save as PDF</button>' +
+    '</div>';
+}
+
+function certRender(rawName){
+  const el = document.getElementById("certificate");
+  const actions = document.getElementById("certActions");
+  if (!el) return;
+  const name = String(rawName || "").replace(/\s+/g, " ").trim();
+  const code = certMakeCode(name);
+  let dateStr;
+  try {
+    dateStr = new Date().toLocaleDateString(undefined, {year:"numeric", month:"long", day:"numeric"});
+  } catch(e){ dateStr = new Date().toDateString(); }
+
+  /* One corner flourish, drawn once and mirrored into the other three corners
+     with CSS transforms. */
+  const corner =
+    '<svg class="cert-corner tl" viewBox="0 0 100 100" aria-hidden="true" focusable="false">' +
+      '<g fill="none" stroke="currentColor" stroke-linecap="round">' +
+        '<path d="M4 52 C4 25 25 4 52 4" stroke-width="2.1"/>' +
+        '<path d="M13 52 C13 30 30 13 52 13" stroke-width="1.1"/>' +
+        '<path d="M52 13 C38 14 27 21 22 33 C19 40 24 47 30 45 C35 43 35 36 30 35" stroke-width="1.8"/>' +
+        '<path d="M22 33 C28 30 36 30 41 33" stroke-width="0.9"/>' +
+        '<path d="M4 52 C4 70 8 82 16 90" stroke-width="0.9"/>' +
+        '<path d="M52 4 C70 4 82 8 90 16" stroke-width="0.9"/>' +
+        '<path d="M60 18 C70 20 78 25 84 32" stroke-width="0.8"/>' +
+        '<path d="M18 60 C20 70 25 78 32 84" stroke-width="0.8"/>' +
+      '</g>' +
+      '<circle cx="30" cy="35" r="2" fill="currentColor"/>' +
+      '<circle cx="52" cy="4" r="1.6" fill="currentColor"/>' +
+      '<circle cx="4" cy="52" r="1.6" fill="currentColor"/>' +
+    '</svg>';
+  const corners = corner +
+    corner.replace('cert-corner tl','cert-corner tr') +
+    corner.replace('cert-corner tl','cert-corner bl') +
+    corner.replace('cert-corner tl','cert-corner br');
+
+  const seal =
+    '<svg class="cert-seal" viewBox="0 0 80 100" aria-hidden="true" focusable="false">' +
+      /* Flat fills, no gradient and no element ids: the certificate markup is
+         duplicated into the print container, and a duplicated <defs> id does not
+         resolve reliably in print. */
+      '<path d="M26 56 L18 96 L31 88 L40 97 L36 56 Z" fill="#b3202a"/>' +
+      '<path d="M54 56 L62 96 L49 88 L40 97 L44 56 Z" fill="#8f1620"/>' +
+      '<circle cx="40" cy="36" r="29" fill="none" stroke="#c08b2e" stroke-width="5" ' +
+        'stroke-dasharray="3 4"/>' +
+      '<circle cx="40" cy="36" r="25" fill="#dcab3e"/>' +
+      '<path d="M40 11 A25 25 0 0 0 15 36 L40 36 Z" fill="#edc766"/>' +
+      '<circle cx="40" cy="36" r="19" fill="none" stroke="#8a6412" stroke-width="1.3"/>' +
+      '<circle cx="40" cy="36" r="13" fill="none" stroke="#8a6412" stroke-width="1"/>' +
+    '</svg>';
+
+  el.innerHTML =
+    '<div class="cert">' +
+      '<div class="cert-frame">' +
+        corners +
+        '<div class="cert-hr"></div>' +
+        '<div class="cert-h1">Certificate</div>' +
+        '<div class="cert-h2">of Completion</div>' +
+        '<div class="cert-lead">This certifies that</div>' +
+        '<div class="cert-name">' + escapeHtml(name) + '</div>' +
+        '<div class="cert-line"></div>' +
+        '<div class="cert-lead">has successfully completed the</div>' +
+        '<div class="cert-course">High Value Care Module</div>' +
+        '<div class="cert-line"></div>' +
+        seal +
+        '<div class="cert-feet">' +
+          '<div class="cert-foot">' +
+            '<div class="cert-foot-val">' + escapeHtml(dateStr) + '</div>' +
+            '<div class="cert-foot-rule"></div>' +
+            '<div class="cert-foot-label">Date Awarded</div>' +
+          '</div>' +
+          '<div class="cert-foot">' +
+            '<div class="cert-foot-val mono">' + escapeHtml(code) + '</div>' +
+            '<div class="cert-foot-rule"></div>' +
+            '<div class="cert-foot-label">Verification Code</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  el.classList.remove("hidden");
+  if (actions) actions.style.display = "";
+}
+
+/* Called after the completion screen is written, since its markup is replaced
+   wholesale by innerHTML. */
+function certBind(){
+  const input = document.getElementById("certNameInput");
+  const gen = document.getElementById("certGenBtn");
+  const err = document.getElementById("certError");
+  const print = document.getElementById("certPrintBtn");
+  function go(){
+    const v = input ? input.value : "";
+    if (!String(v).replace(/\s+/g, " ").trim()){
+      if (err) err.style.display = "";
+      if (input) input.focus();
+      return;
+    }
+    if (err) err.style.display = "none";
+    certRender(v);
+  }
+  if (gen) gen.addEventListener("click", go);
+  if (input) input.addEventListener("keydown", (e)=>{ if (e.key === "Enter"){ e.preventDefault(); go(); } });
+  if (print) print.addEventListener("click", ()=>{
+    const src = document.getElementById("certificate");
+    if (!src) return;
+    let root = document.getElementById("certPrintRoot");
+    if (!root){
+      root = document.createElement("div");
+      root.id = "certPrintRoot";
+      document.body.appendChild(root);
+    }
+    root.innerHTML = src.innerHTML;
+    window.print();
+  });
+}
+
 function nextButtonLabel(caseId){
   if (caseId === 11) return "Start Case 1";
   if (caseId < 5) return "Next Case";
@@ -4388,6 +4660,7 @@ function setDxUiVisible(visible){
   const setDisp = (el, v)=>{ if (!el) return; el.style.display = v ? "" : "none"; };
   setDisp(dxHeaderEl, show);
   setDisp(dxHintEl, show);
+  setDisp(document.getElementById("searchLabel"), show);
   setDisp(searchEl, show);
   setDisp(orderFormEl, show);
 }
@@ -4399,6 +4672,7 @@ function setOrderEntryVisible(visible){
   const setDisp = (el, v)=>{ if (!el) return; el.style.display = v ? "" : "none"; };
   setDisp(dxHeaderEl, show);
   setDisp(dxHintEl, show);
+  setDisp(document.getElementById("searchLabel"), show);
   setDisp(searchEl, show);
   setDisp(matchListEl, show);
   const selBox = matchListEl ? matchListEl.parentElement.querySelector(".card") : null;
@@ -5707,13 +5981,20 @@ if (continueBtnEl){
       setCase5Visible(false);
       setSurveyVisible(null);
       setDxUiVisible(false);
+      // Clear the stage furniture so the final screen is only the completion card.
+      const ccEl = document.getElementById("caseContent"); if (ccEl) ccEl.innerHTML = "";
+      const ctEl = document.getElementById("caseTitle"); if (ctEl) ctEl.textContent = "";
+      const msEl = document.getElementById("moduleSubtitle"); if (msEl) msEl.style.display = "none";
       resultsEl.classList.remove("hidden");
       resultsEl.innerHTML =
-        '<div class="card">' +
+        '<div class="card no-print">' +
           '<h2>Module Complete</h2>' +
           '<p class="muted">Thank you for completing the High-Value Care Simulator.</p>' +
           '<p class="small">You may close this window or refresh the page to restart.</p>' +
-          '<h3 style="margin-top:22px;">Acknowledgements</h3>' +
+        '</div>' +
+        certPromptHtml() +
+        '<div class="card no-print">' +
+          '<h3 style="margin-top:0;">Acknowledgements</h3>' +
           '<p class="small">Thank you to the multiple physicians who helped review these cases and the feedback provided.</p>' +
           '<ul class="small ack-list">' +
             '<li>Edward Ha, MD, MEHP, FACP</li>' +
@@ -5724,6 +6005,7 @@ if (continueBtnEl){
             '<li>Meena Archie, MD</li>' +
           '</ul>' +
         '</div>';
+      certBind();
       if (continueBtnEl) continueBtnEl.classList.add("hidden");
       window.scrollTo({top: 0, behavior: "smooth"});
       return;
@@ -5952,33 +6234,61 @@ if (trainingLevelSelectEl){
   });
 }
 
-if (pretestFormEl){
-  pretestFormEl.addEventListener("submit", (e)=>{
+/* A survey gate that fails silently is the worst failure this module can have:
+   the student clicks Submit, nothing moves, and there is nothing on screen to
+   report. So the side effects (logging, progress marking, scoring) each get
+   their own guard, the Continue button is revealed whether or not they
+   succeeded, and anything that still escapes is written into the validation
+   area instead of being swallowed. Answering the questions is the gate; a bug
+   in telemetry or scoring must never be. */
+function surveyStepFailed(prefix, err){
+  try { console.error("[" + prefix + "-test submit]", err); } catch(e){}
+}
+function surveySubmitHandler(prefix, onDone){
+  return (e)=>{
     e.preventDefault();
-    if (!validateSurvey("pre")) return;
+    const errEl = document.getElementById(prefix === "pre" ? "pretestValidationError" : "posttestValidationError");
+    try {
+      if (!validateSurvey(prefix)) return;
+      onDone();
+    } catch(err){
+      surveyStepFailed(prefix, err);
+      if (errEl){
+        errEl.textContent = "Something went wrong submitting this section (" +
+          String((err && err.message) || err) + "). Your answers are still on screen \u2014 " +
+          "please tell Dr. Ghanem what you see here, then try again.";
+        errEl.classList.remove("hidden");
+      }
+    }
+  };
+}
+function guarded(prefix, fn){
+  try { fn(); } catch(err){ surveyStepFailed(prefix, err); }
+}
+
+if (pretestFormEl){
+  pretestFormEl.addEventListener("submit", surveySubmitHandler("pre", ()=>{
     PRETEST_RESPONSES = getSurveyResponses("pre");
-    logSurveySubmission("pretest_submission", PRETEST_RESPONSES);
-    markCaseCompleted(0);
+    guarded("pre", ()=>logSurveySubmission("pretest_submission", PRETEST_RESPONSES));
+    guarded("pre", ()=>markCaseCompleted(0));
     if (continueBtnEl){
       continueBtnEl.classList.remove("hidden");
       continueBtnEl.textContent = "Next Case";
     }
-  });
+  }));
 }
 
 if (posttestFormEl){
-  posttestFormEl.addEventListener("submit", (e)=>{
-    e.preventDefault();
-    if (!validateSurvey("post")) return;
+  posttestFormEl.addEventListener("submit", surveySubmitHandler("post", ()=>{
     POSTTEST_RESPONSES = getSurveyResponses("post");
-    logSurveySubmission("posttest_submission", POSTTEST_RESPONSES);
-    markCaseCompleted(10);
-    renderKnowledgeResults(scoreKnowledge(POSTTEST_RESPONSES, "post"));
+    guarded("post", ()=>logSurveySubmission("posttest_submission", POSTTEST_RESPONSES));
+    guarded("post", ()=>markCaseCompleted(10));
+    guarded("post", ()=>renderKnowledgeResults(scoreKnowledge(POSTTEST_RESPONSES, "post")));
     if (continueBtnEl){
       continueBtnEl.classList.remove("hidden");
       continueBtnEl.textContent = "Finish Module";
     }
-  });
+  }));
 }
 
 ["lcMother","lcDay","lcCity"].forEach(id=>{
